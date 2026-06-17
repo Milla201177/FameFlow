@@ -21,7 +21,7 @@
         --radius-button: 16px;
         --radius-card: 20px;
         --radius-sheet: 24px;
-        --screen-padding: 20px;
+        --screen-padding: 24px;
         --button-height: 48px;
         --input-height: 56px;
         --s1: 4px;
@@ -33,17 +33,17 @@
         --s7: 56px;
         --s8: 64px;
         --s9: 88px;
-        --type-h1-size: 28px;
-        --type-h1-line: 34px;
+        --type-h1-size: 32px;
+        --type-h1-line: 38px;
         --type-h1-weight: 700;
-        --type-h2-size: 22px;
-        --type-h2-line: 28px;
+        --type-h2-size: 24px;
+        --type-h2-line: 30px;
         --type-h2-weight: 600;
-        --type-body-size: 16px;
+        --type-body-size: 17px;
         --type-body-line: 24px;
-        --type-body-weight: 400;
-        --type-caption-size: 13px;
-        --type-caption-line: 18px;
+        --type-body-weight: 500;
+        --type-caption-size: 14px;
+        --type-caption-line: 20px;
         --type-caption-weight: 400;
       }
 
@@ -265,8 +265,8 @@
       .copilot-content {
         min-height: 0;
         display: grid;
-        grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
-        align-content: stretch;
+        grid-auto-rows: max-content;
+        align-content: start;
         gap: var(--s4);
         padding: var(--s4) var(--screen-padding) var(--s3);
         overflow: auto;
@@ -1583,13 +1583,15 @@
       }
 
       .copilot-content .idea-panel {
-        min-height: clamp(136px, 22dvh, 192px);
-        grid-template-rows: auto minmax(0, 1fr);
+        min-height: auto;
+        grid-template-rows: auto;
       }
 
       .ready-panel {
         order: 6;
-        margin-top: var(--s2);
+        position: relative;
+        z-index: 1;
+        margin-top: 0;
       }
 
       .guide-panel h2,
@@ -1671,7 +1673,6 @@
         align-items: start;
         gap: var(--s2);
         min-height: var(--s7);
-        height: 100%;
         padding: var(--s3);
         border: 1px solid var(--divider);
         border-radius: var(--radius-card);
@@ -1918,47 +1919,6 @@
 
       .mode-switch .segment:not(.active) {
         color: color-mix(in srgb, var(--muted) 62%, #ffffff);
-      }
-
-      .control-panel {
-        display: grid;
-        gap: var(--s1);
-        padding: 0;
-        border: 0;
-        border-radius: var(--radius);
-        background: transparent;
-        box-shadow: none;
-      }
-
-      .format-stack {
-        width: 100%;
-        display: grid;
-        justify-items: stretch;
-        gap: var(--s1);
-      }
-
-      body[data-mode="character"] .format-stack {
-        justify-items: stretch;
-      }
-
-      .format-stack .segmented {
-        width: 100%;
-      }
-
-      .format-stack .segmented.three {
-        width: 100%;
-      }
-
-      .control-panel .segment {
-        min-height: var(--button-height);
-        padding: 0 var(--s2);
-        font-size: var(--type-caption-size);
-        line-height: var(--type-caption-line);
-        font-weight: var(--type-caption-weight);
-      }
-
-      .control-panel .segmented {
-        padding: 0;
       }
 
       .setting-row {
@@ -3770,8 +3730,7 @@
 
         .content .mode-switch,
         .content .media-tabbar,
-        .content .subject-row,
-        .content .control-panel {
+        .content .subject-row {
           grid-column: 1;
         }
 
@@ -5169,7 +5128,6 @@
 
       const modeButtons = [...document.querySelectorAll("[data-mode-button]")];
       const kindButtons = [...document.querySelectorAll("[data-kind]")];
-      const flowButtons = [...document.querySelectorAll("[data-flow]")];
       const modelButtons = [...document.querySelectorAll("[data-model]")];
       const sizeButtons = [...document.querySelectorAll("[data-size]")];
       const customSelects = [...document.querySelectorAll(".custom-select")];
@@ -5200,7 +5158,6 @@
       let activeKind = "Image";
       let activeModel = "Fast";
       let activeSize = "9:16";
-      let activeFlow = "Create";
       let activeProject = "TEST";
       let activeCashAmount = "$25";
       let activeScreen = "generate";
@@ -5326,7 +5283,7 @@
         document.querySelector("#subject-label").textContent = data.label;
         document.querySelector("#subject-label").hidden = !data.label;
         document.querySelector("#sheet-title").textContent = data.sheetTitle;
-        updateFlowPlaceholder();
+        updatePromptPlaceholder();
         updateSubjectDisplay();
         renderSubjects();
       }
@@ -5827,19 +5784,13 @@
         updateCampaignReview();
       }
 
-      function updateFlowPlaceholder() {
-        prompt.placeholder = activeFlow === "Edit" ? "Describe what you want to change" : modeData[activeMode].placeholder;
+      function updatePromptPlaceholder() {
+        prompt.placeholder = modeData[activeMode].placeholder;
       }
 
       function setKind(kind) {
         activeKind = kind;
         kindButtons.forEach((item) => item.classList.toggle("active", item.dataset.kind === kind));
-      }
-
-      function setFlow(flow) {
-        activeFlow = flow;
-        flowButtons.forEach((item) => item.classList.toggle("active", item.dataset.flow === flow));
-        updateFlowPlaceholder();
       }
 
       function setModel(model) {
@@ -5874,7 +5825,6 @@
           option.classList.toggle("active", option.dataset.value === value);
         });
 
-        if (type === "flow") setFlow(value);
         if (type === "model") setModel(value);
         if (type === "size") setSize(value);
       }
@@ -5886,7 +5836,6 @@
         const preparedPrompt = idea || `${copilotAnswers.format}, ${copilotAnswers.size}: ${(activeMake || "custom idea").toLowerCase()}.`;
         setMode(modeFromGoal);
         setKind(copilotAnswers.format);
-        setFlow("Create");
         setSize(copilotAnswers.size);
         prompt.value = preparedPrompt;
         updateGenerateState();
@@ -6115,10 +6064,6 @@
 
       kindButtons.forEach((button) => {
         button.addEventListener("click", () => setKind(button.dataset.kind));
-      });
-
-      flowButtons.forEach((button) => {
-        button.addEventListener("click", () => setFlow(button.dataset.flow));
       });
 
       modelButtons.forEach((button) => {
