@@ -1953,7 +1953,7 @@
       }
 
       .media-tabbar {
-        min-height: var(--s6);
+        min-height: var(--s7);
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: var(--s1);
@@ -1964,9 +1964,15 @@
         box-shadow: 0 var(--s1) var(--s2) rgba(63, 48, 120, 0.08);
       }
 
+      body[data-theme="dark"] .media-tabbar {
+        background: var(--surface-soft);
+        border-color: rgba(255, 255, 255, 0.16);
+        box-shadow: none;
+      }
+
       .media-tab {
         position: relative;
-        min-height: var(--s5);
+        min-height: var(--button-height);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1979,6 +1985,10 @@
         font-weight: var(--type-caption-weight);
       }
 
+      body[data-theme="dark"] .media-tab {
+        color: #f8f6ff;
+      }
+
       .media-tab .icon {
         width: var(--s3);
         height: var(--s3);
@@ -1988,6 +1998,12 @@
         color: var(--mode-ink);
         background: color-mix(in srgb, var(--mode) 28%, transparent);
         box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mode) 58%, transparent);
+      }
+
+      body[data-theme="dark"] .media-tab.active {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.14);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
       }
 
       .media-tab.active::before {
@@ -2349,6 +2365,8 @@
       .prompt-area {
         min-height: 0;
         display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: var(--s3);
         align-content: stretch;
         padding: var(--s3);
         border: 1px solid var(--divider);
@@ -2372,6 +2390,33 @@
         gap: var(--s2);
         min-height: var(--s8);
         height: 100%;
+      }
+
+      .generate-settings-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--s2);
+      }
+
+      .generate-settings-row .select-trigger {
+        min-height: var(--button-height);
+        padding: 0 var(--s5) 0 var(--s3);
+        border-radius: var(--radius-button);
+      }
+
+      .generate-settings-row .select-label {
+        left: var(--s3);
+        text-transform: none;
+      }
+
+      .generate-settings-row .select-value {
+        justify-self: end;
+        font-size: var(--type-caption-size);
+        line-height: var(--type-caption-line);
+      }
+
+      .generate-settings-row .select-trigger svg {
+        right: var(--s3);
       }
 
       .prompt-box {
@@ -3043,8 +3088,8 @@
         flex-direction: column;
         overflow: auto;
         padding: var(--s3) var(--s3) var(--s2);
-        background: #ffffff;
-        color: #17151f;
+        background: var(--surface);
+        color: var(--text);
         border-left: 1px solid var(--divider);
         box-shadow: calc(var(--s2) * -1) 0 var(--s5) rgba(0, 0, 0, 0.16);
       }
@@ -3075,8 +3120,8 @@
       .menu-header .round-button {
         width: var(--s7);
         height: var(--s7);
-        background: #f4f3f5;
-        color: #17151f;
+        background: var(--control);
+        color: var(--text);
       }
 
       .menu-main {
@@ -3108,6 +3153,12 @@
         text-transform: uppercase;
       }
 
+      body[data-theme="dark"] .menu-section-label,
+      body[data-theme="dark"] .menu-action-text,
+      body[data-theme="dark"] .menu-chevron {
+        color: #dbd4fa;
+      }
+
       .menu-card,
       .menu-item,
       .account-link {
@@ -3118,8 +3169,8 @@
         padding: var(--s2) var(--s3);
         border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
         border-radius: var(--s3);
-        background: #ffffff;
-        color: #17151f;
+        background: var(--surface);
+        color: var(--text);
         text-align: left;
         font-size: var(--type-body-size);
         line-height: var(--type-body-line);
@@ -3220,7 +3271,7 @@
         gap: var(--s2);
         margin-top: auto;
         padding-top: var(--s2);
-        background: #ffffff;
+        background: var(--surface);
       }
 
       .account-heading {
@@ -3234,7 +3285,7 @@
 
       .account-name {
         margin: 0;
-        color: #17151f;
+        color: var(--text);
         font-size: var(--type-h2-size);
         line-height: var(--type-h2-line);
         font-weight: var(--type-h2-weight);
@@ -3266,14 +3317,14 @@
       }
 
       .credit-value strong {
-        color: #17151f;
+        color: var(--text);
         font-size: var(--type-body-size);
         line-height: var(--type-body-line);
         font-weight: 500;
       }
 
       .credit-value span {
-        color: var(--text-secondary);
+        color: var(--muted);
         font-size: var(--type-caption-size);
         line-height: var(--type-caption-line);
         font-weight: var(--type-caption-weight);
@@ -3293,8 +3344,8 @@
         place-items: center;
         border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
         border-radius: var(--s3);
-        background: #ffffff;
-        color: #17151f;
+        background: var(--surface);
+        color: var(--text);
         box-shadow: 0 var(--s1) var(--s2) rgba(70, 55, 126, 0.12);
       }
 
@@ -3313,7 +3364,7 @@
         padding: 0 var(--s3);
         border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
         border-radius: var(--s3);
-        background: #ffffff;
+        background: var(--surface);
         box-shadow: 0 var(--s1) var(--s2) rgba(70, 55, 126, 0.08);
       }
 
@@ -3322,14 +3373,14 @@
         border: 0;
         outline: 0;
         background: transparent;
-        color: #17151f;
+        color: var(--text);
         font-size: var(--type-body-size);
         line-height: var(--type-body-line);
         font-weight: var(--type-body-weight);
       }
 
       .project-search input::placeholder {
-        color: #817b8e;
+        color: var(--muted);
       }
 
       .project-options {
@@ -3345,8 +3396,8 @@
         padding: var(--s3);
         border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
         border-radius: var(--s3);
-        background: #ffffff;
-        color: #17151f;
+        background: var(--surface);
+        color: var(--text);
         text-align: left;
         font-size: var(--type-body-size);
         line-height: var(--type-body-line);
@@ -3750,26 +3801,6 @@
           </button>
         </div>
 
-        <div class="control-panel">
-          <div class="format-stack">
-            <div class="setting-row">
-              <span class="setting-label">Model</span>
-              <div class="segmented two" role="tablist" aria-label="Model">
-                <button class="segment active" type="button" data-model="Fast">Fast</button>
-                <button class="segment" type="button" data-model="Pro">Pro</button>
-              </div>
-            </div>
-            <div class="setting-row">
-              <span class="setting-label">Size</span>
-              <div class="segmented three" role="tablist" aria-label="Size">
-                <button class="segment active" type="button" data-size="9:16">9:16</button>
-                <button class="segment" type="button" data-size="1:1">1:1</button>
-                <button class="segment" type="button" data-size="16:9">16:9</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <section class="prompt-area" aria-label="Prompt builder">
           <div class="generate-prompt-row">
             <button class="composer-icon" id="prompt-reference" type="button" aria-label="Add reference">
@@ -3784,6 +3815,35 @@
                 <path d="M19 11a7 7 0 0 1-14 0M12 18v3" />
               </svg>
             </button>
+          </div>
+          <div class="generate-settings-row" aria-label="Generation settings">
+            <div class="custom-select" data-select="model">
+              <button class="select-trigger" type="button" aria-expanded="false">
+                <span class="select-label">Model</span>
+                <span class="select-value">Fast</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div class="select-menu">
+                <button class="select-option active" type="button" data-value="Fast">Fast</button>
+                <button class="select-option" type="button" data-value="Pro">Pro</button>
+              </div>
+            </div>
+            <div class="custom-select" data-select="size">
+              <button class="select-trigger" type="button" aria-expanded="false">
+                <span class="select-label">Size</span>
+                <span class="select-value">9:16</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div class="select-menu">
+                <button class="select-option active" type="button" data-value="9:16">9:16</button>
+                <button class="select-option" type="button" data-value="1:1">1:1</button>
+                <button class="select-option" type="button" data-value="16:9">16:9</button>
+              </div>
+            </div>
           </div>
         </section>
       </section>
@@ -5681,11 +5741,25 @@
       function setModel(model) {
         activeModel = model;
         modelButtons.forEach((item) => item.classList.toggle("active", item.dataset.model === model));
+        const select = document.querySelector('.custom-select[data-select="model"]');
+        if (select) {
+          select.querySelector(".select-value").textContent = model;
+          select.querySelectorAll(".select-option").forEach((option) => {
+            option.classList.toggle("active", option.dataset.value === model);
+          });
+        }
       }
 
       function setSize(size) {
         activeSize = size;
         sizeButtons.forEach((item) => item.classList.toggle("active", item.dataset.size === size));
+        const select = document.querySelector('.custom-select[data-select="size"]');
+        if (select) {
+          select.querySelector(".select-value").textContent = size;
+          select.querySelectorAll(".select-option").forEach((option) => {
+            option.classList.toggle("active", option.dataset.value === size);
+          });
+        }
       }
 
       function setCustomSelectValue(select, value) {
