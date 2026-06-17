@@ -1900,11 +1900,11 @@
       .control-panel {
         display: grid;
         gap: var(--s1);
-        padding: var(--s1);
-        border: 1px solid var(--divider);
+        padding: 0;
+        border: 0;
         border-radius: var(--radius);
-        background: var(--surface);
-        box-shadow: 0 var(--s2) var(--s4) rgba(28, 24, 42, 0.08);
+        background: transparent;
+        box-shadow: none;
       }
 
       .format-stack {
@@ -1927,7 +1927,7 @@
       }
 
       .control-panel .segment {
-        min-height: var(--s4);
+        min-height: var(--button-height);
         padding: 0 var(--s2);
         font-size: var(--type-caption-size);
         line-height: var(--type-caption-line);
@@ -1943,10 +1943,6 @@
         grid-template-columns: var(--s8) minmax(0, 1fr);
         align-items: center;
         gap: var(--s2);
-      }
-
-      .setting-row.no-label {
-        grid-template-columns: minmax(0, 1fr);
       }
 
       .setting-label {
@@ -2173,10 +2169,6 @@
       .action-row .asset-button .icon {
         width: var(--s4);
         height: var(--s4);
-      }
-
-      .create-edit {
-        width: 100%;
       }
 
       .subject-row {
@@ -2609,8 +2601,17 @@
         gap: var(--s2);
       }
 
+      .settings-view {
+        display: grid;
+        gap: var(--s4);
+      }
+
+      .settings-view[hidden] {
+        display: none !important;
+      }
+
       .settings-title {
-        margin: var(--s1) 0 var(--s2);
+        margin: 0;
         font-size: var(--type-h1-size);
         line-height: var(--type-h1-line);
         font-weight: var(--type-h1-weight);
@@ -3751,12 +3752,6 @@
 
         <div class="control-panel">
           <div class="format-stack">
-            <div class="setting-row no-label">
-              <div class="segmented two create-edit" role="tablist" aria-label="Flow">
-                <button class="segment active" type="button" data-flow="Create">Create</button>
-                <button class="segment" type="button" data-flow="Edit">Edit</button>
-              </div>
-            </div>
             <div class="setting-row">
               <span class="setting-label">Model</span>
               <div class="segmented two" role="tablist" aria-label="Model">
