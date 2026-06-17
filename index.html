@@ -119,7 +119,7 @@
         --mode: var(--character);
         --mode-strong: #67d7aa;
         --mode-ink: #0b5b46;
-        --active-pattern: repeating-linear-gradient(135deg, rgba(11, 91, 70, 0.18) 0 2px, transparent 2px 8px);
+        --active-pattern: none;
       }
 
       body[data-theme="light"][data-mode="character"] {
@@ -130,7 +130,7 @@
 
       body[data-theme="dark"][data-mode="character"] {
         --control-strong: rgba(200, 241, 223, 0.2);
-        --active-pattern: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0 2px, transparent 2px 8px);
+        --active-pattern: none;
       }
 
       .phone {
@@ -1877,7 +1877,7 @@
       }
 
       .mode-switch .segment {
-        min-height: var(--s6);
+        min-height: var(--s7);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1900,7 +1900,7 @@
       .control-panel {
         display: grid;
         gap: var(--s1);
-        padding: var(--s3);
+        padding: var(--s1);
         border: 1px solid var(--divider);
         border-radius: var(--radius);
         background: var(--surface);
@@ -1911,7 +1911,7 @@
         width: 100%;
         display: grid;
         justify-items: stretch;
-        gap: var(--s2);
+        gap: var(--s1);
       }
 
       body[data-mode="character"] .format-stack {
@@ -1927,10 +1927,15 @@
       }
 
       .control-panel .segment {
-        min-height: var(--s6);
+        min-height: var(--s4);
+        padding: 0 var(--s2);
         font-size: var(--type-caption-size);
         line-height: var(--type-caption-line);
         font-weight: var(--type-caption-weight);
+      }
+
+      .control-panel .segmented {
+        padding: 0;
       }
 
       .setting-row {
@@ -1952,7 +1957,7 @@
       }
 
       .media-tabbar {
-        min-height: var(--s7);
+        min-height: var(--s6);
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: var(--s1);
@@ -1965,7 +1970,7 @@
 
       .media-tab {
         position: relative;
-        min-height: var(--s6);
+        min-height: var(--s5);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1979,8 +1984,8 @@
       }
 
       .media-tab .icon {
-        width: var(--s4);
-        height: var(--s4);
+        width: var(--s3);
+        height: var(--s3);
       }
 
       .media-tab.active {
@@ -3702,6 +3707,22 @@
           </button>
         </div>
 
+        <button class="subject-row empty" id="open-sheet" type="button">
+          <span class="avatar-stack" aria-hidden="true">
+            <span class="avatar"></span>
+            <span class="avatar"></span>
+            <span class="avatar"></span>
+          </span>
+          <span class="subject-copy">
+            <small id="subject-label">Selected celebrity</small>
+            <strong id="subject-name"></strong>
+            <span id="subject-status">Tap to choose</span>
+          </span>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+        </button>
+
         <div class="media-tabbar" role="tablist" aria-label="Media type">
           <button class="media-tab active" type="button" data-kind="Image">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -3727,22 +3748,6 @@
             <span>Audio</span>
           </button>
         </div>
-
-        <button class="subject-row empty" id="open-sheet" type="button">
-          <span class="avatar-stack" aria-hidden="true">
-            <span class="avatar"></span>
-            <span class="avatar"></span>
-            <span class="avatar"></span>
-          </span>
-          <span class="subject-copy">
-            <small id="subject-label">Selected celebrity</small>
-            <strong id="subject-name"></strong>
-            <span id="subject-status">Tap to choose</span>
-          </span>
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m9 6 6 6-6 6" />
-          </svg>
-        </button>
 
         <div class="control-panel">
           <div class="format-stack">
