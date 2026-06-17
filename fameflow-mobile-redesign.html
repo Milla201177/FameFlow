@@ -1579,7 +1579,6 @@
 
       .idea-panel {
         order: 5;
-        min-height: 100%;
         align-content: start;
       }
 
@@ -1590,6 +1589,7 @@
 
       .ready-panel {
         order: 6;
+        margin-top: var(--s2);
       }
 
       .guide-panel h2,
@@ -3000,8 +3000,8 @@
         overflow: auto;
         padding: var(--s4) var(--s4) var(--s5);
         border-radius: 0;
-        background: #ffffff;
-        color: #17151f;
+        background: var(--surface);
+        color: var(--text);
       }
 
       .sheet-header {
@@ -3019,8 +3019,13 @@
       }
 
       .sheet .round-button {
-        background: #f2f0f4;
-        color: #7d7788;
+        background: var(--control);
+        color: var(--text);
+      }
+
+      body[data-theme="dark"] .sheet {
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 calc(var(--s2) * -1) var(--s6) rgba(0, 0, 0, 0.38);
       }
 
       .subject-list {
@@ -5694,7 +5699,7 @@
 
       function updateCopilotReadyCopy() {
         const hasPrompt = Boolean(submittedCopilotIdea.trim());
-        const realPersonNeedsCelebrity = activeMake === "Real person" && !selectedSubjects.celebrity.name;
+        const realPersonNeedsCelebrity = ["Real person", "Celebrity"].includes(activeMake) && !selectedSubjects.celebrity.name;
         document.querySelector("#ready-title").textContent = hasPrompt ? "Ready to generate" : "Almost ready";
         document.querySelector("#ready-goal").textContent = getReadyGoalLabel(activeMake);
         document.querySelector("#ready-format").textContent = copilotAnswers.format;
@@ -5947,7 +5952,16 @@
           renderGallery();
           return;
         }
-        if (favoriteButton) return;
+        if (favoriteButton) {
+          const item = galleryItems.find((entry) => entry.id === card?.dataset.galleryCard);
+          if (item) {
+            item.favorite = !item.favorite;
+            activeGalleryMenu = "";
+            renderGallery();
+            showToast(item.favorite ? "Added to favorites." : "Removed from favorites.");
+          }
+          return;
+        }
         if (menuButton) {
           activeGalleryMenu = activeGalleryMenu === menuButton.dataset.galleryMenu ? "" : menuButton.dataset.galleryMenu;
           renderGallery();
@@ -6019,7 +6033,7 @@
         [...makeDots.children].forEach((dot, index) => dot.classList.toggle("active", index === [...makeOptions.children].indexOf(card)));
         applyGoalDefaults(activeMake);
         if (activeHelp === "how") showCopilotGuide(activeMake);
-        if (activeMake === "Real person") {
+        if (["Real person", "Celebrity"].includes(activeMake)) {
           openCelebrityPickerForCopilot();
         }
         showCopilotReady();
@@ -6146,7 +6160,7 @@
         };
         updateSubjectDisplay();
         sheet.classList.remove("open");
-        if (activeScreen === "copilot" && activeMake === "Real person") showCopilotReady();
+        if (activeScreen === "copilot" && ["Real person", "Celebrity"].includes(activeMake)) showCopilotReady();
         showToast(`${activeSubject} selected.`);
       });
 
