@@ -250,7 +250,7 @@
       .content {
         min-height: 0;
         display: grid;
-        grid-template-rows: auto auto auto auto minmax(0, 1fr);
+        grid-template-rows: auto auto auto minmax(0, 1fr);
         align-content: stretch;
         gap: var(--s3);
         padding: var(--s2) var(--screen-padding) var(--s3);
@@ -1583,7 +1583,7 @@
       }
 
       .copilot-content .idea-panel {
-        min-height: clamp(184px, 32dvh, 280px);
+        min-height: clamp(136px, 22dvh, 192px);
         grid-template-rows: auto minmax(0, 1fr);
       }
 
@@ -2388,9 +2388,9 @@
       .prompt-area {
         position: relative;
         z-index: 2;
-        min-height: 0;
+        min-height: clamp(240px, 38dvh, 360px);
         display: grid;
-        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-rows: minmax(0, 1fr) auto auto;
         gap: var(--s3);
         align-content: stretch;
         padding: var(--s3);
@@ -2449,7 +2449,38 @@
       }
 
       .generate-settings-row .select-menu {
+        top: auto;
+        bottom: calc(100% + var(--s1));
         z-index: 24;
+      }
+
+      .enhance-prompt {
+        width: fit-content;
+        min-height: var(--button-height);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--s2);
+        padding: 0 var(--s3);
+        border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
+        border-radius: var(--radius-button);
+        background: color-mix(in srgb, var(--brand) 28%, var(--surface));
+        color: var(--text);
+        box-shadow: 0 var(--s1) var(--s2) rgba(70, 55, 126, 0.1);
+        font-size: var(--type-caption-size);
+        line-height: var(--type-caption-line);
+        font-weight: var(--type-body-weight);
+      }
+
+      body[data-theme="dark"] .enhance-prompt {
+        background: var(--surface-soft);
+        color: #f8f6ff;
+        border-color: rgba(219, 212, 250, 0.42);
+      }
+
+      .enhance-prompt .icon {
+        width: var(--s4);
+        height: var(--s4);
       }
 
       .prompt-box {
@@ -3883,6 +3914,12 @@
               </svg>
             </button>
           </div>
+          <button class="enhance-prompt" id="enhance-prompt" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+            </svg>
+            Enhance prompt
+          </button>
           <div class="generate-settings-row" aria-label="Generation settings">
             <div class="custom-select" data-select="model">
               <button class="select-trigger" type="button" aria-expanded="false">
@@ -6166,6 +6203,9 @@
 
       document.querySelector("#prompt-mic").addEventListener("click", showVoiceListening);
       document.querySelector("#prompt-reference").addEventListener("click", () => sourceSheet.classList.add("open"));
+      document.querySelector("#enhance-prompt").addEventListener("click", () => {
+        showToast(prompt.value.trim() ? "Prompt enhanced." : "Add a prompt to enhance.");
+      });
       sourceSheet.addEventListener("click", (event) => {
         if (event.target === sourceSheet) sourceSheet.classList.remove("open");
       });
