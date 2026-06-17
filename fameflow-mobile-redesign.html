@@ -2363,6 +2363,8 @@
       }
 
       .prompt-area {
+        position: relative;
+        z-index: 2;
         min-height: 0;
         display: grid;
         grid-template-rows: minmax(0, 1fr) auto;
@@ -2373,7 +2375,11 @@
         border-radius: var(--s4);
         background: var(--field);
         box-shadow: 0 var(--s2) var(--s4) rgba(28, 24, 42, 0.08);
-        overflow: hidden;
+        overflow: visible;
+      }
+
+      .prompt-area:has(.custom-select.open) {
+        z-index: 20;
       }
 
       .prompt-area h2 {
@@ -2417,6 +2423,10 @@
 
       .generate-settings-row .select-trigger svg {
         right: var(--s3);
+      }
+
+      .generate-settings-row .select-menu {
+        z-index: 24;
       }
 
       .prompt-box {
