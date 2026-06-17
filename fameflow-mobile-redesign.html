@@ -265,7 +265,8 @@
       .copilot-content {
         min-height: 0;
         display: grid;
-        align-content: start;
+        grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+        align-content: stretch;
         gap: var(--s4);
         padding: var(--s4) var(--screen-padding) var(--s3);
         overflow: auto;
@@ -1578,6 +1579,13 @@
 
       .idea-panel {
         order: 5;
+        min-height: 100%;
+        align-content: start;
+      }
+
+      .copilot-content .idea-panel {
+        min-height: clamp(184px, 32dvh, 280px);
+        grid-template-rows: auto minmax(0, 1fr);
       }
 
       .ready-panel {
@@ -1660,17 +1668,19 @@
       .idea-input-row {
         display: grid;
         grid-template-columns: auto minmax(0, 1fr) auto auto;
-        align-items: center;
+        align-items: start;
         gap: var(--s2);
         min-height: var(--s7);
-        padding: 0 var(--s2) 0 var(--s3);
+        height: 100%;
+        padding: var(--s3);
         border: 1px solid var(--divider);
-        border-radius: 999px;
+        border-radius: var(--radius-card);
         background: var(--field);
       }
 
       .idea-input-row input {
         min-width: 0;
+        align-self: stretch;
         border: 0;
         outline: 0;
         background: transparent;
@@ -3904,6 +3914,16 @@
         <section class="copilot-section" aria-label="How can Co-Pilot help">
           <h2>How can Co-Pilot help?</h2>
           <div class="copilot-rail" id="help-options">
+            <button class="copilot-card" type="button" data-help="how">
+              <span class="copilot-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M9.8 9.2a2.3 2.3 0 1 1 3.7 1.8c-.9.6-1.4 1.2-1.4 2.2" />
+                  <circle cx="12" cy="16.8" r=".7" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <span>How it works</span>
+            </button>
             <button class="copilot-card active" type="button" data-help="mode">
               <span class="copilot-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -3931,20 +3951,10 @@
               </span>
               <span>Create from idea</span>
             </button>
-            <button class="copilot-card" type="button" data-help="how">
-              <span class="copilot-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="8" />
-                  <path d="M9.8 9.2a2.3 2.3 0 1 1 3.7 1.8c-.9.6-1.4 1.2-1.4 2.2" />
-                  <circle cx="12" cy="16.8" r=".7" fill="currentColor" stroke="none" />
-                </svg>
-              </span>
-              <span>How it works</span>
-            </button>
           </div>
           <div class="rail-dots" id="help-dots" aria-hidden="true">
-            <span class="rail-dot active"></span>
             <span class="rail-dot"></span>
+            <span class="rail-dot active"></span>
             <span class="rail-dot"></span>
             <span class="rail-dot"></span>
           </div>
@@ -5740,8 +5750,8 @@
       }
 
       function handleCopilotIdeaInput(input) {
-        const value = input.value.trim();
-        if (value) {
+        const value = input.value;
+        if (value.trim()) {
           copilotIdea.value = value;
           copilotBottomInput.value = value;
         } else if (!activeMake) {
