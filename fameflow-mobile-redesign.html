@@ -4986,8 +4986,8 @@
           ]
         },
         character: {
-          label: "Selected AI character",
-          sheetTitle: "Selected AI character",
+          label: "",
+          sheetTitle: "Choose AI character",
           placeholder: "Describe the original character, scene, action, and visual style",
           subjects: [
             ["Alex", "linear-gradient(135deg, #c9d0d6, #3b2b2d)"],
@@ -5165,6 +5165,7 @@
         activeSubject = storedSubject.name;
         activeSubjectBackground = storedSubject.background;
         document.querySelector("#subject-label").textContent = data.label;
+        document.querySelector("#subject-label").hidden = !data.label;
         document.querySelector("#sheet-title").textContent = data.sheetTitle;
         updateFlowPlaceholder();
         updateSubjectDisplay();
@@ -5195,6 +5196,7 @@
           avatarStack.classList.add("selected");
           firstAvatar.style.background = activeSubjectBackground;
           label.textContent = modeData[activeMode].label;
+          label.hidden = !modeData[activeMode].label;
           name.textContent = activeSubject;
           status.textContent = "";
         } else {
@@ -5203,6 +5205,7 @@
           avatarStack.classList.remove("selected");
           firstAvatar.style.background = "";
           label.textContent = modeData[activeMode].label;
+          label.hidden = !modeData[activeMode].label;
           name.textContent = "";
           status.textContent = activeMode === "celebrity" ? "Choose a celebrity" : "Choose a character";
         }
