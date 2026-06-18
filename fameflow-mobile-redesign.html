@@ -121,13 +121,7 @@
         --mode: var(--character);
         --mode-strong: #67d7aa;
         --mode-ink: #0b5b46;
-        --active-pattern: repeating-linear-gradient(
-          135deg,
-          rgba(11, 91, 70, 0.12) 0,
-          rgba(11, 91, 70, 0.12) 4px,
-          transparent 4px,
-          transparent 10px
-        );
+        --active-pattern: none;
       }
 
       body[data-theme="light"][data-mode="character"] {
@@ -138,13 +132,7 @@
 
       body[data-theme="dark"][data-mode="character"] {
         --control-strong: rgba(200, 241, 223, 0.2);
-        --active-pattern: repeating-linear-gradient(
-          135deg,
-          rgba(198, 252, 228, 0.16) 0,
-          rgba(198, 252, 228, 0.16) 4px,
-          transparent 4px,
-          transparent 10px
-        );
+        --active-pattern: none;
       }
 
       .phone {
@@ -5335,10 +5323,12 @@
       ];
 
       function setMode(mode) {
+        if (!modeData[mode]) mode = "celebrity";
         activeMode = mode;
         const data = modeData[mode];
         const storedSubject = selectedSubjects[mode];
         body.dataset.mode = mode;
+        localStorage.setItem("fameflow.activeMode", mode);
         modeButtons.forEach((button) => button.classList.toggle("active", button.dataset.modeButton === mode));
         modeBadge.innerHTML = mode === "celebrity"
           ? `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z" /></svg><span>Star mode</span>`
@@ -5413,7 +5403,10 @@
       }
 
       function setScreen(screen) {
+        const screenNames = ["generate", "copilot", "gallery", "campaigns", "influencers", "settings"];
+        if (!screenNames.includes(screen)) screen = "copilot";
         activeScreen = screen;
+        localStorage.setItem("fameflow.activeScreen", activeScreen);
         if (activeScreen === "generate") body.dataset.mode = activeMode;
         if (activeScreen === "copilot") body.dataset.mode = "celebrity";
         if (activeScreen === "gallery") body.dataset.mode = "celebrity";
@@ -6477,8 +6470,8 @@
 
       renderMakeOptions();
       renderGallery();
-      setScreen("copilot");
-      setMode("celebrity");
+      setMode(localStorage.getItem("fameflow.activeMode") || "celebrity");
+      setScreen(localStorage.getItem("fameflow.activeScreen") || "copilot");
       syncOfflineDemoHash();
     </script>
   </body>
