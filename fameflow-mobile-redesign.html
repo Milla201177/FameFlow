@@ -112,14 +112,22 @@
         --mode: var(--brand);
         --mode-strong: var(--primary-button);
         --mode-ink: #2d235f;
-        --active-pattern: none;
+        --active-pattern:
+          radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.16) 0 2px, transparent 2.5px),
+          radial-gradient(circle at 76% 68%, rgba(45, 35, 95, 0.12) 0 2px, transparent 2.5px);
       }
 
       body[data-mode="character"] {
         --mode: var(--character);
         --mode-strong: #67d7aa;
         --mode-ink: #0b5b46;
-        --active-pattern: none;
+        --active-pattern: repeating-linear-gradient(
+          135deg,
+          rgba(11, 91, 70, 0.12) 0,
+          rgba(11, 91, 70, 0.12) 4px,
+          transparent 4px,
+          transparent 10px
+        );
       }
 
       body[data-theme="light"][data-mode="character"] {
@@ -130,7 +138,13 @@
 
       body[data-theme="dark"][data-mode="character"] {
         --control-strong: rgba(200, 241, 223, 0.2);
-        --active-pattern: none;
+        --active-pattern: repeating-linear-gradient(
+          135deg,
+          rgba(198, 252, 228, 0.16) 0,
+          rgba(198, 252, 228, 0.16) 4px,
+          transparent 4px,
+          transparent 10px
+        );
       }
 
       .phone {
@@ -1884,6 +1898,7 @@
       .segment {
         min-height: var(--s6);
         padding: var(--s1) var(--s2);
+        border: 1px solid transparent;
         border-radius: 999px;
         background: transparent;
         color: color-mix(in srgb, var(--muted) 68%, #ffffff);
@@ -1909,6 +1924,18 @@
         font-size: var(--type-h2-size);
         line-height: var(--type-h2-line);
         font-weight: var(--type-h2-weight);
+      }
+
+      .mode-switch .segment[data-mode-button="celebrity"].active {
+        border-style: solid;
+        box-shadow:
+          inset 0 0 0 2px color-mix(in srgb, var(--mode-ink) 18%, transparent),
+          0 var(--s1) var(--s2) rgba(70, 55, 126, 0.16);
+      }
+
+      .mode-switch .segment[data-mode-button="character"].active {
+        border-style: dashed;
+        border-color: color-mix(in srgb, var(--mode-ink) 46%, transparent);
       }
 
       .mode-icon {
@@ -2284,6 +2311,34 @@
         text-transform: uppercase;
       }
 
+      .mode-badge {
+        width: fit-content;
+        min-height: var(--s5);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--s1);
+        margin-bottom: var(--s1);
+        padding: 0 var(--s2);
+        border-radius: 999px;
+        background-color: var(--mode);
+        background-image: var(--active-pattern);
+        color: var(--mode-ink);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mode-ink) 18%, transparent);
+        font-size: var(--type-caption-size);
+        line-height: var(--type-caption-line);
+        font-weight: var(--type-caption-weight);
+      }
+
+      .mode-badge .icon {
+        width: var(--s3);
+        height: var(--s3);
+      }
+
+      body[data-theme="dark"] .mode-badge {
+        color: #f8f6ff;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+      }
+
       .subject-copy strong {
         display: block;
         overflow: hidden;
@@ -2295,7 +2350,7 @@
         white-space: nowrap;
       }
 
-      .subject-copy span {
+      #subject-status {
         display: inline-flex;
         align-items: center;
         margin-top: var(--s1);
@@ -2311,11 +2366,11 @@
           0 var(--s1) var(--s2) rgba(63, 48, 120, 0.08);
       }
 
-      body[data-theme="dark"] .subject-copy span {
+      body[data-theme="dark"] #subject-status {
         color: var(--mode);
       }
 
-      .subject-row.selected .subject-copy span {
+      .subject-row.selected #subject-status {
         display: none;
       }
 
@@ -3823,6 +3878,12 @@
             <span class="avatar"></span>
           </span>
           <span class="subject-copy">
+            <span class="mode-badge" id="mode-badge">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z" />
+              </svg>
+              <span>Star mode</span>
+            </span>
             <small id="subject-label">Selected celebrity</small>
             <strong id="subject-name"></strong>
             <span id="subject-status">Tap to choose</span>
@@ -5147,6 +5208,7 @@
       const projectButtons = [...document.querySelectorAll("[data-project]")];
       const cashChoices = [...document.querySelectorAll("[data-cash-amount]")];
       const subjectList = document.querySelector("#subject-list");
+      const modeBadge = document.querySelector("#mode-badge");
       const toast = document.querySelector("#toast");
       let activeMode = "celebrity";
       let activeSubject = "";
@@ -5278,6 +5340,9 @@
         const storedSubject = selectedSubjects[mode];
         body.dataset.mode = mode;
         modeButtons.forEach((button) => button.classList.toggle("active", button.dataset.modeButton === mode));
+        modeBadge.innerHTML = mode === "celebrity"
+          ? `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z" /></svg><span>Star mode</span>`
+          : `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4" /><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6" /></svg><span>Creator mode</span>`;
         activeSubject = storedSubject.name;
         activeSubjectBackground = storedSubject.background;
         document.querySelector("#subject-label").textContent = data.label;
