@@ -1202,6 +1202,31 @@
         padding: var(--s3);
       }
 
+      .influencer-row[data-campaign-influencer] {
+        grid-template-columns: var(--s7) minmax(0, 1fr) auto;
+        grid-template-rows: auto auto;
+        row-gap: var(--s2);
+      }
+
+      .influencer-row[data-campaign-influencer] .influencer-avatar,
+      .influencer-row[data-campaign-influencer] .influencer-copy {
+        grid-row: 1 / span 2;
+      }
+
+      .influencer-row[data-campaign-influencer] .match-pill,
+      .influencer-row[data-campaign-influencer] .select-check {
+        grid-column: 3;
+        justify-self: center;
+      }
+
+      .influencer-row[data-campaign-influencer] .match-pill {
+        grid-row: 1;
+      }
+
+      .influencer-row[data-campaign-influencer] .select-check {
+        grid-row: 2;
+      }
+
       .influencer-row.active {
         border-color: color-mix(in srgb, var(--brand) 92%, transparent);
         background: color-mix(in srgb, var(--brand) 32%, var(--surface));
