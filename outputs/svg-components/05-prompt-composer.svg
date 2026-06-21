@@ -36,7 +36,7 @@
       <g transform="translate(28 246)"><path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" stroke="#1E1E24" stroke-width="1.8" stroke-linejoin="round"/></g>
       <text x="66" y="264" fill="#1E1E24" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="0" text-anchor="start">Enhance prompt</text>
       <rect x="198" y="234" width="128" height="48" rx="16" fill="#FFF8E4" stroke="#F5D780" stroke-width="1" filter="url(#shadow)"/>
-      <g transform="translate(210 246)"><path d="M4 7v5h5" stroke="#1E1E24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4 9.4" stroke="#1E1E24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g transform="translate(210 246)"><path d="M19 12H5" stroke="#1E1E24" stroke-width="1.8" stroke-linecap="round"/><path d="M12 5l-7 7 7 7" stroke="#1E1E24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
       <text x="248" y="264" fill="#1E1E24" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="0" text-anchor="start">Undo</text>
       <rect x="16" y="298" width="150" height="48" rx="16" fill="#FFFFFF" stroke="rgba(219,212,250,0.78)" stroke-width="1" filter="url(#shadow)"/>
       <text x="32" y="326" fill="#6F6F7A" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" letter-spacing="0" text-anchor="start">Model</text>

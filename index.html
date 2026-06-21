@@ -2484,6 +2484,15 @@
         box-shadow: inset 0 0 0 1px rgba(30, 30, 36, 0.04);
       }
 
+      .enhance-prompt:disabled {
+        cursor: not-allowed;
+        border-color: color-mix(in srgb, var(--divider) 72%, transparent);
+        background: color-mix(in srgb, var(--surface) 74%, var(--divider));
+        color: var(--muted);
+        opacity: 0.56;
+        box-shadow: none;
+      }
+
       body[data-theme="dark"] .enhance-prompt {
         background: var(--surface-soft);
         color: #f8f6ff;
@@ -2494,6 +2503,12 @@
         background: rgba(245, 215, 128, 0.16);
         color: #fff4cd;
         border-color: rgba(245, 215, 128, 0.56);
+      }
+
+      body[data-theme="dark"] .enhance-prompt:disabled {
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(248, 246, 255, 0.48);
+        border-color: rgba(255, 255, 255, 0.12);
       }
 
       .enhance-prompt .icon {
@@ -4002,7 +4017,7 @@
               </svg>
             </button>
           </div>
-          <button class="enhance-prompt" id="enhance-prompt" type="button" data-state="enhance">
+          <button class="enhance-prompt" id="enhance-prompt" type="button" data-state="enhance" disabled>
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
             </svg>
@@ -5502,8 +5517,8 @@
         enhancePromptButton.setAttribute("aria-label", isRevert ? "Undo prompt enhancement" : "Enhance prompt");
         enhancePromptButton.innerHTML = isRevert ? `
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M4 7v5h5" />
-            <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4 9.4" />
+            <path d="M19 12H5" />
+            <path d="M12 5l-7 7 7 7" />
           </svg>
           <span>Undo enhance</span>
         ` : `
@@ -5514,10 +5529,17 @@
         `;
       }
 
+      function updateEnhancePromptAvailability() {
+        const isRevert = enhancePromptButton.dataset.state === "revert";
+        const hasPrompt = prompt.value.trim().length > 0;
+        enhancePromptButton.disabled = !isRevert && !hasPrompt;
+      }
+
       function resetEnhancePromptState() {
         promptBeforeEnhance = "";
         enhancedPromptValue = "";
         setEnhancePromptState("enhance");
+        updateEnhancePromptAvailability();
       }
 
       function toggleTheme() {
@@ -6332,7 +6354,9 @@
       prompt.addEventListener("input", () => {
         if (enhancePromptButton.dataset.state === "revert" && prompt.value !== enhancedPromptValue) {
           resetEnhancePromptState();
+          return;
         }
+        updateEnhancePromptAvailability();
       });
       enhancePromptButton.addEventListener("click", () => {
         const currentPrompt = prompt.value.trim();
@@ -6342,13 +6366,13 @@
           showToast("Prompt restored.");
           return;
         }
+        if (!currentPrompt) return;
         promptBeforeEnhance = prompt.value;
-        enhancedPromptValue = currentPrompt
-          ? `${currentPrompt}, with clearer visual details, polished composition, natural lighting, and production-ready styling.`
-          : "";
+        enhancedPromptValue = `${currentPrompt}, with clearer visual details, polished composition, natural lighting, and production-ready styling.`;
         prompt.value = enhancedPromptValue;
         setEnhancePromptState("revert");
-        showToast(currentPrompt ? "Prompt enhanced." : "Enhance mode selected.");
+        updateEnhancePromptAvailability();
+        showToast("Prompt enhanced.");
       });
       sourceSheet.addEventListener("click", (event) => {
         if (event.target === sourceSheet) sourceSheet.classList.remove("open");

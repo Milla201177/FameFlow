@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="960" height="720" viewBox="0 0 960 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="960" height="820" viewBox="0 0 960 820" fill="none" xmlns="http://www.w3.org/2000/svg">
   <title>FameFlow icons</title>
   <style>
     .bg { fill: #FAFAFC; }
@@ -57,8 +57,8 @@
       <path d="M19 11a7 7 0 0 1-14 0M12 18v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
     </symbol>
     <symbol id="icon-undo" viewBox="0 0 24 24">
-      <path d="M4 7v5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4 9.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M19 12H5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <symbol id="icon-chevron-right" viewBox="0 0 24 24">
       <path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -114,6 +114,9 @@
     <symbol id="icon-arrow-right" viewBox="0 0 24 24">
       <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
+    <symbol id="icon-arrow-up" viewBox="0 0 24 24">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
     <symbol id="icon-bag" viewBox="0 0 24 24">
       <path d="M6 8h12l-1 12H7L6 8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
       <path d="M9 8a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -148,13 +151,13 @@
     </symbol>
   </defs>
 
-  <rect class="bg" width="960" height="720"/>
+  <rect class="bg" width="960" height="820"/>
   <text class="title" x="40" y="52">FameFlow Icons</text>
   <text class="subtitle" x="40" y="78">Single SVG file with reusable symbols and preview grid. Use symbols as &lt;use href="#icon-name"/&gt;.</text>
 
   <g class="ink">
     <g transform="translate(40 118)">
-      <rect class="card" x="0" y="0" width="880" height="548" rx="20"/>
+      <rect class="card" x="0" y="0" width="880" height="654" rx="20"/>
 
       <g transform="translate(28 28)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-logo-mark" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">logo-mark</text></g>
       <g transform="translate(166 28)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-sparkle" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">sparkle</text></g>
@@ -190,8 +193,11 @@
       <g transform="translate(442 452)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-guide" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">guide</text></g>
       <g transform="translate(580 452)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-chat" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">chat</text></g>
       <g transform="translate(718 452)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-heart" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">heart</text></g>
+
+      <g transform="translate(28 558)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-arrow-up" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">arrow-up</text><text class="caption" x="0" y="104">Write your idea</text></g>
+      <g transform="translate(166 558)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-lightning" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">lightning</text><text class="caption" x="0" y="104">Generate</text></g>
+      <g transform="translate(304 558)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-more-vertical" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">more-vertical</text></g>
+      <g transform="translate(442 558)"><rect class="icon-box" x="0" y="0" width="64" height="64" rx="18"/><use href="#icon-card" x="18" y="18" width="28" height="28"/><text class="label" x="0" y="88">card</text></g>
     </g>
   </g>
-
-  <text class="caption" x="40" y="696">Also included in defs: icon-more-vertical, icon-lightning, icon-card.</text>
 </svg>
