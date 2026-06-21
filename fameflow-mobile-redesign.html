@@ -3557,8 +3557,8 @@
 
       .offline-logo {
         position: relative;
-        width: var(--s9);
-        height: var(--s9);
+        width: 136px;
+        height: 112px;
         perspective: 520px;
         transform-style: preserve-3d;
       }
@@ -3575,23 +3575,24 @@
         width: var(--cube-size);
         height: var(--cube-size);
         transform-style: preserve-3d;
-        animation: cube-tumble 2.4s ease-in-out infinite;
+        transform-origin: center center;
+        animation: cube-roll 3.2s cubic-bezier(0.55, 0, 0.25, 1) infinite;
       }
 
       .offline-cube:first-child {
         left: 2px;
-        bottom: 7px;
+        bottom: 10px;
       }
 
       .offline-cube:last-child {
         right: 2px;
-        top: 5px;
+        top: 8px;
         --cube-front: linear-gradient(145deg, #585966 0%, #363740 58%, #181920 100%);
         --cube-right: #191a22;
         --cube-left: #15161d;
         --cube-top: #858692;
-        animation-name: cube-tumble-alt;
-        animation-delay: 0.28s;
+        animation-name: cube-roll-alt;
+        animation-delay: 0.18s;
       }
 
       .offline-cube-face {
@@ -3659,25 +3660,39 @@
         max-width: 260px;
       }
 
-      @keyframes cube-tumble {
-        0%,
-        100% {
-          transform: rotateX(-24deg) rotateY(28deg) rotateZ(-5deg) scale(1);
+      @keyframes cube-roll {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) rotateX(-24deg) rotateY(28deg) rotateZ(-4deg);
+        }
+
+        25% {
+          transform: translate3d(12px, -8px, 0) rotateX(66deg) rotateY(28deg) rotateZ(-4deg);
         }
 
         50% {
-          transform: rotateX(-36deg) rotateY(42deg) rotateZ(7deg) scale(1.06);
+          transform: translate3d(24px, 0, 0) rotateX(66deg) rotateY(118deg) rotateZ(-4deg);
+        }
+
+        75% {
+          transform: translate3d(12px, 8px, 0) rotateX(-24deg) rotateY(118deg) rotateZ(86deg);
         }
       }
 
-      @keyframes cube-tumble-alt {
-        0%,
-        100% {
-          transform: rotateX(-22deg) rotateY(-28deg) rotateZ(7deg) scale(1);
+      @keyframes cube-roll-alt {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) rotateX(-22deg) rotateY(-28deg) rotateZ(6deg);
+        }
+
+        25% {
+          transform: translate3d(-12px, 8px, 0) rotateX(-112deg) rotateY(-28deg) rotateZ(6deg);
         }
 
         50% {
-          transform: rotateX(-36deg) rotateY(-42deg) rotateZ(-8deg) scale(1.06);
+          transform: translate3d(-24px, 0, 0) rotateX(-112deg) rotateY(-118deg) rotateZ(6deg);
+        }
+
+        75% {
+          transform: translate3d(-12px, -8px, 0) rotateX(-22deg) rotateY(-118deg) rotateZ(-84deg);
         }
       }
 

@@ -478,7 +478,7 @@ const components = [
     body: `
       ${rect(0, 0, 342, 250, 24, colors.surface, colors.border)}
       ${rect(132, 34, 78, 78, 22, colors.soft)}
-      ${rect(150, 50, 24, 24, 6, colors.primary)}${rect(168, 68, 24, 24, 6, colors.character)}
+      ${rect(142, 58, 24, 24, 6, colors.primary)}${rect(176, 42, 24, 24, 6, colors.character)}
       ${text(171, 148, "No internet connection", 21, 700, colors.text, "middle")}
       ${text(171, 176, "Check connection and try again.", 14, 500, colors.muted, "middle")}
       ${rect(54, 198, 234, 48, 16, colors.primary)}
