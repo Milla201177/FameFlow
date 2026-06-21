@@ -64,8 +64,10 @@ const line = (x1, y1, x2, y2, stroke = colors.text, sw = 2) =>
 
 const icon = {
   sparkle: (x, y, c = colors.text) => `<path d="M${x + 12} ${y + 3} ${x + 14.4} ${y + 9.1} ${x + 21} ${y + 9.4}l-5.1 4.1 1.7 6.5-5.6-3.6L${x + 6.4} ${y + 20}l1.7-6.5L${x + 3} ${y + 9.4}l6.6-.3L${x + 12} ${y + 3}Z" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/>`,
+  undo: (x, y, c = colors.text) => `<path d="M${x + 4} ${y + 7}v5h5" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M${x + 4.5} ${y + 12}a7.5 7.5 0 1 0 2.2-5.3L${x + 4} ${y + 9.4}" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`,
   user: (x, y, c = colors.text) => `<circle cx="${x + 12}" cy="${y + 8}" r="4" stroke="${c}" stroke-width="1.8"/><path d="M${x + 5} ${y + 21}c1.4-4 4-6 7-6s5.6 2 7 6" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`,
   image: (x, y, c = colors.text) => `<rect x="${x + 4}" y="${y + 5}" width="16" height="14" rx="2" stroke="${c}" stroke-width="1.8"/><path d="m${x + 7} ${y + 16} 4-4 3 3 2-2 1 3" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  grid: (x, y, c = colors.text) => `<rect x="${x + 4}" y="${y + 4}" width="6" height="6" rx="1" stroke="${c}" stroke-width="1.8"/><rect x="${x + 14}" y="${y + 4}" width="6" height="6" rx="1" stroke="${c}" stroke-width="1.8"/><rect x="${x + 4}" y="${y + 14}" width="6" height="6" rx="1" stroke="${c}" stroke-width="1.8"/><rect x="${x + 14}" y="${y + 14}" width="6" height="6" rx="1" stroke="${c}" stroke-width="1.8"/>`,
   video: (x, y, c = colors.text) => `<rect x="${x + 4}" y="${y + 7}" width="12" height="10" rx="2" stroke="${c}" stroke-width="1.8"/><circle cx="${x + 10}" cy="${y + 12}" r="2" stroke="${c}" stroke-width="1.8"/><path d="m${x + 16} ${y + 10} 4-2v8l-4-2" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`,
   audio: (x, y, c = colors.text) => `<path d="M${x + 9} ${y + 18}V${y + 5}l11-2v13" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${x + 6}" cy="${y + 18}" r="3" stroke="${c}" stroke-width="1.8"/><circle cx="${x + 17}" cy="${y + 16}" r="3" stroke="${c}" stroke-width="1.8"/>`,
   chevron: (x, y, c = colors.muted) => `<path d="m${x + 8} ${y + 5} 6 7-6 7" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -84,6 +86,37 @@ const roundButton = (x, y, symbol) => `${rect(x, y, 40, 40, 20, colors.surface, 
 
 const chip = (x, y, label, active = false, w = 82, accent = colors.primary) =>
   `${rect(x, y, w, 36, 18, active ? accent : colors.surface, active ? accent : colors.border)}${text(x + w / 2, y + 23, label, 13, 600, active ? "#fff" : colors.text, "middle")}`;
+
+const galleryCard = ({ id, label, title, ink, accent, tagFill, thumbStops, portrait }) => `
+  <defs>
+    <linearGradient id="${id}-thumb" x1="0" y1="0" x2="167" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="${thumbStops[0]}"/>
+      <stop offset="0.52" stop-color="${thumbStops[1]}"/>
+      <stop offset="1" stop-color="${thumbStops[2]}"/>
+    </linearGradient>
+    <linearGradient id="${id}-fade" x1="83.5" y1="58" x2="83.5" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.28"/>
+    </linearGradient>
+  </defs>
+  ${rect(0, 0, 167, 188, 8, colors.surface, "none", 1, 'filter="url(#shadow)"')}
+  ${rect(0, 0, 167, 128, 8, `url(#${id}-thumb)`)}
+  <ellipse cx="68" cy="36" rx="34" ry="16" fill="#FFFFFF" fill-opacity="0.46"/>
+  <ellipse cx="90" cy="46" rx="26" ry="15" fill="${portrait}" fill-opacity="0.72"/>
+  <circle cx="82" cy="43" r="18" fill="${portrait}" fill-opacity="0.62"/>
+  <rect x="0" y="58" width="167" height="70" fill="url(#${id}-fade)"/>
+  <circle cx="24" cy="24" r="16" fill="${accent}"/>
+  <circle cx="24" cy="24" r="15.5" stroke="${ink}" stroke-opacity="0.42"/>
+  <g transform="translate(12 12)">${icon.image(0, 0, ink)}</g>
+  <circle cx="143" cy="24" r="16" fill="#FFFFFF" fill-opacity="0.84"/>
+  <path d="M151.5 21.8c0 4.6-8.5 9.2-8.5 9.2s-8.5-4.6-8.5-9.2A4.5 4.5 0 0 1 143 19a4.5 4.5 0 0 1 8.5 2.8Z" stroke="#17151F" stroke-width="1.8" fill="none"/>
+  ${rect(8, 136, label === "Celebrity" ? 74 : 80, 20, 10, tagFill)}
+  ${text(16, 151, label, 14, 400, ink)}
+  ${text(8, 175, title, 14, 500, colors.text)}
+  <circle cx="147" cy="161" r="1.5" fill="${colors.text}"/>
+  <circle cx="147" cy="168" r="1.5" fill="${colors.text}"/>
+  <circle cx="147" cy="175" r="1.5" fill="${colors.text}"/>
+`;
 
 const components = [
   {
@@ -151,16 +184,34 @@ const components = [
   {
     name: "05-prompt-composer",
     width: 342,
-    height: 164,
+    height: 363,
     body: `
-      ${rect(0, 0, 342, 116, 24, colors.surface, colors.border)}
-      ${roundButton(16, 20, icon.plus)}
-      ${text(72, 42, "Enter a text prompt", 16, 500, colors.disabled)}
-      ${text(72, 68, "or reference image", 16, 500, colors.disabled)}
-      ${roundButton(286, 60, (x,y,c=colors.text)=>`<path d="M12 4v7a4 4 0 0 1-8 0V4a4 4 0 0 1 8 0Z" stroke="${c}" stroke-width="1.8"/><path d="M2 11a8 8 0 0 0 16 0M10 19v3M6 22h8" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`)}
-      ${rect(0, 128, 174, 36, 18, colors.soft, colors.border)}
-      <g transform="translate(14 134)">${icon.sparkle(0, 0, colors.primary)}</g>
-      ${text(44, 151, "Enhance prompt", 13, 700, colors.primary)}
+      ${rect(0, 0, 342, 363, 24, colors.surface, colors.border, 1, 'filter="url(#shadow)"')}
+      <g transform="translate(16 16)">
+        <g>
+          <path d="M21.4 11.6 12.3 20.7a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 1 1 4.5 4.5l-9.3 9.3a1.5 1.5 0 0 1-2.1-2.1l8.6-8.6" stroke="${colors.muted}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        ${text(40, 31, "Enter a text prompt or", 17, 500, colors.muted)}
+        ${text(40, 57, "reference image", 17, 500, colors.muted)}
+        <g transform="translate(276 0)">
+          <path d="M16 4a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z" stroke="${colors.muted}" stroke-width="1.8"/>
+          <path d="M23 12a7 7 0 0 1-14 0M16 19v3" stroke="${colors.muted}" stroke-width="1.8" stroke-linecap="round"/>
+        </g>
+      </g>
+      ${rect(16, 234, 174, 48, 16, colors.brandSoft, "rgba(219,212,250,0.78)", 1, 'filter="url(#shadow)"')}
+      <g transform="translate(28 246)"><path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" stroke="${colors.text}" stroke-width="1.8" stroke-linejoin="round"/></g>
+      ${text(66, 264, "Enhance prompt", 14, 600, colors.text)}
+      ${rect(198, 234, 128, 48, 16, "#FFF8E4", colors.warning, 1, 'filter="url(#shadow)"')}
+      <g transform="translate(210 246)">${icon.undo(0, 0, colors.text)}</g>
+      ${text(248, 264, "Undo", 14, 600, colors.text)}
+      ${rect(16, 298, 150, 48, 16, colors.surface, "rgba(219,212,250,0.78)", 1, 'filter="url(#shadow)"')}
+      ${text(32, 326, "Model", 14, 400, colors.muted)}
+      ${text(104, 326, "Fast", 14, 700, colors.text)}
+      <g transform="translate(134 310) rotate(90 12 12)">${icon.chevron(0, 0, colors.text)}</g>
+      ${rect(174, 298, 150, 48, 16, colors.surface, "rgba(219,212,250,0.78)", 1, 'filter="url(#shadow)"')}
+      ${text(190, 326, "Size", 14, 400, colors.muted)}
+      ${text(260, 326, "9:16", 14, 700, colors.text)}
+      <g transform="translate(292 310) rotate(90 12 12)">${icon.chevron(0, 0, colors.text)}</g>
     `,
   },
   {
@@ -206,53 +257,76 @@ const components = [
   {
     name: "09-quick-chips",
     width: 342,
-    height: 104,
+    height: 192,
     body: `
-      ${text(0, 18, "Format", 14, 700)}
-      ${chip(0, 32, "Image", true, 92)}
-      ${chip(100, 32, "Video", false, 92)}
-      ${chip(200, 32, "Audio", false, 92)}
-      ${text(0, 88, "Size", 14, 700)}
-      ${chip(52, 72, "9:16", true, 74, colors.green)}
-      ${chip(134, 72, "1:1", false, 64)}
-      ${chip(206, 72, "16:9", false, 74)}
+      ${rect(0, 0, 342, 192, 8, colors.surface, colors.border, 1, 'filter="url(#shadow)"')}
+      ${text(16, 40, "A few quick questions", 24, 600, colors.text)}
+      ${text(16, 91, "Format", 14, 400, colors.text)}
+      ${rect(88, 62, 236, 48, 24, colors.surface, "none", 1, 'filter="url(#shadow)"')}
+      ${rect(92, 66, 73.33, 40, 20, colors.brand)}
+      <circle cx="110" cy="74" r="2" fill="#2D235F" fill-opacity="0.16"/>
+      <circle cx="150" cy="94" r="2" fill="#2D235F" fill-opacity="0.12"/>
+      ${text(128.5, 91, "Image", 14, 400, "#2D235F", "middle")}
+      ${text(206, 91, "Video", 14, 400, colors.text, "middle")}
+      ${text(282, 91, "Audio", 14, 400, colors.text, "middle")}
+      ${text(16, 155, "Size", 14, 400, colors.text)}
+      ${rect(88, 126, 236, 48, 24, colors.surface, "none", 1, 'filter="url(#shadow)"')}
+      ${rect(92, 130, 73.33, 40, 20, colors.brand)}
+      <circle cx="110" cy="138" r="2" fill="#2D235F" fill-opacity="0.16"/>
+      <circle cx="150" cy="158" r="2" fill="#2D235F" fill-opacity="0.12"/>
+      ${text(128.5, 155, "9:16", 14, 400, "#2D235F", "middle")}
+      ${text(206, 155, "1:1", 14, 400, colors.text, "middle")}
+      ${text(282, 155, "16:9", 14, 400, colors.text, "middle")}
     `,
   },
   {
     name: "10-gallery-filters",
     width: 342,
-    height: 104,
+    height: 120,
     body: `
-      ${chip(0, 0, "All", true, 58)}
-      ${chip(66, 0, "Celebrity", false, 96)}
-      ${chip(170, 0, "Character", false, 100)}
-      ${chip(278, 0, "Favs", false, 64)}
-      ${rect(0, 56, 162, 48, 16, colors.surface, colors.border)}
-      <g transform="translate(16 68)">${icon.user(0, 0, colors.muted)}</g>${text(50, 86, "Subject", 14, 700)}
-      <g transform="translate(130 68) rotate(90 12 12)">${icon.chevron(0, 0)}</g>
-      ${rect(180, 56, 162, 48, 16, colors.surface, colors.border)}
-      <g transform="translate(196 68)">${icon.image(0, 0, colors.muted)}</g>${text(230, 86, "Media", 14, 700)}
-      <g transform="translate(310 68) rotate(90 12 12)">${icon.chevron(0, 0)}</g>
+      ${rect(0, 0, 342, 48, 24, colors.surface, colors.border, 1, 'filter="url(#shadow)"')}
+      ${rect(4, 4, 80.5, 40, 20, colors.brand)}
+      ${text(44.25, 29, "All", 14, 400, "#2D235F", "middle")}
+      ${text(128.75, 29, "Celebrity", 14, 400, colors.text, "middle")}
+      ${text(213.25, 29, "Character", 14, 400, colors.text, "middle")}
+      ${text(297.75, 29, "Favorites", 14, 400, colors.text, "middle")}
+      ${rect(0, 64, 167, 56, 28, colors.brandSoft, "rgba(219,212,250,0.76)", 1, 'filter="url(#shadow)"')}
+      <g transform="translate(16 80)">${icon.user(0, 0, colors.text)}</g>${text(49, 99, "All", 14, 400)}
+      <g transform="translate(127 80) rotate(90 12 12)">${icon.chevron(0, 0, colors.text)}</g>
+      ${rect(175, 64, 167, 56, 28, colors.brandSoft, "rgba(219,212,250,0.76)", 1, 'filter="url(#shadow)"')}
+      <g transform="translate(191 80)">${icon.grid(0, 0, colors.text)}</g>${text(224, 99, "All media", 14, 400)}
+      <g transform="translate(302 80) rotate(90 12 12)">${icon.chevron(0, 0, colors.text)}</g>
     `,
   },
   {
-    name: "11-gallery-card",
-    width: 162,
-    height: 236,
-    body: `
-      ${rect(0, 0, 162, 236, 20, colors.surface, colors.border)}
-      ${rect(10, 10, 142, 142, 16, "url(#purpleGrad)")}
-      <circle cx="81" cy="78" r="34" fill="#FFFFFF" fill-opacity="0.42"/>
-      <path d="M66 94c8-19 22-19 30 0" stroke="#8F7CF6" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="81" cy="67" r="19" fill="#8F7CF6" fill-opacity="0.75"/>
-      ${rect(18, 18, 34, 28, 14, "#FFFFFF", "none", 1, 'fill-opacity="0.88"')}
-      <g transform="translate(23 20)">${icon.image(0, 0, colors.primary)}</g>
-      ${rect(110, 18, 32, 28, 14, "#FFFFFF", "none", 1, 'fill-opacity="0.88"')}
-      <path d="M126 24l2.3 5.2 5.7.4-4.4 3.6 1.3 5.6-4.9-3-4.9 3 1.3-5.6-4.4-3.6 5.7-.4L126 24Z" fill="${colors.primary}"/>
-      ${text(14, 178, "Character", 12, 700, colors.primary)}
-      ${text(14, 204, "Mina portrait", 15, 700)}
-      <circle cx="136" cy="196" r="3" fill="${colors.muted}"/><circle cx="136" cy="204" r="3" fill="${colors.muted}"/><circle cx="136" cy="212" r="3" fill="${colors.muted}"/>
-    `,
+    name: "11-gallery-card-celebrity",
+    width: 167,
+    height: 188,
+    body: galleryCard({
+      id: "gallery-celebrity",
+      label: "Celebrity",
+      title: "Dwayne Johnson",
+      ink: "#4D35C7",
+      accent: "#E3DDFC",
+      tagFill: "#F5F3FE",
+      thumbStops: ["#8FC4E8", "#E9C89F", "#496C61"],
+      portrait: "#F1C5A6",
+    }),
+  },
+  {
+    name: "11-gallery-card-character",
+    width: 167,
+    height: 188,
+    body: galleryCard({
+      id: "gallery-character",
+      label: "Character",
+      title: "Lyria Silverwind",
+      ink: "#0B5B46",
+      accent: "#B1F2E4",
+      tagFill: "#E3FAF5",
+      thumbStops: ["#DBEEF5", "#B7C7C2", "#6A7D83"],
+      portrait: "#DFF7F0",
+    }),
   },
   {
     name: "12-campaign-card",
@@ -304,14 +378,22 @@ const components = [
   {
     name: "16-bottom-nav",
     width: 390,
-    height: 88,
+    height: 81,
     body: `
-      ${rect(0, 0, 390, 88, 0, "rgba(250,250,252,0.96)")}
-      ${rect(22, 12, 82, 56, 18, colors.brand)}
-      <g transform="translate(51 19)">${icon.sparkle(0, 0, "#2D235F")}</g>${text(63, 58, "Create", 11, 700, "#2D235F", "middle")}
-      <g transform="translate(137 19)">${icon.image(0, 0, colors.muted)}</g>${text(149, 58, "Gallery", 11, 600, colors.muted, "middle")}
-      <g transform="translate(226 19)">${icon.user(0, 0, colors.muted)}</g>${text(238, 58, "Co-Pilot", 11, 600, colors.muted, "middle")}
-      <g transform="translate(316 19)">${icon.menu(0, 0, colors.muted)}</g>${text(328, 58, "Menu", 11, 600, colors.muted, "middle")}
+      ${rect(0, 0, 390, 81, 0, "rgba(250,250,252,0.94)")}
+      <path d="M0 0.5H390" stroke="${colors.border}" stroke-width="1"/>
+      ${rect(24, 9, 111.33, 64, 16, "rgba(219,212,250,0.28)")}
+      ${rect(40, 9, 79.33, 4, 2, colors.brand)}
+      <g transform="translate(67.67 17)">
+        <rect x="6" y="8" width="12" height="9" rx="4" stroke="#2D235F" stroke-width="1.8"/>
+        <path d="M12 8V5M9 5h6M4 12h2M18 12h2" stroke="#2D235F" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="10" cy="12.5" r=".8" fill="#2D235F"/><circle cx="14" cy="12.5" r=".8" fill="#2D235F"/>
+      </g>
+      ${text(79.67, 61, "Co-Pilot", 14, 400, "#2D235F", "middle")}
+      <g transform="translate(183 17)">${icon.sparkle(0, 0, colors.muted)}</g>
+      ${text(195, 61, "Generate", 14, 400, colors.muted, "middle")}
+      <g transform="translate(298.33 17)">${icon.grid(0, 0, colors.muted)}</g>
+      ${text(310.33, 61, "Gallery", 14, 400, colors.muted, "middle")}
     `,
   },
   {
@@ -465,4 +547,404 @@ components.forEach((component, index) => {
 
 writeFileSync(join(outDir, "00-fameflow-component-kit.svg"), svg(1360, Math.max(2800, y + rowHeight + 64), sheetParts.join("\n")));
 
-console.log(`Exported ${components.length + 1} SVG files to ${outDir}`);
+const spec = {
+  "01-app-header": {
+    notes: ["screen padding 24px", "logo 32px", "actions gap 8px", "round buttons 40px / r20", "bg #FAFAFC"],
+    arrows: [
+      ["h", 24, 64, 116, "24px"],
+      ["h", 278, 318, 116, "40px"],
+      ["h", 318, 326, 116, "8px gap"],
+    ],
+  },
+  "02-mode-switch": {
+    notes: ["outer r32", "outer stroke 1 rgba lavender 78%", "inner padding 4px", "active 165x56 r28", "active stroke 2 rgba ink 18%", "fill #DBD4FA"],
+    arrows: [
+      ["h", 0, 342, 92, "342px"],
+      ["v", -22, 0, 64, "64px"],
+      ["h", 0, 4, 76, "4px"],
+      ["h", 4, 169, 82, "165px"],
+      ["v", 354, 4, 60, "56px"],
+      ["h", 169, 197, 76, "28px gap"],
+    ],
+  },
+  "03-subject-row-empty": {
+    notes: ["outer r8", "stroke 1 #E8E6F2", "padding x16", "avatar stack starts 16px", "badge 104x32 r16", "status chip 136x28 r14"],
+    arrows: [
+      ["h", 0, 342, 116, "342px"],
+      ["v", -22, 0, 86, "86px"],
+      ["h", 0, 16, 98, "16px"],
+      ["h", 16, 96, 104, "80px"],
+      ["h", 96, 200, 98, "104px"],
+      ["v", 354, 10, 42, "32px"],
+    ],
+  },
+  "04-media-tabbar": {
+    notes: ["outer r29", "stroke 1 #E8E6F2", "padding 5px", "active tab 108x48 r24", "top indicator 76x4 r2", "active fill #F6F4FE"],
+    arrows: [
+      ["h", 0, 342, 86, "342px"],
+      ["v", -22, 0, 58, "58px"],
+      ["h", 0, 5, 70, "5px"],
+      ["h", 5, 113, 76, "108px"],
+      ["v", 354, 5, 53, "48px"],
+      ["h", 21, 97, 17, "76px"],
+    ],
+  },
+  "05-prompt-composer": {
+    notes: ["outer card 342x363 r24", "stroke 1 #E8E6F2", "padding 16px", "prompt row 308x201", "enhance 174x48 r16", "settings gap 8px", "selects 150x48 r16"],
+    arrows: [
+      ["h", 0, 342, 391, "342px"],
+      ["v", -22, 0, 363, "363px"],
+      ["h", 0, 16, 375, "16px"],
+      ["h", 16, 324, 382, "308px"],
+      ["v", 354, 16, 217, "201px"],
+      ["v", 366, 217, 234, "17px"],
+      ["h", 16, 190, 292, "174px"],
+      ["v", 354, 234, 282, "48px"],
+      ["v", 366, 282, 298, "16px"],
+      ["h", 16, 166, 356, "150px"],
+      ["h", 166, 174, 356, "8px"],
+      ["h", 174, 324, 356, "150px"],
+    ],
+  },
+  "06-select-controls": {
+    notes: ["each select 162x64 r18", "stroke 1 #E8E6F2", "gap 18px", "label x18", "value baseline y48"],
+    arrows: [
+      ["h", 0, 162, 92, "162px"],
+      ["h", 162, 180, 92, "18px gap"],
+      ["h", 180, 342, 92, "162px"],
+      ["v", -22, 0, 64, "64px"],
+      ["h", 0, 18, 76, "18px"],
+    ],
+  },
+  "07-primary-buttons": {
+    notes: ["primary 342x48 r16", "fill #8F7CF6", "secondary 164x48 r16", "gap 14px", "mint fill #C6FCE4"],
+    arrows: [
+      ["h", 0, 342, 164, "342px"],
+      ["v", -22, 0, 48, "48px"],
+      ["v", 354, 48, 64, "16px gap"],
+      ["h", 0, 164, 124, "164px"],
+      ["h", 164, 178, 124, "14px gap"],
+      ["h", 178, 342, 124, "164px"],
+    ],
+  },
+  "08-copilot-card": {
+    notes: ["card 172x132 r20", "stroke 1 #E8E6F2", "padding 16px", "icon tile 42x42 r14", "text y84 / y108"],
+    arrows: [
+      ["h", 0, 172, 160, "172px"],
+      ["v", -22, 0, 132, "132px"],
+      ["h", 0, 16, 144, "16px"],
+      ["h", 16, 58, 150, "42px"],
+      ["v", 184, 16, 58, "42px"],
+    ],
+  },
+  "09-quick-chips": {
+    notes: ["quick panel 342x192 r8", "padding 16px", "heading 24/30 semibold", "row 308x48", "label column 64px", "row gap 8px", "options 236x48 r24", "chip 73x40 r20"],
+    arrows: [
+      ["h", 0, 342, 220, "342px"],
+      ["v", -22, 0, 192, "192px"],
+      ["h", 0, 16, 204, "16px"],
+      ["h", 16, 324, 214, "308px"],
+      ["v", 354, 16, 46, "30px"],
+      ["v", 366, 46, 62, "16px"],
+      ["h", 16, 80, 116, "64px"],
+      ["h", 80, 88, 116, "8px"],
+      ["h", 88, 324, 118, "236px"],
+      ["v", 354, 62, 110, "48px"],
+      ["h", 92, 165.33, 106, "73px"],
+      ["h", 165.33, 169.33, 106, "4px"],
+      ["v", 366, 110, 126, "16px"],
+    ],
+  },
+  "10-gallery-filters": {
+    notes: ["mode control 342x48 r24", "mode padding 4px", "4 equal tabs 80.5x40", "active fill #DBD4FA", "row gap 16px", "filter buttons 167x56 r28", "filter gap 8px", "fill #F6F4FE stroke rgba(219,212,250,.76)"],
+    arrows: [
+      ["h", 0, 342, 144, "342px"],
+      ["v", -22, 0, 48, "48px"],
+      ["h", 0, 4, 56, "4px"],
+      ["h", 4, 84.5, 58, "80.5px"],
+      ["h", 84.5, 88.5, 58, "4px"],
+      ["v", 354, 48, 64, "16px"],
+      ["h", 0, 167, 152, "167px"],
+      ["h", 167, 175, 152, "8px"],
+      ["v", -22, 64, 120, "56px"],
+    ],
+  },
+  "11-gallery-card-celebrity": {
+    notes: ["celebrity card 167x188 r8", "preview 167x128", "body 167x60", "body padding 8px", "media button 32x32", "favorite 32x32", "tag 74x20 r10", "tag fill #F5F3FE ink #4D35C7"],
+    arrows: [
+      ["h", 0, 167, 216, "167px"],
+      ["v", -22, 0, 188, "188px"],
+      ["v", 179, 0, 128, "128px"],
+      ["v", 191, 128, 188, "60px"],
+      ["h", 0, 8, 200, "8px"],
+      ["h", 8, 82, 164, "74px"],
+      ["h", 8, 131, 188, "123px"],
+      ["h", 8, 40, 52, "32px"],
+      ["h", 127, 159, 44, "32px"],
+    ],
+  },
+  "11-gallery-card-character": {
+    notes: ["character card 167x188 r8", "preview 167x128", "body 167x60", "body padding 8px", "media button 32x32", "favorite 32x32", "tag 80x20 r10", "tag fill #E3FAF5 ink #0B5B46"],
+    arrows: [
+      ["h", 0, 167, 216, "167px"],
+      ["v", -22, 0, 188, "188px"],
+      ["v", 179, 0, 128, "128px"],
+      ["v", 191, 128, 188, "60px"],
+      ["h", 0, 8, 200, "8px"],
+      ["h", 8, 88, 164, "80px"],
+      ["h", 8, 131, 188, "123px"],
+      ["h", 8, 40, 52, "32px"],
+      ["h", 127, 159, 44, "32px"],
+    ],
+  },
+  "12-campaign-card": {
+    notes: ["card 342x96 r20", "stroke 1 #E8E6F2", "padding 16px", "thumb 64x64 r16", "copy x96", "status 66x32 r16"],
+    arrows: [
+      ["h", 0, 342, 124, "342px"],
+      ["v", -22, 0, 96, "96px"],
+      ["h", 0, 16, 108, "16px"],
+      ["h", 16, 80, 114, "64px"],
+      ["h", 80, 96, 108, "16px gap"],
+      ["h", 252, 318, 114, "66px"],
+    ],
+  },
+  "13-field-card": {
+    notes: ["field 342x82 r18", "stroke 1 #E8E6F2", "content padding x18", "label y27", "value y57"],
+    arrows: [
+      ["h", 0, 342, 110, "342px"],
+      ["v", -22, 0, 82, "82px"],
+      ["h", 0, 18, 94, "18px"],
+    ],
+  },
+  "14-stepper": {
+    notes: ["circle r16 / 32px", "connector stroke 3 #E8E6F2", "centers 18 / 91 / 164", "center gap 73px"],
+    arrows: [
+      ["h", 2, 34, 64, "32px"],
+      ["h", 18, 91, 78, "73px"],
+      ["h", 91, 164, 78, "73px"],
+      ["v", 196, 2, 34, "32px"],
+    ],
+  },
+  "15-influencer-row": {
+    notes: ["row 342x84 r20", "padding 16px", "avatar r25 / 50px", "copy x82", "button 54x32 r16"],
+    arrows: [
+      ["h", 0, 342, 112, "342px"],
+      ["v", -22, 0, 84, "84px"],
+      ["h", 17, 67, 98, "50px"],
+      ["h", 67, 82, 98, "15px gap"],
+      ["h", 260, 314, 98, "54px"],
+    ],
+  },
+  "16-bottom-nav": {
+    notes: ["bar 390x81", "padding 8px 24px", "nav 342x64", "3 equal items 111.33x64", "item gap 4px", "active r16 rgba #DBD4FA 28%", "active top line h4", "icons 24px labels 14/20"],
+    arrows: [
+      ["h", 0, 390, 116, "390px"],
+      ["v", -22, 0, 81, "81px"],
+      ["h", 0, 24, 100, "24px"],
+      ["h", 24, 135.33, 104, "111.33px"],
+      ["h", 135.33, 139.33, 104, "4px"],
+      ["v", 402, 9, 73, "64px"],
+      ["h", 40, 119.33, 88, "79.33px"],
+      ["v", 414, 9, 13, "4px"],
+    ],
+  },
+  "17-bottom-sheet": {
+    notes: ["sheet 390x288 r24", "stroke 1 #E8E6F2", "padding x24", "handle 60x5 r3", "row 342x64 r18", "CTA 342x48 r16"],
+    arrows: [
+      ["h", 0, 390, 316, "390px"],
+      ["v", -22, 0, 288, "288px"],
+      ["h", 0, 24, 300, "24px"],
+      ["h", 24, 366, 306, "342px"],
+      ["v", 402, 76, 140, "64px"],
+      ["v", 414, 216, 228, "12px gap"],
+    ],
+  },
+  "18-side-menu": {
+    notes: ["panel 318x620", "main padding 24px", "cards width 270px", "menu rows 52px r16", "card gaps 8px / 12px"],
+    arrows: [
+      ["h", 0, 318, 648, "318px"],
+      ["v", -22, 0, 620, "620px"],
+      ["h", 0, 24, 632, "24px"],
+      ["h", 24, 294, 638, "270px"],
+      ["v", 330, 204, 256, "52px"],
+    ],
+  },
+  "19-toast": {
+    notes: ["toast 300x56 r18", "fill #1E1E24", "text #FFFFFF", "center aligned"],
+    arrows: [
+      ["h", 0, 300, 84, "300px"],
+      ["v", -22, 0, 56, "56px"],
+    ],
+  },
+  "20-empty-state": {
+    notes: ["card 342x260 r24", "stroke 1 #E8E6F2", "orb r42", "CTA 234x48 r16", "CTA x54 y196"],
+    arrows: [
+      ["h", 0, 342, 288, "342px"],
+      ["v", -22, 0, 260, "260px"],
+      ["h", 54, 288, 274, "234px"],
+      ["v", 354, 196, 244, "48px"],
+      ["h", 129, 213, 128, "84px orb"],
+    ],
+  },
+  "21-dialog": {
+    notes: ["dialog 342x238 r24", "stroke 1 #E8E6F2", "padding 24px", "chips 86x36 r18", "actions 138x48 r16", "gap 18px"],
+    arrows: [
+      ["h", 0, 342, 266, "342px"],
+      ["v", -22, 0, 238, "238px"],
+      ["h", 0, 24, 250, "24px"],
+      ["h", 24, 110, 136, "86px"],
+      ["h", 162, 180, 226, "18px"],
+      ["h", 180, 318, 226, "138px"],
+    ],
+  },
+  "22-offline-card": {
+    notes: ["card 342x250 r24", "logo tile 78x78 r22", "cube 24x24 r6", "CTA 234x48 r16", "stroke 1 #E8E6F2"],
+    arrows: [
+      ["h", 0, 342, 278, "342px"],
+      ["v", -22, 0, 250, "250px"],
+      ["h", 132, 210, 124, "78px"],
+      ["h", 54, 288, 264, "234px"],
+      ["v", 354, 198, 246, "48px"],
+    ],
+  },
+  "23-source-menu": {
+    notes: ["sheet 342x238 r24", "padding 24px", "options 294x48 r16", "row gap 8px", "stroke 1 #E8E6F2"],
+    arrows: [
+      ["h", 0, 342, 266, "342px"],
+      ["v", -22, 0, 238, "238px"],
+      ["h", 0, 24, 250, "24px"],
+      ["h", 24, 318, 122, "294px"],
+      ["v", 354, 70, 118, "48px"],
+      ["v", 366, 118, 126, "8px"],
+    ],
+  },
+  "24-project-option": {
+    notes: ["option 342x68 r18", "stroke 1.5 #8F7CF6", "content padding 18px", "pill 76x32 r16", "check circle r14"],
+    arrows: [
+      ["h", 0, 342, 96, "342px"],
+      ["v", -22, 0, 68, "68px"],
+      ["h", 0, 18, 82, "18px"],
+      ["h", 198, 274, 82, "76px"],
+      ["h", 296, 324, 82, "28px"],
+    ],
+  },
+};
+
+const specDefs = `
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0 0 10 5 0 10Z" fill="#EF4444"/>
+  </marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 10 5 0 10Z" fill="#2563EB"/>
+  </marker>
+`;
+
+const specText = (x, y, value, size = 12, fill = "#EF4444", anchor = "middle", weight = 800) =>
+  text(x, y, value, size, weight, fill, anchor);
+
+const measureLine = (x1, y1, x2, y2, label, color = "#EF4444") => `
+  <path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-width="1.5" stroke-linecap="round" marker-start="url(#arrow-red)" marker-end="url(#arrow-red)"/>
+  ${specText((x1 + x2) / 2, (y1 + y2) / 2 - 6, label, 12, color)}
+`;
+
+const extensionLine = (x1, y1, x2, y2, color = "#EF4444") =>
+  `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-width="1" stroke-dasharray="4 4" stroke-linecap="round"/>`;
+
+const arrow = (kind, a, b, c, label) => {
+  if (kind === "h") {
+    return `${extensionLine(a, c - 8, a, c + 8)}${extensionLine(b, c - 8, b, c + 8)}${measureLine(a, c, b, c, label)}`;
+  }
+  return `${extensionLine(a - 8, b, a + 8, b)}${extensionLine(a - 8, c, a + 8, c)}${measureLine(a, b, a, c, label)}`;
+};
+
+const callout = (x1, y1, x2, y2, label) => `
+  <path d="M${x1} ${y1}L${x2} ${y2}" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <rect x="${x1 - 6}" y="${y1 - 19}" width="${Math.max(82, label.length * 6.5 + 12)}" height="22" rx="11" fill="#EFF6FF" stroke="#BFDBFE"/>
+  ${text(x1, y1 - 4, label, 11, 800, "#2563EB")}
+`;
+
+const noteBox = (x, y, notes) => {
+  const rows = notes.map((note, index) => `${text(x + 12, y + 26 + index * 18, note, 11, 700, "#374151")}`).join("");
+  return `${rect(x, y, 292, 26 + notes.length * 18, 10, "#FFFFFF", "#CBD5E1")}${text(x + 12, y + 18, "Specs", 12, 900, "#111827")}${rows}`;
+};
+
+const colorLegend = (x, y) => {
+  const entries = [
+    ["Surface", colors.surface],
+    ["Border", colors.border],
+    ["Text", colors.text],
+    ["Muted", colors.muted],
+    ["Lavender", colors.brand],
+    ["Primary button", colors.primary],
+    ["Mint", colors.character],
+    ["Mint strong", colors.green],
+  ];
+  return `
+    <g transform="translate(${x} ${y})">
+      ${rect(0, 0, 418, 188, 16, "#FFFFFF", "#DEDBE8")}
+      ${text(18, 30, "Color / stroke legend", 18, 800)}
+      ${entries.map((entry, index) => {
+        const row = Math.floor(index / 2);
+        const col = index % 2;
+        const px = 18 + col * 200;
+        const py = 54 + row * 30;
+        return `${rect(px, py, 22, 22, 6, entry[1], "#CBD5E1")}${text(px + 32, py + 16, `${entry[0]} ${entry[1]}`, 11, 700, "#374151")}`;
+      }).join("")}
+      ${text(18, 172, "Red = spacing/dimensions. Blue = visual style notes.", 12, 700, colors.muted)}
+    </g>
+  `;
+};
+
+const annotatedParts = [
+  rect(0, 0, 1480, 5000, 0, "#F8FAFC"),
+  text(32, 58, "FameFlow Component Kit - Annotated Spacing Spec", 30, 800),
+  text(32, 88, "Import into Figma to inspect arrows, pixel spacing, radii, borders, fills, and key layout values.", 15, 500, colors.muted),
+  colorLegend(1010, 24),
+];
+
+const annotatedColumns = 2;
+const annotatedColWidth = 720;
+let annotatedX = 32;
+let annotatedY = 236;
+let annotatedRowHeight = 0;
+
+components.forEach((component, index) => {
+  if (index % annotatedColumns === 0 && index !== 0) {
+    annotatedX = 32;
+    annotatedY += annotatedRowHeight + 38;
+    annotatedRowHeight = 0;
+  }
+
+  const cardW = 676;
+  const localX = 36;
+  const localY = 72;
+  const componentSpec = spec[component.name] || { notes: [`component ${component.width}x${component.height}px`], arrows: [] };
+  const notesH = 26 + componentSpec.notes.length * 18;
+  const cardH = Math.max(component.height + 260, localY + component.height + 76 + notesH + 24, 330);
+
+  annotatedParts.push(`<g id="${component.name}-annotated" transform="translate(${annotatedX} ${annotatedY})">`);
+  annotatedParts.push(rect(0, 0, cardW, cardH, 18, "#FFFFFF", "#DEDBE8"));
+  annotatedParts.push(text(20, 28, component.name, 15, 900, "#111827"));
+  annotatedParts.push(text(20, 50, `Canvas ${component.width} x ${component.height}px`, 12, 700, colors.muted));
+  annotatedParts.push(`<g transform="translate(${localX} ${localY})">`);
+  annotatedParts.push(rect(-1, -1, component.width + 2, component.height + 2, 0, "transparent", "#EF4444", 1, 'stroke-dasharray="6 4"'));
+  annotatedParts.push(component.body);
+  annotatedParts.push(arrow("h", 0, component.width, component.height + 28, `${component.width}px`));
+  annotatedParts.push(arrow("v", -18, 0, component.height, `${component.height}px`));
+  componentSpec.arrows.forEach(([kind, a, b, c, label]) => annotatedParts.push(arrow(kind, a, b, c, label)));
+  annotatedParts.push(callout(component.width + 26, 18, component.width - 2, 8, "outer radius / stroke"));
+  annotatedParts.push(callout(component.width + 26, 46, Math.max(6, component.width - 18), Math.min(component.height - 6, 28), "fill / color"));
+  annotatedParts.push("</g>");
+  annotatedParts.push(noteBox(20, localY + component.height + 76, componentSpec.notes));
+  annotatedParts.push("</g>");
+
+  annotatedRowHeight = Math.max(annotatedRowHeight, cardH);
+  annotatedX += annotatedColWidth;
+});
+
+writeFileSync(
+  join(outDir, "00-fameflow-component-kit-annotated.svg"),
+  svg(1480, Math.max(5000, annotatedY + annotatedRowHeight + 64), annotatedParts.join("\n"), specDefs),
+);
+
+console.log(`Exported ${components.length + 2} SVG files to ${outDir}`);

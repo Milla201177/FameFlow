@@ -2475,10 +2475,23 @@
         font-weight: var(--type-body-weight);
       }
 
+      .enhance-prompt.is-revert {
+        border-color: color-mix(in srgb, var(--warning) 76%, var(--text));
+        background: color-mix(in srgb, var(--warning) 34%, var(--surface));
+        color: var(--text);
+        box-shadow: inset 0 0 0 1px rgba(30, 30, 36, 0.04);
+      }
+
       body[data-theme="dark"] .enhance-prompt {
         background: var(--surface-soft);
         color: #f8f6ff;
         border-color: rgba(219, 212, 250, 0.42);
+      }
+
+      body[data-theme="dark"] .enhance-prompt.is-revert {
+        background: rgba(245, 215, 128, 0.16);
+        color: #fff4cd;
+        border-color: rgba(245, 215, 128, 0.56);
       }
 
       .enhance-prompt .icon {
@@ -3987,11 +4000,11 @@
               </svg>
             </button>
           </div>
-          <button class="enhance-prompt" id="enhance-prompt" type="button">
+          <button class="enhance-prompt" id="enhance-prompt" type="button" data-state="enhance">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
             </svg>
-            Enhance prompt
+            <span>Enhance prompt</span>
           </button>
           <div class="generate-settings-row" aria-label="Generation settings">
             <div class="custom-select" data-select="model">
@@ -5260,6 +5273,7 @@
       const sizeButtons = [...document.querySelectorAll("[data-size]")];
       const customSelects = [...document.querySelectorAll(".custom-select")];
       const prompt = document.querySelector("#prompt");
+      const enhancePromptButton = document.querySelector("#enhance-prompt");
       const sheet = document.querySelector("#sheet");
       const sourceSheet = document.querySelector("#source-sheet");
       const menuSheet = document.querySelector("#menu-sheet");
@@ -5305,6 +5319,8 @@
       let viewerStartX = 0;
       let viewerStartY = 0;
       let activePaymentFlow = "credits";
+      let promptBeforeEnhance = "";
+      let enhancedPromptValue = "";
       let copilotAnswers = {
         format: "Image",
         size: "9:16"
@@ -5475,6 +5491,31 @@
         toast.classList.add("visible");
         clearTimeout(showToast.timer);
         showToast.timer = setTimeout(() => toast.classList.remove("visible"), 1800);
+      }
+
+      function setEnhancePromptState(state) {
+        const isRevert = state === "revert";
+        enhancePromptButton.dataset.state = isRevert ? "revert" : "enhance";
+        enhancePromptButton.classList.toggle("is-revert", isRevert);
+        enhancePromptButton.setAttribute("aria-label", isRevert ? "Undo prompt enhancement" : "Enhance prompt");
+        enhancePromptButton.innerHTML = isRevert ? `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 7v5h5" />
+            <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4 9.4" />
+          </svg>
+          <span>Undo enhance</span>
+        ` : `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+          </svg>
+          <span>Enhance prompt</span>
+        `;
+      }
+
+      function resetEnhancePromptState() {
+        promptBeforeEnhance = "";
+        enhancedPromptValue = "";
+        setEnhancePromptState("enhance");
       }
 
       function toggleTheme() {
@@ -5975,6 +6016,7 @@
         setKind(copilotAnswers.format);
         setSize(copilotAnswers.size);
         prompt.value = preparedPrompt;
+        resetEnhancePromptState();
         updateGenerateState();
       }
 
@@ -6285,8 +6327,28 @@
 
       document.querySelector("#prompt-mic").addEventListener("click", showVoiceListening);
       document.querySelector("#prompt-reference").addEventListener("click", () => sourceSheet.classList.add("open"));
-      document.querySelector("#enhance-prompt").addEventListener("click", () => {
-        showToast(prompt.value.trim() ? "Prompt enhanced." : "Add a prompt to enhance.");
+      prompt.addEventListener("input", () => {
+        if (enhancePromptButton.dataset.state === "revert" && prompt.value !== enhancedPromptValue) {
+          resetEnhancePromptState();
+        }
+      });
+      enhancePromptButton.addEventListener("click", () => {
+        const currentPrompt = prompt.value.trim();
+        if (enhancePromptButton.dataset.state === "revert") {
+          prompt.value = promptBeforeEnhance;
+          resetEnhancePromptState();
+          showToast("Prompt restored.");
+          return;
+        }
+        if (!currentPrompt) {
+          showToast("Add a prompt to enhance.");
+          return;
+        }
+        promptBeforeEnhance = prompt.value;
+        enhancedPromptValue = `${currentPrompt}, with clearer visual details, polished composition, natural lighting, and production-ready styling.`;
+        prompt.value = enhancedPromptValue;
+        setEnhancePromptState("revert");
+        showToast("Prompt enhanced.");
       });
       sourceSheet.addEventListener("click", (event) => {
         if (event.target === sourceSheet) sourceSheet.classList.remove("open");
