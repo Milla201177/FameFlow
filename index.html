@@ -5457,10 +5457,12 @@
 
       function updateGenerateState() {
         const needsSubject = activeMode === "celebrity" && !activeSubject;
-        generateButton.disabled = needsSubject;
-        generateButton.setAttribute("aria-disabled", String(needsSubject));
+        const needsPrompt = !prompt.value.trim();
+        const isDisabled = needsSubject || needsPrompt;
+        generateButton.disabled = isDisabled;
+        generateButton.setAttribute("aria-disabled", String(isDisabled));
         if (!generateButton.classList.contains("loading")) {
-          generateLabel.textContent = needsSubject ? "Select celebrity" : "Generate";
+          generateLabel.textContent = needsPrompt ? "Write prompt" : needsSubject ? "Select celebrity" : "Generate";
         }
       }
 
@@ -6354,15 +6356,18 @@
       prompt.addEventListener("input", () => {
         if (enhancePromptButton.dataset.state === "revert" && prompt.value !== enhancedPromptValue) {
           resetEnhancePromptState();
+          updateGenerateState();
           return;
         }
         updateEnhancePromptAvailability();
+        updateGenerateState();
       });
       enhancePromptButton.addEventListener("click", () => {
         const currentPrompt = prompt.value.trim();
         if (enhancePromptButton.dataset.state === "revert") {
           prompt.value = promptBeforeEnhance;
           resetEnhancePromptState();
+          updateGenerateState();
           showToast("Prompt restored.");
           return;
         }
@@ -6372,6 +6377,7 @@
         prompt.value = enhancedPromptValue;
         setEnhancePromptState("revert");
         updateEnhancePromptAvailability();
+        updateGenerateState();
         showToast("Prompt enhanced.");
       });
       sourceSheet.addEventListener("click", (event) => {
