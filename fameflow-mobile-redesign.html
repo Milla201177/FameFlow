@@ -6340,15 +6340,13 @@
           showToast("Prompt restored.");
           return;
         }
-        if (!currentPrompt) {
-          showToast("Add a prompt to enhance.");
-          return;
-        }
         promptBeforeEnhance = prompt.value;
-        enhancedPromptValue = `${currentPrompt}, with clearer visual details, polished composition, natural lighting, and production-ready styling.`;
+        enhancedPromptValue = currentPrompt
+          ? `${currentPrompt}, with clearer visual details, polished composition, natural lighting, and production-ready styling.`
+          : "";
         prompt.value = enhancedPromptValue;
         setEnhancePromptState("revert");
-        showToast("Prompt enhanced.");
+        showToast(currentPrompt ? "Prompt enhanced." : "Enhance mode selected.");
       });
       sourceSheet.addEventListener("click", (event) => {
         if (event.target === sourceSheet) sourceSheet.classList.remove("open");
