@@ -45,6 +45,20 @@
         letter-spacing: 0;
       }
 
+      body[data-mode="character"] {
+        --mode-soft: var(--mint);
+        --mode-strong: var(--mint-strong);
+        --mode-ink: #0b5b46;
+        --mode-shadow: rgba(103, 215, 170, 0.24);
+      }
+
+      body[data-mode="celebrity"] {
+        --mode-soft: var(--lavender);
+        --mode-strong: var(--lavender-strong);
+        --mode-ink: #2d235f;
+        --mode-shadow: rgba(143, 124, 246, 0.24);
+      }
+
       button,
       input,
       textarea,
@@ -294,9 +308,10 @@
       }
 
       .primary-button {
-        background: var(--lavender-strong);
+        background: var(--mode-strong, var(--lavender-strong));
         color: #fff;
-        box-shadow: 0 10px 20px rgba(143, 124, 246, 0.24);
+        box-shadow: 0 10px 20px var(--mode-shadow, rgba(143, 124, 246, 0.24));
+        transition: background 180ms ease, box-shadow 180ms ease;
       }
 
       .secondary-button {
@@ -324,10 +339,7 @@
       }
 
       .generate-grid {
-        display: grid;
-        grid-template-columns: minmax(560px, 1fr) var(--right-rail);
-        gap: 24px;
-        align-items: start;
+        display: block;
       }
 
       .workspace {
@@ -400,9 +412,9 @@
       }
 
       .segment.active {
-        background: var(--lavender);
-        color: #2d235f;
-        box-shadow: inset 0 0 0 1px rgba(45, 35, 95, 0.14);
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mode-ink, #2d235f) 16%, transparent);
       }
 
       .segment.mint.active {
@@ -416,9 +428,25 @@
       }
 
       .prompt-panel {
-        min-height: 520px;
+        position: fixed;
+        z-index: 20;
+        right: 32px;
+        bottom: 20px;
+        left: calc(var(--sidebar) + 32px);
+        height: 50vh;
+        min-height: 340px;
         display: grid;
-        grid-template-rows: auto minmax(280px, 1fr) auto;
+        grid-template-rows: auto minmax(140px, 1fr) auto;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 -18px 56px rgba(31, 28, 45, 0.16);
+        backdrop-filter: blur(18px);
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      body[data-mode="character"] .prompt-panel {
+        border-color: rgba(103, 215, 170, 0.62);
+        box-shadow: 0 12px 32px rgba(24, 105, 79, 0.1);
       }
 
       .prompt-toolbar {
@@ -659,6 +687,102 @@
         gap: 16px;
       }
 
+      .generation-gallery {
+        display: grid;
+        min-height: calc(100vh - 180px);
+        gap: 14px;
+        padding: 4px 0 calc(50vh + 72px);
+      }
+
+      .generation-gallery-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .generation-gallery-header h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 26px;
+      }
+
+      .generation-gallery-header p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 18px;
+      }
+
+      .generation-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(170px, 1fr));
+        gap: 16px;
+      }
+
+      .generation-work {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 24px rgba(31, 28, 45, 0.06);
+      }
+
+      .generation-work-preview {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, transparent 55%, rgba(10, 12, 16, 0.36)),
+          var(--work-image),
+          linear-gradient(135deg, var(--lavender), var(--mint));
+        background-size: cover;
+        background-position: center;
+      }
+
+      .generation-work-preview::after {
+        content: attr(data-format);
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.88);
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 800;
+        backdrop-filter: blur(8px);
+      }
+
+      .generation-work-copy {
+        display: grid;
+        gap: 3px;
+        padding: 12px;
+      }
+
+      .generation-work-copy strong {
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .generation-work-copy span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 18px;
+      }
+
+      .character-only {
+        display: none;
+      }
+
+      body[data-mode="character"] .celebrity-only {
+        display: none;
+      }
+
+      body[data-mode="character"] .character-only {
+        display: block;
+      }
+
       .asset-card {
         overflow: hidden;
         border: 1px solid var(--line);
@@ -870,6 +994,10 @@
         .gallery-grid {
           grid-template-columns: repeat(3, minmax(160px, 1fr));
         }
+
+        .generation-gallery-grid {
+          grid-template-columns: repeat(3, minmax(160px, 1fr));
+        }
       }
 
       @media (max-width: 840px) {
@@ -890,6 +1018,12 @@
         .topbar,
         .content {
           padding-inline: 18px;
+        }
+
+        .prompt-panel {
+          right: 18px;
+          bottom: 18px;
+          left: 18px;
         }
 
         .control-strip,
@@ -917,6 +1051,7 @@
         }
 
         .gallery-grid,
+        .generation-gallery-grid,
         .rail,
         .settings-grid {
           grid-template-columns: 1fr;
@@ -924,7 +1059,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-mode="celebrity">
     <div class="desktop-shell">
       <aside class="sidebar" aria-label="FameFlow navigation">
         <div>
@@ -1046,8 +1181,8 @@
                     <button class="subject-picker ghost-button" type="button">
                       <span class="avatar-stack" aria-hidden="true"><span></span><span></span><span></span></span>
                       <span class="subject-copy">
-                        <strong>Choose celebrity</strong>
-                        <span>Required for Star mode</span>
+                        <strong id="subject-title">Choose celebrity</strong>
+                        <span id="subject-caption">Required for Celebrity mode</span>
                       </span>
                     </button>
                     <button class="secondary-button" type="button">
@@ -1059,7 +1194,7 @@
                     <button class="icon-button" type="button" aria-label="Attach file">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11.6 12.3 20.7a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 1 1 4.5 4.5l-9.3 9.3a1.5 1.5 0 0 1-2.1-2.1l8.6-8.6"/></svg>
                     </button>
-                    <textarea placeholder="Describe the scene, mood, styling, wardrobe, camera angle, and output intent..."></textarea>
+                    <textarea id="prompt-input" placeholder="Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent..."></textarea>
                     <button class="icon-button" type="button" aria-label="Voice input">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>
                     </button>
@@ -1080,9 +1215,121 @@
                     </button>
                   </div>
                 </section>
+
+                <section class="generation-gallery" aria-labelledby="generation-gallery-title">
+                  <div class="generation-gallery-header">
+                    <div>
+                      <h2 id="generation-gallery-title">Ready to reuse</h2>
+                      <p id="generation-gallery-caption">Celebrity works from your gallery — open one to reuse its prompt and settings.</p>
+                    </div>
+                    <button class="secondary-button" type="button" data-view-link="gallery">View all</button>
+                  </div>
+
+                  <div class="generation-gallery-grid celebrity-only">
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="9:16" style="--work-image: linear-gradient(155deg, rgba(25,28,35,.08), rgba(25,28,35,.3)), url('../before/Celebrity/Galery.png'); background-size: 800% auto; background-position: 0% 15%;"></div>
+                      <div class="generation-work-copy"><strong>City keynote portrait</strong><span>Celebrity · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="10s" style="--work-image: linear-gradient(155deg, rgba(25,28,35,.02), rgba(25,28,35,.25)), url('../before/Celebrity/Galery.png'); background-size: 800% auto; background-position: 0% 48%;"></div>
+                      <div class="generation-work-copy"><strong>Wall Street story</strong><span>Celebrity · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="4:5" style="--work-image: linear-gradient(155deg, rgba(25,28,35,.02), rgba(25,28,35,.25)), url('../before/Celebrity/Galery.png'); background-size: 800% auto; background-position: 43% 20%;"></div>
+                      <div class="generation-work-copy"><strong>Campaign close-up</strong><span>Celebrity · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="10s" style="--work-image: linear-gradient(155deg, rgba(25,28,35,.02), rgba(25,28,35,.25)), url('../before/Celebrity/Galery.png'); background-size: 800% auto; background-position: 43% 58%;"></div>
+                      <div class="generation-work-copy"><strong>Outdoor launch reel</strong><span>Celebrity · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="1:1" style="--work-image: linear-gradient(135deg, #cfd8ff, #5d6b9c);"></div>
+                      <div class="generation-work-copy"><strong>Editorial blue hour</strong><span>Celebrity · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="16:9" style="--work-image: linear-gradient(135deg, #f7d1bf, #a56557);"></div>
+                      <div class="generation-work-copy"><strong>Studio product story</strong><span>Celebrity · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="4:5" style="--work-image: radial-gradient(circle at 48% 34%, #edc4ad 0 11%, transparent 12%), radial-gradient(ellipse at 48% 82%, #243a55 0 34%, transparent 35%), linear-gradient(135deg, #c9def7, #7188a5);"></div>
+                      <div class="generation-work-copy"><strong>Morning press portrait</strong><span>Celebrity · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="10s" style="--work-image: linear-gradient(145deg, #efc7ff, #70539c);"></div>
+                      <div class="generation-work-copy"><strong>Fashion week arrival</strong><span>Celebrity · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="1:1" style="--work-image: radial-gradient(circle at 58% 36%, #f2c9af 0 12%, transparent 13%), radial-gradient(ellipse at 58% 85%, #6c4139 0 36%, transparent 37%), linear-gradient(135deg, #ffe4d4, #b98974);"></div>
+                      <div class="generation-work-copy"><strong>Beauty campaign cover</strong><span>Celebrity · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="16:9" style="--work-image: linear-gradient(145deg, #d8e4ec, #435d6c);"></div>
+                      <div class="generation-work-copy"><strong>Backstage interview</strong><span>Celebrity · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="9:16" style="--work-image: linear-gradient(145deg, #f8e3a2, #b45a44);"></div>
+                      <div class="generation-work-copy"><strong>Golden hour premiere</strong><span>Celebrity · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="4:5" style="--work-image: linear-gradient(145deg, #cee7ff, #55579f);"></div>
+                      <div class="generation-work-copy"><strong>Night city editorial</strong><span>Celebrity · Image</span></div>
+                    </article>
+                  </div>
+
+                  <div class="generation-gallery-grid character-only">
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="9:16" style="--work-image: radial-gradient(circle at 52% 34%, #f4d9c9 0 12%, transparent 13%), radial-gradient(ellipse at 52% 82%, #315f59 0 34%, transparent 35%), linear-gradient(135deg, #d8fff0, #6cbfa5);"></div>
+                      <div class="generation-work-copy"><strong>Mina studio portrait</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="10s" style="--work-image: linear-gradient(135deg, #c6fce4, #4cae8c);"></div>
+                      <div class="generation-work-copy"><strong>Green room motion</strong><span>Character · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="4:5" style="--work-image: linear-gradient(135deg, #ffe1ca, #bd7b67);"></div>
+                      <div class="generation-work-copy"><strong>Warm editorial look</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="1:1" style="--work-image: linear-gradient(135deg, #c9e8ff, #6978b8);"></div>
+                      <div class="generation-work-copy"><strong>Digital creator profile</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="16:9" style="--work-image: linear-gradient(135deg, #d7ffd9, #538e72);"></div>
+                      <div class="generation-work-copy"><strong>Nature brand film</strong><span>Character · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="9:16" style="--work-image: linear-gradient(135deg, #f5d8ff, #8266ab);"></div>
+                      <div class="generation-work-copy"><strong>Neon night campaign</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="4:5" style="--work-image: radial-gradient(circle at 45% 34%, #dcae91 0 11%, transparent 12%), radial-gradient(ellipse at 45% 84%, #5e4b82 0 35%, transparent 36%), linear-gradient(135deg, #f1dfff, #a187c0);"></div>
+                      <div class="generation-work-copy"><strong>Amara profile set</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="10s" style="--work-image: linear-gradient(145deg, #b9ffe1, #337a6c);"></div>
+                      <div class="generation-work-copy"><strong>Wellness morning reel</strong><span>Character · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="1:1" style="--work-image: radial-gradient(circle at 56% 35%, #f0c8ad 0 12%, transparent 13%), radial-gradient(ellipse at 56% 85%, #804d40 0 36%, transparent 37%), linear-gradient(135deg, #ffe8d7, #c88872);"></div>
+                      <div class="generation-work-copy"><strong>Skincare creator cover</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="16:9" style="--work-image: linear-gradient(145deg, #d6eaff, #4d7096);"></div>
+                      <div class="generation-work-copy"><strong>Travel diary intro</strong><span>Character · Video</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="9:16" style="--work-image: linear-gradient(145deg, #fff2b6, #d27b58);"></div>
+                      <div class="generation-work-copy"><strong>Summer style story</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="4:5" style="--work-image: linear-gradient(145deg, #e0dcff, #60538c);"></div>
+                      <div class="generation-work-copy"><strong>Future fashion look</strong><span>Character · Image</span></div>
+                    </article>
+                  </div>
+                </section>
               </div>
 
-              <aside class="rail" aria-label="Generation context">
+              <aside class="rail" aria-label="Generation context" hidden>
                 <section class="panel rail-panel">
                   <h2 class="panel-title">Workspace health</h2>
                   <p class="panel-subtitle">Today across active projects.</p>
@@ -1261,6 +1508,29 @@
           if (!segment) return;
           group.querySelectorAll(".segment").forEach((item) => item.classList.toggle("active", item === segment));
         });
+      });
+
+      const subjectTitle = document.querySelector("#subject-title");
+      const subjectCaption = document.querySelector("#subject-caption");
+      const promptInput = document.querySelector("#prompt-input");
+      const galleryCaption = document.querySelector("#generation-gallery-caption");
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const mode = button.dataset.mode;
+          document.body.dataset.mode = mode;
+          const isCharacter = mode === "character";
+          subjectTitle.textContent = isCharacter ? "Choose character" : "Choose celebrity";
+          subjectCaption.textContent = isCharacter ? "Required for Character mode" : "Required for Celebrity mode";
+          promptInput.placeholder = isCharacter
+            ? "Describe the character, scene, mood, styling, wardrobe, camera angle, and output intent..."
+            : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
+          galleryCaption.textContent = `${isCharacter ? "Character" : "Celebrity"} works from your gallery — open one to reuse its prompt and settings.`;
+        });
+      });
+
+      document.querySelector("[data-view-link='gallery']").addEventListener("click", () => {
+        document.querySelector("[data-view='gallery']").click();
       });
     </script>
   </body>
