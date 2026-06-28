@@ -433,15 +433,45 @@
         right: 32px;
         bottom: 20px;
         left: calc(var(--sidebar) + 32px);
-        height: 50vh;
-        min-height: 340px;
+        height: var(--prompt-panel-height, 50vh);
+        min-height: 280px;
+        max-height: 82vh;
         display: grid;
-        grid-template-rows: auto minmax(140px, 1fr) auto;
+        grid-template-rows: 14px auto minmax(100px, 1fr) auto;
         overflow: hidden;
         background: rgba(255, 255, 255, 0.96);
         box-shadow: 0 -18px 56px rgba(31, 28, 45, 0.16);
         backdrop-filter: blur(18px);
         transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .prompt-panel.resizing {
+        user-select: none;
+        transition: none;
+      }
+
+      .prompt-resize-handle {
+        position: relative;
+        display: grid;
+        place-items: center;
+        cursor: ns-resize;
+        touch-action: none;
+      }
+
+      .prompt-resize-handle::before {
+        content: "";
+        width: 52px;
+        height: 4px;
+        border-radius: 999px;
+        background: #c9c7d2;
+        transition: width 160ms ease, background 160ms ease;
+      }
+
+      .prompt-resize-handle:hover::before,
+      .prompt-resize-handle:focus-visible::before,
+      .prompt-panel.resizing .prompt-resize-handle::before {
+        width: 72px;
+        background: var(--mode-strong, var(--lavender-strong));
       }
 
       body[data-mode="character"] .prompt-panel {
@@ -456,6 +486,25 @@
         gap: 12px;
         padding: 16px 18px;
         border-bottom: 1px solid var(--line);
+      }
+
+      .prompt-status {
+        max-width: 320px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 18px;
+        text-align: right;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .prompt-status.success {
+        color: #0b7657;
+      }
+
+      .prompt-status.error {
+        color: var(--danger);
       }
 
       .subject-picker {
@@ -525,6 +574,12 @@
         min-height: 40px;
       }
 
+      .icon-button.active {
+        border-color: var(--mode-strong, var(--lavender-strong));
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
+      }
+
       .prompt-editor textarea {
         width: 100%;
         min-height: 100%;
@@ -557,6 +612,10 @@
         justify-content: flex-end;
       }
 
+      .select-control {
+        position: relative;
+      }
+
       .select-field {
         min-width: 128px;
         display: grid;
@@ -570,6 +629,22 @@
         background: var(--surface);
       }
 
+      .select-field::after {
+        content: "⌄";
+        color: var(--muted);
+        font-size: 14px;
+        transition: transform 160ms ease;
+      }
+
+      .select-field[aria-expanded="true"] {
+        border-color: var(--mode-strong, var(--lavender-strong));
+        box-shadow: 0 0 0 3px var(--mode-soft, var(--lavender));
+      }
+
+      .select-field[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+      }
+
       .select-field span {
         color: var(--muted);
         font-size: 12px;
@@ -579,6 +654,39 @@
         display: block;
         margin-top: -1px;
         font-size: 14px;
+      }
+
+      .select-menu {
+        position: absolute;
+        z-index: 40;
+        right: 0;
+        bottom: calc(100% + 8px);
+        min-width: 100%;
+        display: grid;
+        gap: 3px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 16px 36px rgba(31, 28, 45, 0.16);
+      }
+
+      .select-option {
+        min-height: 36px;
+        padding: 0 10px;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .select-option:hover,
+      .select-option.selected {
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
       }
 
       .rail {
@@ -691,7 +799,7 @@
         display: grid;
         min-height: calc(100vh - 180px);
         gap: 14px;
-        padding: 4px 0 calc(50vh + 72px);
+        padding: 4px 0 calc(var(--prompt-panel-height, 50vh) + 72px);
       }
 
       .generation-gallery-header {
@@ -1177,6 +1285,7 @@
                 </div>
 
                 <section class="panel prompt-panel" aria-label="Prompt builder">
+                  <div class="prompt-resize-handle" id="prompt-resize-handle" role="separator" aria-label="Resize prompt panel" aria-orientation="horizontal" tabindex="0"></div>
                   <div class="prompt-toolbar">
                     <button class="subject-picker ghost-button" type="button">
                       <span class="avatar-stack" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -1185,31 +1294,52 @@
                         <span id="subject-caption">Required for Celebrity mode</span>
                       </span>
                     </button>
-                    <button class="secondary-button" type="button">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11.6 12.3 20.7a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 1 1 4.5 4.5l-9.3 9.3a1.5 1.5 0 0 1-2.1-2.1l8.6-8.6"/></svg>
-                      Add reference
-                    </button>
+                    <span class="prompt-status" id="prompt-status" role="status" aria-live="polite">Drag the top edge to resize</span>
                   </div>
                   <div class="prompt-editor">
-                    <button class="icon-button" type="button" aria-label="Attach file">
+                    <button class="icon-button" id="attach-button" type="button" aria-label="Attach file">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11.6 12.3 20.7a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 1 1 4.5 4.5l-9.3 9.3a1.5 1.5 0 0 1-2.1-2.1l8.6-8.6"/></svg>
                     </button>
+                    <input id="attachment-input" type="file" accept="image/*,video/*,audio/*" hidden />
                     <textarea id="prompt-input" placeholder="Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent..."></textarea>
-                    <button class="icon-button" type="button" aria-label="Voice input">
+                    <button class="icon-button" id="voice-button" type="button" aria-label="Voice input" aria-pressed="false">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>
                     </button>
                   </div>
                   <div class="prompt-footer">
-                    <button class="secondary-button" type="button">
+                    <button class="secondary-button" id="enhance-button" type="button">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>
                       Enhance prompt
                     </button>
                     <div class="select-row">
-                      <button class="select-field" type="button"><span>Model</span><strong>Fast</strong></button>
-                      <button class="select-field" type="button"><span>Size</span><strong>9:16</strong></button>
-                      <button class="select-field" type="button"><span>Batch</span><strong>4</strong></button>
+                      <div class="select-control" data-select="model">
+                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false"><span>Model</span><strong>Fast</strong></button>
+                        <div class="select-menu" role="menu" hidden>
+                          <button class="select-option selected" type="button" role="menuitem" data-value="Fast">Fast</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="Quality">Quality</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="Cinematic">Cinematic</button>
+                        </div>
+                      </div>
+                      <div class="select-control" data-select="size">
+                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false"><span>Size</span><strong>9:16</strong></button>
+                        <div class="select-menu" role="menu" hidden>
+                          <button class="select-option selected" type="button" role="menuitem" data-value="9:16">9:16</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="1:1">1:1</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="4:5">4:5</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="16:9">16:9</button>
+                        </div>
+                      </div>
+                      <div class="select-control" data-select="batch">
+                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false"><span>Batch</span><strong>4</strong></button>
+                        <div class="select-menu" role="menu" hidden>
+                          <button class="select-option" type="button" role="menuitem" data-value="1">1</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="2">2</button>
+                          <button class="select-option selected" type="button" role="menuitem" data-value="4">4</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="8">8</button>
+                        </div>
+                      </div>
                     </div>
-                    <button class="primary-button" type="button">
+                    <button class="primary-button" id="generate-button" type="button">
                       Generate
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </button>
@@ -1531,6 +1661,169 @@
 
       document.querySelector("[data-view-link='gallery']").addEventListener("click", () => {
         document.querySelector("[data-view='gallery']").click();
+      });
+
+      const promptPanel = document.querySelector(".prompt-panel");
+      const resizeHandle = document.querySelector("#prompt-resize-handle");
+      const promptStatus = document.querySelector("#prompt-status");
+      const attachButton = document.querySelector("#attach-button");
+      const attachmentInput = document.querySelector("#attachment-input");
+      const enhanceButton = document.querySelector("#enhance-button");
+      const voiceButton = document.querySelector("#voice-button");
+      const generateButton = document.querySelector("#generate-button");
+      let recognition;
+
+      const setPromptStatus = (message, state = "") => {
+        promptStatus.textContent = message;
+        promptStatus.className = `prompt-status${state ? ` ${state}` : ""}`;
+      };
+
+      const setPromptHeight = (height) => {
+        const minHeight = 280;
+        const maxHeight = Math.round(window.innerHeight * 0.82);
+        const nextHeight = Math.max(minHeight, Math.min(maxHeight, height));
+        document.documentElement.style.setProperty("--prompt-panel-height", `${nextHeight}px`);
+        resizeHandle.setAttribute("aria-valuenow", String(nextHeight));
+        resizeHandle.setAttribute("aria-valuemin", String(minHeight));
+        resizeHandle.setAttribute("aria-valuemax", String(maxHeight));
+      };
+
+      resizeHandle.addEventListener("pointerdown", (event) => {
+        promptPanel.classList.add("resizing");
+        resizeHandle.setPointerCapture(event.pointerId);
+        event.preventDefault();
+      });
+
+      resizeHandle.addEventListener("pointermove", (event) => {
+        if (!promptPanel.classList.contains("resizing")) return;
+        setPromptHeight(window.innerHeight - event.clientY - 20);
+      });
+
+      resizeHandle.addEventListener("pointerup", (event) => {
+        promptPanel.classList.remove("resizing");
+        if (resizeHandle.hasPointerCapture(event.pointerId)) resizeHandle.releasePointerCapture(event.pointerId);
+        setPromptStatus("Prompt panel resized", "success");
+      });
+
+      resizeHandle.addEventListener("pointercancel", () => {
+        promptPanel.classList.remove("resizing");
+      });
+
+      resizeHandle.addEventListener("keydown", (event) => {
+        if (!["ArrowUp", "ArrowDown"].includes(event.key)) return;
+        const direction = event.key === "ArrowUp" ? 1 : -1;
+        setPromptHeight(promptPanel.getBoundingClientRect().height + direction * 32);
+        setPromptStatus("Prompt panel resized", "success");
+        event.preventDefault();
+      });
+
+      attachButton.addEventListener("click", () => attachmentInput.click());
+
+      attachmentInput.addEventListener("change", () => {
+        const file = attachmentInput.files?.[0];
+        if (!file) return;
+        const maxSize = 25 * 1024 * 1024;
+        if (file.size > maxSize) {
+          attachmentInput.value = "";
+          setPromptStatus("File must be smaller than 25 MB", "error");
+          return;
+        }
+        attachButton.classList.add("active");
+        setPromptStatus(`Attached: ${file.name}`, "success");
+      });
+
+      enhanceButton.addEventListener("click", () => {
+        const mode = document.body.dataset.mode;
+        const basePrompt = promptInput.value.trim();
+        if (!basePrompt) {
+          promptInput.value = mode === "character"
+            ? "A confident original character in a contemporary editorial setting"
+            : "A cinematic celebrity portrait for a premium social campaign";
+        }
+        const enhancement = "soft directional lighting, refined styling, natural skin texture, editorial composition, 50mm lens, high detail";
+        if (!promptInput.value.toLowerCase().includes("directional lighting")) {
+          promptInput.value = `${promptInput.value.replace(/[.,\s]+$/, "")}, ${enhancement}.`;
+        }
+        promptInput.focus();
+        setPromptStatus("Prompt enhanced", "success");
+      });
+
+      voiceButton.addEventListener("click", () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          setPromptStatus("Voice input is not supported in this browser", "error");
+          return;
+        }
+
+        if (recognition) {
+          recognition.stop();
+          return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = navigator.language || "en-US";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.onstart = () => {
+          voiceButton.classList.add("active");
+          voiceButton.setAttribute("aria-pressed", "true");
+          setPromptStatus("Listening…");
+        };
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          promptInput.value = `${promptInput.value}${promptInput.value ? " " : ""}${transcript}`;
+          setPromptStatus("Voice added to prompt", "success");
+        };
+        recognition.onerror = (event) => {
+          setPromptStatus(event.error === "not-allowed" ? "Microphone permission was denied" : "Could not capture voice", "error");
+        };
+        recognition.onend = () => {
+          voiceButton.classList.remove("active");
+          voiceButton.setAttribute("aria-pressed", "false");
+          recognition = null;
+        };
+        recognition.start();
+      });
+
+      const closeSelectMenus = (exceptControl) => {
+        document.querySelectorAll(".select-control").forEach((control) => {
+          if (control === exceptControl) return;
+          control.querySelector(".select-field").setAttribute("aria-expanded", "false");
+          control.querySelector(".select-menu").hidden = true;
+        });
+      };
+
+      document.querySelectorAll(".select-control").forEach((control) => {
+        const button = control.querySelector(".select-field");
+        const menu = control.querySelector(".select-menu");
+        button.addEventListener("click", () => {
+          const willOpen = menu.hidden;
+          closeSelectMenus(willOpen ? control : null);
+          menu.hidden = !willOpen;
+          button.setAttribute("aria-expanded", String(willOpen));
+        });
+        control.querySelectorAll(".select-option").forEach((option) => {
+          option.addEventListener("click", () => {
+            control.querySelectorAll(".select-option").forEach((item) => item.classList.toggle("selected", item === option));
+            button.querySelector("strong").textContent = option.dataset.value;
+            menu.hidden = true;
+            button.setAttribute("aria-expanded", "false");
+            setPromptStatus(`${control.dataset.select}: ${option.dataset.value}`, "success");
+          });
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".select-control")) closeSelectMenus();
+      });
+
+      generateButton.addEventListener("click", () => {
+        if (!promptInput.value.trim()) {
+          promptInput.focus();
+          setPromptStatus("Write a prompt before generating", "error");
+          return;
+        }
+        setPromptStatus("Generation added to queue", "success");
       });
     </script>
   </body>
