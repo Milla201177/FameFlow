@@ -18,8 +18,10 @@
         --faint: #a8a8b3;
         --line: #e8e6f2;
         --line-strong: #d8d3ec;
+        --warning: #f5d780;
         --danger: #cf3f5b;
         --radius: 8px;
+        --radius-button: 999px;
         --shadow: 0 12px 32px rgba(31, 28, 45, 0.08);
         --sidebar: 272px;
         --right-rail: 360px;
@@ -383,11 +385,12 @@
 
       .segmented {
         display: grid;
-        gap: 4px;
+        gap: 6px;
         padding: 4px;
         border: 1px solid rgba(219, 212, 250, 0.78);
-        border-radius: var(--radius);
+        border-radius: 999px;
         background: var(--surface);
+        box-shadow: 0 4px 10px rgba(63, 48, 120, 0.08);
       }
 
       .segmented.two {
@@ -404,17 +407,21 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        border-radius: 6px;
+        border-radius: 999px;
         background: transparent;
         color: var(--muted);
         font-size: 14px;
         font-weight: 700;
+        transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
       }
 
       .segment.active {
-        background: var(--mode-soft, var(--lavender));
+        background-color: var(--mode-soft, var(--lavender));
+        background-image: radial-gradient(circle at 22% 18%, rgba(255,255,255,0.75), transparent 34%);
         color: var(--mode-ink, #2d235f);
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mode-ink, #2d235f) 16%, transparent);
+        box-shadow:
+          inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, #8f7cf6) 50%, transparent),
+          0 4px 10px var(--mode-shadow, rgba(143, 124, 246, 0.18));
       }
 
       .segment.mint.active {
@@ -572,6 +579,11 @@
       .prompt-editor .icon-button {
         align-self: start;
         min-height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--muted);
+        box-shadow: none;
       }
 
       .icon-button.active {
@@ -612,48 +624,114 @@
         justify-content: flex-end;
       }
 
+      .enhance-prompt {
+        width: fit-content;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 16px;
+        border: 1px solid color-mix(in srgb, var(--lavender-strong) 54%, transparent);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--lavender) 34%, var(--surface));
+        color: var(--ink);
+        box-shadow: 0 4px 10px rgba(70, 55, 126, 0.1);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background 160ms ease, border-color 160ms ease, opacity 160ms ease, transform 160ms ease;
+      }
+
+      body[data-mode="character"] .enhance-prompt:not(.is-revert):not(:disabled) {
+        border-color: color-mix(in srgb, var(--mint-strong) 68%, transparent);
+        background: color-mix(in srgb, var(--mint) 38%, var(--surface));
+      }
+
+      .enhance-prompt:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      .enhance-prompt.is-revert {
+        border-color: color-mix(in srgb, var(--warning) 76%, var(--ink));
+        background: color-mix(in srgb, var(--warning) 42%, var(--surface));
+        box-shadow: inset 0 0 0 1px rgba(30, 30, 36, 0.04);
+      }
+
+      .enhance-prompt:disabled {
+        cursor: not-allowed;
+        border-color: color-mix(in srgb, var(--line) 72%, transparent);
+        background: color-mix(in srgb, var(--surface) 74%, var(--line));
+        color: var(--muted);
+        opacity: 0.56;
+        box-shadow: none;
+      }
+
+      .enhance-prompt svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+      }
+
       .select-control {
         position: relative;
       }
 
       .select-field {
         min-width: 128px;
+        position: relative;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr);
         align-items: center;
         gap: 8px;
-        min-height: 40px;
-        padding: 0 12px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
+        min-height: 48px;
+        padding: 5px 36px 5px 14px;
+        border: 1px solid color-mix(in srgb, var(--mode-strong, #8f7cf6) 62%, transparent);
+        border-radius: 999px;
         background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 4px 10px rgba(63, 48, 120, 0.12);
+        text-align: left;
+        transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
       }
 
-      .select-field::after {
-        content: "⌄";
+      .select-field svg {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        width: 16px;
+        height: 16px;
         color: var(--muted);
-        font-size: 14px;
+        transform: translateY(-50%);
         transition: transform 160ms ease;
       }
 
       .select-field[aria-expanded="true"] {
         border-color: var(--mode-strong, var(--lavender-strong));
-        box-shadow: 0 0 0 3px var(--mode-soft, var(--lavender));
+        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 38%, var(--surface));
+        box-shadow:
+          inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, #8f7cf6) 40%, transparent),
+          0 4px 10px var(--mode-shadow, rgba(143, 124, 246, 0.18));
       }
 
-      .select-field[aria-expanded="true"]::after {
-        transform: rotate(180deg);
+      .select-field[aria-expanded="true"] svg {
+        transform: translateY(-50%) rotate(180deg);
       }
 
       .select-field span {
+        display: block;
         color: var(--muted);
         font-size: 12px;
+        line-height: 16px;
+        font-weight: 700;
       }
 
       .select-field strong {
         display: block;
         margin-top: -1px;
         font-size: 14px;
+        line-height: 18px;
       }
 
       .select-menu {
@@ -663,10 +741,10 @@
         bottom: calc(100% + 8px);
         min-width: 100%;
         display: grid;
-        gap: 3px;
-        padding: 6px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
+        gap: 4px;
+        padding: 8px;
+        border: 1px solid color-mix(in srgb, var(--mode-strong, #8f7cf6) 58%, transparent);
+        border-radius: 16px;
         background: var(--surface);
         box-shadow: 0 16px 36px rgba(31, 28, 45, 0.16);
       }
@@ -674,18 +752,19 @@
       .select-option {
         min-height: 36px;
         padding: 0 10px;
-        border-radius: 6px;
+        border-radius: 8px;
         background: transparent;
         color: var(--ink);
         font-size: 13px;
         font-weight: 700;
-        text-align: left;
+        text-align: center;
         white-space: nowrap;
       }
 
       .select-option:hover,
       .select-option.selected {
-        background: var(--mode-soft, var(--lavender));
+        background-color: var(--mode-soft, var(--lavender));
+        background-image: radial-gradient(circle at 22% 18%, rgba(255,255,255,0.72), transparent 34%);
         color: var(--mode-ink, #2d235f);
       }
 
@@ -1211,7 +1290,7 @@
 
             <div class="nav-label">System</div>
             <button class="nav-item" type="button" data-view="settings">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-2 3.4-.2-.1a1.8 1.8 0 0 0-2 .4l-.1.1a1.8 1.8 0 0 0-.5 1.4V22H9v-.2a1.8 1.8 0 0 0-.5-1.4l-.1-.1a1.8 1.8 0 0 0-2-.4l-.2.1-2-3.4.1-.1a1.8 1.8 0 0 0 .4-2V15a1.8 1.8 0 0 0-1.2-1.4H3v-3.2h.5A1.8 1.8 0 0 0 4.7 9V8.9a1.8 1.8 0 0 0-.4-2l-.1-.1 2-3.4.2.1a1.8 1.8 0 0 0 2-.4l.1-.1A1.8 1.8 0 0 0 9 1.7V1h6v.7a1.8 1.8 0 0 0 .5 1.3l.1.1a1.8 1.8 0 0 0 2 .4l.2-.1 2 3.4-.1.1a1.8 1.8 0 0 0-.4 2V9a1.8 1.8 0 0 0 1.2 1.4h.5v3.2h-.5A1.8 1.8 0 0 0 19.4 15Z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-1.9 3.3-.08-.03a1.7 1.7 0 0 0-1.95.38l-.06.06a1.7 1.7 0 0 0-.47 1.2V22H8.66v-.16a1.7 1.7 0 0 0-.47-1.2l-.06-.06a1.7 1.7 0 0 0-1.95-.38l-.08.03-1.9-3.3.06-.06A1.7 1.7 0 0 0 4.6 15l-.02-.08A1.7 1.7 0 0 0 3 13.25v-2.5a1.7 1.7 0 0 0 1.58-1.67L4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06 1.9-3.3.08.03a1.7 1.7 0 0 0 1.95-.38l.06-.06a1.7 1.7 0 0 0 .47-1.2V2h6.68v.16a1.7 1.7 0 0 0 .47 1.2l.06.06a1.7 1.7 0 0 0 1.95.38l.08-.03 1.9 3.3-.06.06A1.7 1.7 0 0 0 19.4 9l.02.08A1.7 1.7 0 0 0 21 10.75v2.5a1.7 1.7 0 0 0-1.58 1.67Z"/></svg>
               Settings
               <span></span>
             </button>
@@ -1307,13 +1386,18 @@
                     </button>
                   </div>
                   <div class="prompt-footer">
-                    <button class="secondary-button" id="enhance-button" type="button">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>
-                      Enhance prompt
+                    <button class="enhance-prompt" id="enhance-button" type="button" data-state="enhance" disabled>
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+                      </svg>
+                      <span>Enhance prompt</span>
                     </button>
                     <div class="select-row">
                       <div class="select-control" data-select="model">
-                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false"><span>Model</span><strong>Fast</strong></button>
+                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
+                          <span>Model</span><strong>Fast</strong>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
                         <div class="select-menu" role="menu" hidden>
                           <button class="select-option selected" type="button" role="menuitem" data-value="Fast">Fast</button>
                           <button class="select-option" type="button" role="menuitem" data-value="Quality">Quality</button>
@@ -1321,7 +1405,10 @@
                         </div>
                       </div>
                       <div class="select-control" data-select="size">
-                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false"><span>Size</span><strong>9:16</strong></button>
+                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
+                          <span>Size</span><strong>9:16</strong>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
                         <div class="select-menu" role="menu" hidden>
                           <button class="select-option selected" type="button" role="menuitem" data-value="9:16">9:16</button>
                           <button class="select-option" type="button" role="menuitem" data-value="1:1">1:1</button>
@@ -1330,7 +1417,10 @@
                         </div>
                       </div>
                       <div class="select-control" data-select="batch">
-                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false"><span>Batch</span><strong>4</strong></button>
+                        <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
+                          <span>Batch</span><strong>4</strong>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
                         <div class="select-menu" role="menu" hidden>
                           <button class="select-option" type="button" role="menuitem" data-value="1">1</button>
                           <button class="select-option" type="button" role="menuitem" data-value="2">2</button>
@@ -1672,10 +1762,44 @@
       const voiceButton = document.querySelector("#voice-button");
       const generateButton = document.querySelector("#generate-button");
       let recognition;
+      let promptBeforeEnhance = "";
+      let enhancedPromptValue = "";
 
       const setPromptStatus = (message, state = "") => {
         promptStatus.textContent = message;
         promptStatus.className = `prompt-status${state ? ` ${state}` : ""}`;
+      };
+
+      const setEnhancePromptState = (state) => {
+        const isRevert = state === "revert";
+        enhanceButton.dataset.state = isRevert ? "revert" : "enhance";
+        enhanceButton.classList.toggle("is-revert", isRevert);
+        enhanceButton.setAttribute("aria-label", isRevert ? "Undo prompt enhancement" : "Enhance prompt");
+        enhanceButton.innerHTML = isRevert ? `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M19 12H5" />
+            <path d="M12 5l-7 7 7 7" />
+          </svg>
+          <span>Undo enhance</span>
+        ` : `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+          </svg>
+          <span>Enhance prompt</span>
+        `;
+      };
+
+      const updateEnhancePromptAvailability = () => {
+        const isRevert = enhanceButton.dataset.state === "revert";
+        const hasPrompt = promptInput.value.trim().length > 0;
+        enhanceButton.disabled = !isRevert && !hasPrompt;
+      };
+
+      const resetEnhancePromptState = () => {
+        promptBeforeEnhance = "";
+        enhancedPromptValue = "";
+        setEnhancePromptState("enhance");
+        updateEnhancePromptAvailability();
       };
 
       const setPromptHeight = (height) => {
@@ -1732,18 +1856,32 @@
         setPromptStatus(`Attached: ${file.name}`, "success");
       });
 
+      promptInput.addEventListener("input", () => {
+        if (enhanceButton.dataset.state === "revert" && promptInput.value !== enhancedPromptValue) {
+          resetEnhancePromptState();
+          return;
+        }
+        updateEnhancePromptAvailability();
+      });
+
       enhanceButton.addEventListener("click", () => {
-        const mode = document.body.dataset.mode;
-        const basePrompt = promptInput.value.trim();
-        if (!basePrompt) {
-          promptInput.value = mode === "character"
-            ? "A confident original character in a contemporary editorial setting"
-            : "A cinematic celebrity portrait for a premium social campaign";
+        const currentPrompt = promptInput.value.trim();
+        if (enhanceButton.dataset.state === "revert") {
+          promptInput.value = promptBeforeEnhance;
+          resetEnhancePromptState();
+          promptInput.focus();
+          setPromptStatus("Prompt restored", "success");
+          return;
         }
+        if (!currentPrompt) return;
+        promptBeforeEnhance = promptInput.value;
         const enhancement = "soft directional lighting, refined styling, natural skin texture, editorial composition, 50mm lens, high detail";
-        if (!promptInput.value.toLowerCase().includes("directional lighting")) {
-          promptInput.value = `${promptInput.value.replace(/[.,\s]+$/, "")}, ${enhancement}.`;
-        }
+        enhancedPromptValue = currentPrompt.toLowerCase().includes("directional lighting")
+          ? currentPrompt
+          : `${promptInput.value.replace(/[.,\s]+$/, "")}, ${enhancement}.`;
+        promptInput.value = enhancedPromptValue;
+        setEnhancePromptState("revert");
+        updateEnhancePromptAvailability();
         promptInput.focus();
         setPromptStatus("Prompt enhanced", "success");
       });
@@ -1772,6 +1910,7 @@
         recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
           promptInput.value = `${promptInput.value}${promptInput.value ? " " : ""}${transcript}`;
+          updateEnhancePromptAvailability();
           setPromptStatus("Voice added to prompt", "success");
         };
         recognition.onerror = (event) => {
@@ -1825,6 +1964,8 @@
         }
         setPromptStatus("Generation added to queue", "success");
       });
+
+      updateEnhancePromptAvailability();
     </script>
   </body>
 </html>
