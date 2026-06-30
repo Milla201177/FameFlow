@@ -352,13 +352,13 @@
 
       .gallery-filter-trigger {
         width: 100%;
-        min-height: var(--s7);
+        min-height: var(--s8);
         display: grid;
         grid-template-columns: auto minmax(0, 1fr) auto;
         align-items: center;
         gap: var(--s2);
         padding: 0 var(--s3);
-        border-radius: 999px;
+        border-radius: var(--radius-card);
         border: 1px solid color-mix(in srgb, var(--brand) 76%, transparent);
         background: color-mix(in srgb, var(--brand) 24%, var(--surface));
         color: var(--text);
@@ -395,8 +395,8 @@
         display: grid;
         gap: var(--s1);
         padding: var(--s2);
-        border: 1px solid var(--divider);
-        border-radius: var(--s3);
+        border: 1px solid color-mix(in srgb, var(--brand) 70%, transparent);
+        border-radius: var(--radius-card);
         background: var(--surface);
         box-shadow: 0 var(--s3) var(--s6) rgba(28, 24, 42, 0.16);
         z-index: 18;
@@ -412,7 +412,7 @@
       }
 
       .gallery-option {
-        min-height: var(--s6);
+        min-height: var(--button-height);
         display: grid;
         grid-template-columns: auto minmax(0, 1fr) auto;
         align-items: center;
@@ -428,8 +428,11 @@
       }
 
       .gallery-option.active {
-        background: color-mix(in srgb, var(--brand) 54%, transparent);
-        color: var(--mode-ink);
+        background-color: var(--brand);
+        background-image:
+          radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.16) 0 2px, transparent 2.5px),
+          radial-gradient(circle at 76% 68%, rgba(45, 35, 95, 0.12) 0 2px, transparent 2.5px);
+        color: #2d235f;
       }
 
       .gallery-option .option-avatar {
@@ -1054,14 +1057,14 @@
 
       .campaign-select-trigger {
         width: 100%;
-        min-height: var(--input-height);
+        min-height: var(--s8);
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
         gap: var(--s2);
         padding: 0 var(--s3);
         border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
-        border-radius: var(--radius-button);
+        border-radius: var(--radius-card);
         background: var(--surface);
         color: var(--text);
         box-shadow: 0 var(--s1) var(--s2) rgba(70, 55, 126, 0.08);
@@ -1093,7 +1096,7 @@
         display: grid;
         gap: var(--s1);
         padding: var(--s2);
-        border: 1px solid var(--divider);
+        border: 1px solid color-mix(in srgb, var(--brand) 70%, transparent);
         border-radius: var(--radius-card);
         background: var(--surface);
         box-shadow: 0 var(--s3) var(--s6) rgba(28, 24, 42, 0.16);
@@ -1106,18 +1109,21 @@
       .campaign-select-option {
         min-height: var(--button-height);
         padding: 0 var(--s3);
-        border-radius: var(--radius-button);
+        border-radius: var(--s3);
         background: transparent;
         color: var(--text);
-        text-align: left;
+        text-align: center;
         font-size: var(--type-body-size);
         line-height: var(--type-body-line);
         font-weight: var(--type-body-weight);
       }
 
       .campaign-select-option.active {
-        background: var(--brand);
-        color: var(--text-primary);
+        background-color: var(--brand);
+        background-image:
+          radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.16) 0 2px, transparent 2.5px),
+          radial-gradient(circle at 76% 68%, rgba(45, 35, 95, 0.12) 0 2px, transparent 2.5px);
+        color: #2d235f;
       }
 
       .influencer-tools {
@@ -2071,13 +2077,13 @@
 
       .select-trigger {
         width: 100%;
-        min-height: var(--s6);
+        min-height: var(--s8);
         position: relative;
         display: grid;
         align-items: center;
         padding: 0 var(--s6) 0 var(--s4);
-        border-radius: 999px;
-        border: 1px solid color-mix(in srgb, var(--mode) 78%, transparent);
+        border-radius: var(--radius-card);
+        border: 1px solid color-mix(in srgb, var(--brand) 78%, transparent);
         background: var(--surface);
         color: var(--text);
         box-shadow:
@@ -2091,7 +2097,7 @@
         font-size: var(--type-caption-size);
         line-height: var(--type-caption-line);
         font-weight: var(--type-caption-weight);
-        text-transform: uppercase;
+        text-transform: none;
       }
 
       .select-value {
@@ -2144,8 +2150,8 @@
         display: none;
         gap: var(--s1);
         padding: var(--s2);
-        border: 1px solid color-mix(in srgb, var(--mode) 70%, transparent);
-        border-radius: var(--s3);
+        border: 1px solid color-mix(in srgb, var(--brand) 70%, transparent);
+        border-radius: var(--radius-card);
         background: var(--surface);
         box-shadow: 0 var(--s2) var(--s4) rgba(28, 24, 42, 0.16);
       }
@@ -2155,9 +2161,9 @@
       }
 
       .select-option {
-        min-height: var(--s6);
+        min-height: var(--button-height);
         padding: 0 var(--s3);
-        border-radius: var(--radius);
+        border-radius: var(--s3);
         background: transparent;
         color: var(--text);
         text-align: center;
@@ -2167,9 +2173,11 @@
       }
 
       .select-option.active {
-        background-color: var(--mode);
-        background-image: var(--active-pattern);
-        color: var(--mode-ink);
+        background-color: var(--brand);
+        background-image:
+          radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.16) 0 2px, transparent 2.5px),
+          radial-gradient(circle at 76% 68%, rgba(45, 35, 95, 0.12) 0 2px, transparent 2.5px);
+        color: #2d235f;
       }
 
       .reference-control {
@@ -2464,9 +2472,9 @@
       }
 
       .generate-settings-row .select-trigger {
-        min-height: var(--button-height);
+        min-height: var(--s8);
         padding: 0 var(--s5) 0 var(--s3);
-        border-radius: var(--radius-button);
+        border-radius: var(--radius-card);
       }
 
       .generate-settings-row .select-label {
@@ -2475,9 +2483,9 @@
       }
 
       .generate-settings-row .select-value {
-        justify-self: end;
-        font-size: var(--type-caption-size);
-        line-height: var(--type-caption-line);
+        justify-self: center;
+        font-size: var(--type-body-size);
+        line-height: var(--type-body-line);
       }
 
       .generate-settings-row .select-trigger svg {
@@ -3463,6 +3471,7 @@
         font-size: var(--type-caption-size);
         line-height: var(--type-caption-line);
         font-weight: var(--type-body-weight);
+        white-space: nowrap;
       }
 
       .credit-value {
@@ -3874,6 +3883,150 @@
         background-image: var(--active-pattern);
         color: var(--mode-ink);
         box-shadow: 0 var(--s1) var(--s2) rgba(70, 55, 126, 0.16);
+      }
+
+      .menu-card:has(.credit-value) {
+        min-height: var(--s9);
+        padding: var(--s3) var(--s4);
+        border-radius: var(--radius-card);
+      }
+
+      .menu-card:has(.credit-value) .cash-button {
+        min-height: var(--button-height);
+        padding-inline: var(--s4);
+      }
+
+      @media (max-width: 340px) {
+        :root {
+          --screen-padding: 12px;
+          --type-body-size: 15px;
+          --type-body-line: 21px;
+          --type-h2-size: 20px;
+          --type-h2-line: 26px;
+        }
+
+        .app-header {
+          padding-inline: var(--screen-padding);
+        }
+
+        .mode-switch .segment {
+          gap: var(--s1);
+          padding-inline: var(--s1);
+          font-size: 18px;
+          line-height: 22px;
+        }
+
+        .mode-icon {
+          width: 18px;
+          height: 18px;
+        }
+
+        .menu-panel {
+          width: calc(100% - var(--s3));
+          max-width: none;
+        }
+
+        .select-label,
+        .generate-settings-row .select-label {
+          left: 12px;
+          font-size: 13px;
+        }
+
+        .select-trigger,
+        .generate-settings-row .select-trigger {
+          padding-right: 32px;
+          padding-left: 12px;
+        }
+
+        .select-trigger svg,
+        .generate-settings-row .select-trigger svg {
+          right: 10px;
+        }
+
+        .generate-settings-row .select-value {
+          justify-self: end;
+          margin-right: 8px;
+          font-size: 14px;
+        }
+      }
+
+      @media (max-height: 700px) {
+        .phone {
+          --header-height: 48px;
+        }
+
+        .content {
+          gap: var(--s2);
+          padding-top: var(--s1);
+          padding-bottom: var(--s2);
+        }
+
+        .mode-switch {
+          margin-top: 0;
+        }
+
+        .mode-switch .segment {
+          min-height: 44px;
+        }
+
+        .subject-row.selected {
+          min-height: 56px;
+          gap: var(--s2);
+          padding: var(--s2);
+        }
+
+        .subject-row.selected .avatar-stack,
+        .subject-row.selected .avatar:first-child {
+          width: 40px;
+          height: 40px;
+        }
+
+        .mode-badge {
+          min-height: 24px;
+          margin-bottom: 0;
+        }
+
+        .media-tabbar {
+          min-height: 44px;
+        }
+
+        .media-tab {
+          min-height: 36px;
+        }
+
+        .prompt-area {
+          min-height: 0;
+          height: 100%;
+          gap: var(--s2);
+          padding: var(--s2);
+          border-radius: var(--s3);
+        }
+
+        .enhance-prompt {
+          min-height: 40px;
+        }
+
+        .generate-settings-row .select-trigger {
+          min-height: 48px;
+          border-radius: var(--s3);
+        }
+
+        .bottom-bar {
+          padding: var(--s1) var(--screen-padding);
+        }
+
+        .generate-button {
+          min-height: 40px;
+          margin-bottom: var(--s1);
+        }
+
+        .bottom-nav {
+          min-height: 56px;
+        }
+
+        .nav-item {
+          min-height: 48px;
+        }
       }
 
       @media (min-width: 900px) {

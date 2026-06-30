@@ -23,8 +23,8 @@
         --radius: 8px;
         --radius-button: 999px;
         --shadow: 0 12px 32px rgba(31, 28, 45, 0.08);
-        --sidebar: 272px;
-        --right-rail: 360px;
+        --sidebar: 236px;
+        --right-rail: 236px;
       }
 
       * {
@@ -81,7 +81,7 @@
       .desktop-shell {
         min-height: 100vh;
         display: grid;
-        grid-template-columns: var(--sidebar) minmax(0, 1fr);
+        grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--right-rail);
       }
 
       .sidebar {
@@ -90,8 +90,8 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        gap: 24px;
-        padding: 24px 16px;
+        gap: 16px;
+        padding: 20px 12px;
         border-right: 1px solid var(--line);
         background: rgba(255, 255, 255, 0.76);
         backdrop-filter: blur(18px);
@@ -101,7 +101,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 0 8px 8px;
+        padding: 0 8px 4px;
       }
 
       .brand img {
@@ -125,27 +125,29 @@
 
       .nav-group {
         display: grid;
-        gap: 6px;
+        gap: 8px;
       }
 
       .nav-label {
-        margin: 12px 8px 4px;
-        color: var(--muted);
+        margin: 10px 8px 0;
+        color: var(--mode-ink, #2d235f);
         font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
       }
 
       .nav-item {
-        min-height: 44px;
+        min-height: 48px;
         display: grid;
         grid-template-columns: 22px minmax(0, 1fr) auto;
         align-items: center;
         gap: 10px;
         padding: 0 12px;
-        border-radius: var(--radius);
-        background: transparent;
-        color: var(--muted);
+        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 4px 8px rgba(70, 55, 126, 0.08);
         text-align: left;
       }
 
@@ -155,9 +157,12 @@
       }
 
       .nav-item.active {
-        background: var(--lavender);
+        background-color: var(--lavender);
+        background-image: radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.14) 0 2px, transparent 2.5px);
         color: #2d235f;
-        box-shadow: inset 0 0 0 1px rgba(45, 35, 95, 0.12);
+        box-shadow:
+          inset 0 0 0 1px rgba(45, 35, 95, 0.12),
+          0 4px 8px rgba(70, 55, 126, 0.12);
       }
 
       .nav-count {
@@ -176,9 +181,10 @@
         gap: 12px;
         margin-top: auto;
         padding: 12px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
+        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
+        border-radius: 16px;
         background: var(--surface);
+        box-shadow: 0 4px 8px rgba(70, 55, 126, 0.1);
       }
 
       .account-row {
@@ -218,12 +224,39 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding-top: 10px;
-        border-top: 1px solid var(--line);
+        min-height: 76px;
+        padding: 8px;
+        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
+        border-radius: 16px;
+        background: var(--surface);
+        box-shadow: 0 4px 8px rgba(70, 55, 126, 0.08);
       }
 
-      .credit-row strong {
-        font-size: 16px;
+      .credit-copy {
+        display: grid;
+        gap: 2px;
+      }
+
+      .credit-copy strong {
+        font-size: 18px;
+        line-height: 22px;
+      }
+
+      .credit-copy span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .cash-button {
+        min-height: 44px;
+        padding: 0 14px;
+        border: 1px solid color-mix(in srgb, var(--lavender) 68%, #fff);
+        border-radius: 999px;
+        background: var(--lavender);
+        color: #2d235f;
+        box-shadow: 0 6px 12px rgba(70, 55, 126, 0.18);
+        font-weight: 700;
+        white-space: nowrap;
       }
 
       .main {
@@ -262,6 +295,10 @@
         color: var(--muted);
         font-size: 14px;
         line-height: 20px;
+      }
+
+      .page-title p:empty {
+        display: none;
       }
 
       .topbar-actions {
@@ -437,7 +474,7 @@
       .prompt-panel {
         position: fixed;
         z-index: 20;
-        right: 32px;
+        right: calc(var(--right-rail) + 32px);
         bottom: 20px;
         left: calc(var(--sidebar) + 32px);
         height: var(--prompt-panel-height, 50vh);
@@ -610,6 +647,7 @@
 
       .prompt-footer {
         display: grid;
+        grid-template-areas: "enhance selects generate";
         grid-template-columns: auto 1fr auto;
         align-items: center;
         gap: 12px;
@@ -618,6 +656,7 @@
       }
 
       .select-row {
+        grid-area: selects;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -625,6 +664,7 @@
       }
 
       .enhance-prompt {
+        grid-area: enhance;
         width: fit-content;
         min-height: 48px;
         display: inline-flex;
@@ -675,20 +715,23 @@
       }
 
       .select-control {
+        min-width: 0;
         position: relative;
+        flex: 1 1 0;
       }
 
       .select-field {
-        min-width: 128px;
+        width: 100%;
+        min-width: 132px;
         position: relative;
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         align-items: center;
         gap: 8px;
-        min-height: 48px;
-        padding: 5px 36px 5px 14px;
-        border: 1px solid color-mix(in srgb, var(--mode-strong, #8f7cf6) 62%, transparent);
-        border-radius: 999px;
+        min-height: 56px;
+        padding: 5px 36px 5px 16px;
+        border: 1px solid color-mix(in srgb, var(--lavender-strong) 62%, transparent);
+        border-radius: 20px;
         background: var(--surface);
         color: var(--ink);
         box-shadow: 0 4px 10px rgba(63, 48, 120, 0.12);
@@ -708,11 +751,11 @@
       }
 
       .select-field[aria-expanded="true"] {
-        border-color: var(--mode-strong, var(--lavender-strong));
-        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 38%, var(--surface));
+        border-color: var(--lavender-strong);
+        background: color-mix(in srgb, var(--lavender) 38%, var(--surface));
         box-shadow:
-          inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, #8f7cf6) 40%, transparent),
-          0 4px 10px var(--mode-shadow, rgba(143, 124, 246, 0.18));
+          inset 0 0 0 1px color-mix(in srgb, var(--lavender-strong) 40%, transparent),
+          0 4px 10px rgba(143, 124, 246, 0.18);
       }
 
       .select-field[aria-expanded="true"] svg {
@@ -722,16 +765,18 @@
       .select-field span {
         display: block;
         color: var(--muted);
-        font-size: 12px;
-        line-height: 16px;
-        font-weight: 700;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
       }
 
       .select-field strong {
+        position: absolute;
+        left: 50%;
         display: block;
-        margin-top: -1px;
-        font-size: 14px;
-        line-height: 18px;
+        font-size: 15px;
+        line-height: 20px;
+        transform: translateX(-50%);
       }
 
       .select-menu {
@@ -743,19 +788,19 @@
         display: grid;
         gap: 4px;
         padding: 8px;
-        border: 1px solid color-mix(in srgb, var(--mode-strong, #8f7cf6) 58%, transparent);
-        border-radius: 16px;
+        border: 1px solid color-mix(in srgb, var(--lavender-strong) 58%, transparent);
+        border-radius: 20px;
         background: var(--surface);
         box-shadow: 0 16px 36px rgba(31, 28, 45, 0.16);
       }
 
       .select-option {
-        min-height: 36px;
+        min-height: 48px;
         padding: 0 10px;
-        border-radius: 8px;
+        border-radius: 12px;
         background: transparent;
         color: var(--ink);
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 700;
         text-align: center;
         white-space: nowrap;
@@ -763,9 +808,117 @@
 
       .select-option:hover,
       .select-option.selected {
-        background-color: var(--mode-soft, var(--lavender));
-        background-image: radial-gradient(circle at 22% 18%, rgba(255,255,255,0.72), transparent 34%);
+        background-color: var(--lavender);
+        background-image:
+          radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.16) 0 2px, transparent 2.5px),
+          radial-gradient(circle at 76% 68%, rgba(45, 35, 95, 0.12) 0 2px, transparent 2.5px);
         color: var(--mode-ink, #2d235f);
+      }
+
+      #generate-button {
+        grid-area: generate;
+      }
+
+      .projects-sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 20px 12px;
+        overflow: auto;
+        border-left: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.76);
+        backdrop-filter: blur(18px);
+      }
+
+      .projects-sidebar h2,
+      .projects-sidebar p {
+        margin: 0;
+      }
+
+      .projects-sidebar h2 {
+        padding: 6px 8px 0;
+        font-size: 18px;
+        line-height: 24px;
+      }
+
+      .projects-sidebar > p {
+        padding: 0 8px 4px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 18px;
+      }
+
+      .project-card {
+        width: 100%;
+        min-height: 64px;
+        display: grid;
+        grid-template-columns: 36px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 4px 8px rgba(70, 55, 126, 0.09);
+        text-align: left;
+      }
+
+      .project-card.active {
+        background: color-mix(in srgb, var(--lavender) 44%, var(--surface));
+      }
+
+      .project-card-icon {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 28% 24%, var(--mint) 0 20%, transparent 21%),
+          linear-gradient(135deg, var(--lavender), #f6f3ff);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.54);
+      }
+
+      .project-card-icon::before {
+        content: "";
+        width: 13px;
+        height: 13px;
+        border-radius: 4px;
+        background: #29262f;
+        box-shadow: 4px 4px 0 #111117;
+      }
+
+      .project-card-copy {
+        min-width: 0;
+      }
+
+      .project-card-copy strong,
+      .project-card-copy span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .project-card-copy strong {
+        font-size: 13px;
+        line-height: 18px;
+      }
+
+      .project-card-copy span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 16px;
+      }
+
+      .project-card svg {
+        width: 16px;
+        height: 16px;
+        color: #2d235f;
       }
 
       .rail {
@@ -1163,15 +1316,35 @@
         line-height: 22px;
       }
 
+      .mobile-app-shell {
+        display: none;
+      }
+
       @media (max-width: 1180px) {
         :root {
-          --sidebar: 236px;
-          --right-rail: 320px;
+          --sidebar: 210px;
+          --right-rail: 210px;
         }
 
-        .generate-grid,
         .copilot-layout {
           grid-template-columns: minmax(0, 1fr);
+        }
+
+        .prompt-footer {
+          grid-template-areas:
+            "enhance generate"
+            "selects selects";
+          grid-template-columns: 1fr auto;
+        }
+
+        .select-row {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .select-field {
+          min-width: 0;
+          width: 100%;
         }
 
         .rail {
@@ -1183,65 +1356,27 @@
         }
 
         .generation-gallery-grid {
-          grid-template-columns: repeat(3, minmax(160px, 1fr));
+          grid-template-columns: repeat(2, minmax(150px, 1fr));
         }
       }
 
-      @media (max-width: 840px) {
+      @media (max-width: 900px) {
+        html,
+        body {
+          height: 100%;
+          overflow: hidden;
+        }
+
         .desktop-shell {
-          grid-template-columns: 1fr;
-        }
-
-        .sidebar {
-          position: static;
-          height: auto;
-          grid-template-rows: auto auto;
-        }
-
-        .account-panel {
           display: none;
         }
 
-        .topbar,
-        .content {
-          padding-inline: 18px;
-        }
-
-        .prompt-panel {
-          right: 18px;
-          bottom: 18px;
-          left: 18px;
-        }
-
-        .control-strip,
-        .prompt-footer,
-        .toolbar-row {
-          grid-template-columns: 1fr;
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .select-row,
-        .topbar-actions {
-          justify-content: flex-start;
-          flex-wrap: wrap;
-        }
-
-        .table-row {
-          grid-template-columns: 1fr;
-          gap: 4px;
-          padding-block: 14px;
-        }
-
-        .table-head {
-          display: none;
-        }
-
-        .gallery-grid,
-        .generation-gallery-grid,
-        .rail,
-        .settings-grid {
-          grid-template-columns: 1fr;
+        .mobile-app-shell {
+          width: 100%;
+          height: 100dvh;
+          display: block;
+          border: 0;
+          background: #17151f;
         }
       }
     </style>
@@ -1257,6 +1392,13 @@
               <span>Creator workspace</span>
             </div>
           </div>
+
+          <div class="nav-label">Current project</div>
+          <button class="project-card active" type="button">
+            <span class="project-card-icon" aria-hidden="true"></span>
+            <span class="project-card-copy"><strong>FameFlow Studio</strong><span>Active project</span></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
 
           <nav class="nav-group" aria-label="Workspace">
             <div class="nav-label">Create</div>
@@ -1290,7 +1432,7 @@
 
             <div class="nav-label">System</div>
             <button class="nav-item" type="button" data-view="settings">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-1.9 3.3-.08-.03a1.7 1.7 0 0 0-1.95.38l-.06.06a1.7 1.7 0 0 0-.47 1.2V22H8.66v-.16a1.7 1.7 0 0 0-.47-1.2l-.06-.06a1.7 1.7 0 0 0-1.95-.38l-.08.03-1.9-3.3.06-.06A1.7 1.7 0 0 0 4.6 15l-.02-.08A1.7 1.7 0 0 0 3 13.25v-2.5a1.7 1.7 0 0 0 1.58-1.67L4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06 1.9-3.3.08.03a1.7 1.7 0 0 0 1.95-.38l.06-.06a1.7 1.7 0 0 0 .47-1.2V2h6.68v.16a1.7 1.7 0 0 0 .47 1.2l.06.06a1.7 1.7 0 0 0 1.95.38l.08-.03 1.9 3.3-.06.06A1.7 1.7 0 0 0 19.4 9l.02.08A1.7 1.7 0 0 0 21 10.75v2.5a1.7 1.7 0 0 0-1.58 1.67Z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg>
               Settings
               <span></span>
             </button>
@@ -1306,8 +1448,8 @@
             </div>
           </div>
           <div class="credit-row">
-            <span class="pill">1,240 credits</span>
-            <button class="small-button secondary-button" type="button">Add</button>
+            <span class="credit-copy"><strong>200</strong><span>credits</span></span>
+            <button class="cash-button" type="button">Add cash</button>
           </div>
         </section>
       </aside>
@@ -1316,15 +1458,9 @@
         <header class="topbar">
           <div class="page-title">
             <h1 id="page-heading">Generate</h1>
-            <p id="page-subheading">Create celebrity and character media from prompts, references, and campaign context.</p>
+            <p id="page-subheading"></p>
           </div>
           <div class="topbar-actions">
-            <button class="icon-button" type="button" aria-label="Search">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
-            </button>
-            <button class="icon-button" type="button" aria-label="Notifications">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
-            </button>
             <button class="primary-button" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
               New campaign
@@ -1400,8 +1536,7 @@
                         </button>
                         <div class="select-menu" role="menu" hidden>
                           <button class="select-option selected" type="button" role="menuitem" data-value="Fast">Fast</button>
-                          <button class="select-option" type="button" role="menuitem" data-value="Quality">Quality</button>
-                          <button class="select-option" type="button" role="menuitem" data-value="Cinematic">Cinematic</button>
+                          <button class="select-option" type="button" role="menuitem" data-value="Pro">Pro</button>
                         </div>
                       </div>
                       <div class="select-control" data-select="size">
@@ -1700,11 +1835,37 @@
           </section>
         </div>
       </main>
+
+      <aside class="projects-sidebar" aria-label="Projects">
+        <h2>Projects</h2>
+        <p>Switch context without leaving your workspace.</p>
+        <button class="project-card active" type="button">
+          <span class="project-card-icon" aria-hidden="true"></span>
+          <span class="project-card-copy"><strong>FameFlow Studio</strong><span>Current project</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+        <button class="project-card" type="button">
+          <span class="project-card-icon" aria-hidden="true"></span>
+          <span class="project-card-copy"><strong>Summer Launch</strong><span>12 assets</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+        <button class="project-card" type="button">
+          <span class="project-card-icon" aria-hidden="true"></span>
+          <span class="project-card-copy"><strong>Character Lab</strong><span>8 assets</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+        <button class="project-card" type="button">
+          <span class="project-card-icon" aria-hidden="true"></span>
+          <span class="project-card-copy"><strong>New project</strong><span>Create a workspace</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </aside>
     </div>
+    <iframe class="mobile-app-shell" src="../app.html" title="FameFlow mobile app"></iframe>
 
     <script>
       const titles = {
-        generate: ["Generate", "Create celebrity and character media from prompts, references, and campaign context."],
+        generate: ["Generate", ""],
         copilot: ["Co-Pilot", "Turn loose creative ideas into structured generation setups."],
         gallery: ["Gallery", "Review, filter, and reuse generated assets."],
         campaigns: ["Campaigns", "Plan influencer campaigns and track generated content."],
