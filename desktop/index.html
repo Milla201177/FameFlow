@@ -44,7 +44,7 @@
         min-height: 100vh;
         color: var(--ink);
         background:
-          radial-gradient(circle at 18% 0%, rgba(219, 212, 250, 0.34), transparent 28%),
+          radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--mode-soft, var(--lavender)) 9%, transparent), transparent 28%),
           linear-gradient(180deg, #fbfbfd 0%, var(--bg) 46%, #f4f5f8 100%);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         letter-spacing: 0;
@@ -61,7 +61,7 @@
         --line-strong: rgba(255, 255, 255, 0.16);
         --shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
         background:
-          radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--mode-soft, var(--lavender)) 14%, transparent), transparent 30%),
+          radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--mode-soft, var(--lavender)) 8%, transparent), transparent 30%),
           #09090d;
       }
 
@@ -70,6 +70,8 @@
         --mode-strong: var(--mint-strong);
         --mode-ink: #0b5b46;
         --mode-shadow: rgba(103, 215, 170, 0.24);
+        --mode-tint: color-mix(in srgb, var(--mint) 64%, var(--surface));
+        --mode-tint-quiet: color-mix(in srgb, var(--mint) 24%, var(--surface));
       }
 
       body[data-mode="celebrity"] {
@@ -77,6 +79,13 @@
         --mode-strong: var(--lavender-strong);
         --mode-ink: #24184f;
         --mode-shadow: rgba(143, 124, 246, 0.24);
+        --mode-tint: color-mix(in srgb, var(--lavender) 64%, var(--surface));
+        --mode-tint-quiet: color-mix(in srgb, var(--lavender) 24%, var(--surface));
+      }
+
+      body[data-theme="dark"] {
+        --mode-tint: color-mix(in srgb, var(--mode-soft) 30%, var(--surface));
+        --mode-tint-quiet: color-mix(in srgb, var(--mode-soft) 12%, var(--surface));
       }
 
       button,
@@ -90,6 +99,13 @@
       button {
         border: 0;
         cursor: pointer;
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--mode-strong, var(--lavender-strong));
+        outline-offset: 2px;
       }
 
       [hidden] {
@@ -189,11 +205,11 @@
         align-items: center;
         gap: 10px;
         padding: 0 12px;
-        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
+        border: 1px solid var(--line);
         border-radius: 16px;
         background: var(--surface);
         color: var(--ink);
-        box-shadow: 0 4px 8px rgba(70, 55, 126, 0.08);
+        box-shadow: 0 4px 8px rgba(31, 28, 45, 0.05);
         text-align: left;
       }
 
@@ -203,7 +219,7 @@
       }
 
       .nav-item.active {
-        background-color: var(--mode-soft, var(--lavender));
+        background-color: var(--mode-tint, var(--mode-soft, var(--lavender)));
         color: var(--mode-ink, #2d235f);
         box-shadow:
           inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 38%, transparent),
@@ -214,7 +230,7 @@
         min-width: 28px;
         padding: 3px 8px;
         border-radius: 999px;
-        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 74%, var(--surface));
+        background: var(--mode-tint, var(--mode-soft, var(--lavender)));
         color: var(--mode-ink, #2d235f);
         font-size: 12px;
         font-weight: 700;
@@ -226,7 +242,7 @@
         gap: 12px;
         margin-top: auto;
         padding: 12px;
-        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
+        border: 1px solid var(--line);
         border-radius: var(--radius-card);
         background: var(--surface);
         box-shadow: 0 4px 8px rgba(70, 55, 126, 0.1);
@@ -315,9 +331,9 @@
       .cash-button {
         min-height: 44px;
         padding: 0 14px;
-        border: 1px solid color-mix(in srgb, var(--lavender) 68%, #fff);
+        border: 1px solid color-mix(in srgb, var(--mode-strong) 34%, var(--line));
         border-radius: 999px;
-        background: var(--mode-soft, var(--lavender));
+        background: var(--mode-tint, var(--mode-soft, var(--lavender)));
         color: var(--mode-ink, #2d235f);
         box-shadow: 0 6px 12px var(--mode-shadow, rgba(70, 55, 126, 0.18));
         font-weight: 700;
@@ -538,10 +554,10 @@
         display: grid;
         gap: 6px;
         padding: 4px;
-        border: 1px solid rgba(219, 212, 250, 0.78);
+        border: 1px solid var(--line);
         border-radius: 999px;
         background: var(--surface);
-        box-shadow: 0 4px 10px rgba(63, 48, 120, 0.08);
+        box-shadow: 0 4px 10px rgba(31, 28, 45, 0.06);
       }
 
       .segmented.two {
@@ -568,7 +584,7 @@
       }
 
       .segment.active {
-        background-color: var(--mode-soft, var(--lavender));
+        background-color: var(--mode-tint, var(--mode-soft, var(--lavender)));
         color: var(--mode-ink, #2d235f);
         box-shadow:
           inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, #8f7cf6) 50%, transparent),
@@ -576,7 +592,7 @@
       }
 
       .segment.mint.active {
-        background: var(--mint);
+        background: var(--mode-tint, var(--mint));
         color: #0b5b46;
       }
 
@@ -904,7 +920,7 @@
         gap: 8px;
         min-height: 38px;
         padding: 3px 24px 3px 8px;
-        border: 1px solid color-mix(in srgb, var(--lavender-strong) 62%, transparent);
+        border: 1px solid var(--line-strong);
         border-radius: 14px;
         background: var(--surface);
         color: var(--ink);
@@ -960,7 +976,7 @@
         display: grid;
         gap: 3px;
         padding: 6px;
-        border: 1px solid color-mix(in srgb, var(--lavender-strong) 58%, transparent);
+        border: 1px solid var(--line-strong);
         border-radius: 16px;
         background: var(--surface);
         box-shadow: 0 16px 36px rgba(31, 28, 45, 0.16);
@@ -980,7 +996,7 @@
 
       .select-option:hover,
       .select-option.selected {
-        background-color: var(--lavender);
+        background-color: var(--mode-tint, var(--lavender));
         color: var(--mode-ink, #2d235f);
       }
 
@@ -1251,7 +1267,16 @@
 
       body[data-theme="dark"] .message.user,
       body[data-theme="dark"] .nav-item.active {
-        color: var(--mode-ink, #2d235f);
+        color: var(--ink);
+      }
+
+      body[data-theme="dark"] .nav-count,
+      body[data-theme="dark"] .cash-button,
+      body[data-theme="dark"] .segment.active,
+      body[data-theme="dark"] .select-option:hover,
+      body[data-theme="dark"] .select-option.selected,
+      body[data-theme="dark"] .asset-primary-action {
+        color: var(--ink);
       }
 
       body[data-theme="dark"] .page-title p,
@@ -1574,7 +1599,7 @@
       }
 
       .asset-primary-action {
-        background: var(--mode-soft, var(--lavender));
+        background: var(--mode-tint, var(--mode-soft, var(--lavender)));
         color: var(--mode-ink, #2d235f);
         box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 46%, transparent);
       }
