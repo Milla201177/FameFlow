@@ -47,6 +47,21 @@
         letter-spacing: 0;
       }
 
+      body[data-theme="dark"] {
+        --bg: #09090d;
+        --surface: #14141c;
+        --surface-soft: #1d1d27;
+        --ink: #f8f6ff;
+        --muted: #aaa4b8;
+        --faint: #787382;
+        --line: rgba(255, 255, 255, 0.1);
+        --line-strong: rgba(255, 255, 255, 0.16);
+        --shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+        background:
+          radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--mode-soft, var(--lavender)) 14%, transparent), transparent 30%),
+          #09090d;
+      }
+
       body[data-mode="character"] {
         --mode-soft: var(--mint);
         --mode-strong: var(--mint-strong);
@@ -95,6 +110,11 @@
         border-right: 1px solid var(--line);
         background: rgba(255, 255, 255, 0.76);
         backdrop-filter: blur(18px);
+      }
+
+      body[data-theme="dark"] .sidebar,
+      body[data-theme="dark"] .projects-sidebar {
+        background: rgba(20, 20, 28, 0.88);
       }
 
       .brand {
@@ -224,12 +244,12 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        min-height: 76px;
-        padding: 8px;
-        border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
-        border-radius: 16px;
-        background: var(--surface);
-        box-shadow: 0 4px 8px rgba(70, 55, 126, 0.08);
+        min-height: 64px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
       }
 
       .credit-copy {
@@ -280,6 +300,10 @@
         backdrop-filter: blur(18px);
       }
 
+      body[data-theme="dark"] .topbar {
+        background: rgba(9, 9, 13, 0.82);
+      }
+
       .page-title {
         min-width: 0;
       }
@@ -305,6 +329,10 @@
         display: flex;
         align-items: center;
         gap: 10px;
+      }
+
+      .theme-toggle {
+        border-radius: 50%;
       }
 
       .icon-button,
@@ -474,19 +502,27 @@
       .prompt-panel {
         position: fixed;
         z-index: 20;
-        right: calc(var(--right-rail) + 32px);
+        right: auto;
         bottom: 20px;
-        left: calc(var(--sidebar) + 32px);
-        height: var(--prompt-panel-height, 50vh);
-        min-height: 280px;
-        max-height: 82vh;
+        left: 50%;
+        width: min(560px, calc((100vw - var(--sidebar) - var(--right-rail) - 64px) / 2));
+        height: var(--prompt-panel-height, 25vh);
+        min-width: 440px;
+        min-height: 210px;
+        max-height: 50vh;
         display: grid;
-        grid-template-rows: 14px auto minmax(100px, 1fr) auto;
+        grid-template-rows: 10px auto minmax(56px, 1fr) auto;
         overflow: hidden;
         background: rgba(255, 255, 255, 0.96);
         box-shadow: 0 -18px 56px rgba(31, 28, 45, 0.16);
         backdrop-filter: blur(18px);
+        transform: translateX(-50%);
         transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      body[data-theme="dark"] .prompt-panel {
+        background: rgba(20, 20, 28, 0.96);
+        box-shadow: 0 -18px 56px rgba(0, 0, 0, 0.42);
       }
 
       .prompt-panel.resizing {
@@ -528,12 +564,12 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding: 16px 18px;
+        padding: 7px 10px;
         border-bottom: 1px solid var(--line);
       }
 
       .prompt-status {
-        max-width: 320px;
+        max-width: 140px;
         overflow: hidden;
         color: var(--muted);
         font-size: 12px;
@@ -555,21 +591,45 @@
         min-width: 0;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
+        min-height: 44px;
+        padding: 4px 10px 4px 6px;
+        border: 1px solid color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 64%, transparent);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 28%, var(--surface));
+        color: var(--ink);
+        box-shadow: 0 4px 10px var(--mode-shadow, rgba(143, 124, 246, 0.16));
+        transition: transform 160ms ease, background 160ms ease;
+      }
+
+      .subject-picker:hover {
+        transform: translateY(-1px);
+        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 48%, var(--surface));
+      }
+
+      .subject-picker.selected {
+        background: var(--mode-soft, var(--lavender));
+      }
+
+      .subject-picker-chevron {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+        color: var(--mode-ink, #2d235f);
       }
 
       .avatar-stack {
         position: relative;
-        width: 70px;
-        height: 38px;
+        width: 54px;
+        height: 32px;
         flex: 0 0 auto;
       }
 
       .avatar-stack span {
         position: absolute;
-        top: 3px;
-        width: 32px;
-        height: 32px;
+        top: 2px;
+        width: 28px;
+        height: 28px;
         border: 2px solid var(--surface);
         border-radius: 50%;
       }
@@ -580,12 +640,12 @@
       }
 
       .avatar-stack span:nth-child(2) {
-        left: 18px;
+        left: 13px;
         background: linear-gradient(135deg, #ffb59e, #f9d7bd);
       }
 
       .avatar-stack span:nth-child(3) {
-        left: 36px;
+        left: 26px;
         background: linear-gradient(135deg, var(--mint), #86c7ff);
       }
 
@@ -595,28 +655,28 @@
       }
 
       .subject-copy strong {
-        font-size: 15px;
-        line-height: 20px;
+        font-size: 13px;
+        line-height: 18px;
       }
 
       .subject-copy span {
         color: var(--muted);
         font-size: 12px;
-        line-height: 18px;
+        line-height: 16px;
       }
 
       .prompt-editor {
         display: grid;
-        grid-template-columns: 52px minmax(0, 1fr) 52px;
+        grid-template-columns: 36px minmax(0, 1fr) 36px;
         align-items: start;
         gap: 8px;
-        padding: 18px;
+        padding: 8px 10px;
       }
 
       .prompt-editor .icon-button {
         align-self: start;
-        min-height: 40px;
-        width: 40px;
+        min-height: 34px;
+        width: 34px;
         border-radius: 50%;
         background: transparent;
         color: var(--muted);
@@ -637,8 +697,8 @@
         outline: none;
         background: transparent;
         color: var(--ink);
-        font-size: 18px;
-        line-height: 28px;
+        font-size: 14px;
+        line-height: 20px;
       }
 
       .prompt-editor textarea::placeholder {
@@ -650,8 +710,8 @@
         grid-template-areas: "enhance selects generate";
         grid-template-columns: auto 1fr auto;
         align-items: center;
-        gap: 12px;
-        padding: 16px 18px;
+        gap: 5px;
+        padding: 7px 8px;
         border-top: 1px solid var(--line);
       }
 
@@ -659,26 +719,26 @@
         grid-area: selects;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
         justify-content: flex-end;
       }
 
       .enhance-prompt {
         grid-area: enhance;
         width: fit-content;
-        min-height: 48px;
+        min-height: 42px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 0 16px;
+        gap: 5px;
+        padding: 0 9px;
         border: 1px solid color-mix(in srgb, var(--lavender-strong) 54%, transparent);
-        border-radius: 16px;
+        border-radius: 14px;
         background: color-mix(in srgb, var(--lavender) 34%, var(--surface));
         color: var(--ink);
         box-shadow: 0 4px 10px rgba(70, 55, 126, 0.1);
-        font-size: 14px;
-        line-height: 20px;
+        font-size: 12px;
+        line-height: 16px;
         font-weight: 700;
         white-space: nowrap;
         transition: background 160ms ease, border-color 160ms ease, opacity 160ms ease, transform 160ms ease;
@@ -709,8 +769,8 @@
       }
 
       .enhance-prompt svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         flex: 0 0 auto;
       }
 
@@ -722,16 +782,16 @@
 
       .select-field {
         width: 100%;
-        min-width: 132px;
+        min-width: 58px;
         position: relative;
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         align-items: center;
         gap: 8px;
-        min-height: 56px;
-        padding: 5px 36px 5px 16px;
+        min-height: 38px;
+        padding: 3px 24px 3px 8px;
         border: 1px solid color-mix(in srgb, var(--lavender-strong) 62%, transparent);
-        border-radius: 20px;
+        border-radius: 14px;
         background: var(--surface);
         color: var(--ink);
         box-shadow: 0 4px 10px rgba(63, 48, 120, 0.12);
@@ -741,10 +801,10 @@
 
       .select-field svg {
         position: absolute;
-        right: 14px;
+        right: 7px;
         top: 50%;
-        width: 16px;
-        height: 16px;
+        width: 13px;
+        height: 13px;
         color: var(--muted);
         transform: translateY(-50%);
         transition: transform 160ms ease;
@@ -763,7 +823,7 @@
       }
 
       .select-field span {
-        display: block;
+        display: none;
         color: var(--muted);
         font-size: 14px;
         line-height: 20px;
@@ -771,12 +831,10 @@
       }
 
       .select-field strong {
-        position: absolute;
-        left: 50%;
         display: block;
-        font-size: 15px;
-        line-height: 20px;
-        transform: translateX(-50%);
+        font-size: 12px;
+        line-height: 16px;
+        text-align: center;
       }
 
       .select-menu {
@@ -786,21 +844,21 @@
         bottom: calc(100% + 8px);
         min-width: 100%;
         display: grid;
-        gap: 4px;
-        padding: 8px;
+        gap: 3px;
+        padding: 6px;
         border: 1px solid color-mix(in srgb, var(--lavender-strong) 58%, transparent);
-        border-radius: 20px;
+        border-radius: 16px;
         background: var(--surface);
         box-shadow: 0 16px 36px rgba(31, 28, 45, 0.16);
       }
 
       .select-option {
-        min-height: 48px;
-        padding: 0 10px;
-        border-radius: 12px;
+        min-height: 36px;
+        padding: 0 8px;
+        border-radius: 10px;
         background: transparent;
         color: var(--ink);
-        font-size: 15px;
+        font-size: 13px;
         font-weight: 700;
         text-align: center;
         white-space: nowrap;
@@ -817,6 +875,37 @@
 
       #generate-button {
         grid-area: generate;
+      }
+
+      .generate-action {
+        min-width: 124px;
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 15px;
+        border-radius: 999px;
+        background-color: var(--mode-strong, var(--lavender-strong));
+        background-image: radial-gradient(circle at 18% 28%, rgba(255,255,255,.25) 0 2px, transparent 2.5px);
+        color: #fff;
+        box-shadow: 0 8px 16px var(--mode-shadow, rgba(143,124,246,.24));
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .generate-action svg {
+        width: 19px;
+        height: 19px;
+      }
+
+      .generate-action:disabled {
+        cursor: not-allowed;
+        background: color-mix(in srgb, var(--surface) 74%, var(--line));
+        background-image: none;
+        color: var(--muted);
+        box-shadow: inset 0 0 0 1px var(--line);
       }
 
       .projects-sidebar {
@@ -871,6 +960,11 @@
         background: color-mix(in srgb, var(--lavender) 44%, var(--surface));
       }
 
+      .project-card:not(.project-create):hover {
+        border-color: var(--lavender-strong);
+        transform: translateY(-1px);
+      }
+
       .project-card-icon {
         width: 36px;
         height: 36px;
@@ -919,6 +1013,135 @@
         width: 16px;
         height: 16px;
         color: #2d235f;
+      }
+
+      .subject-dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: rgba(16, 16, 18, 0.42);
+        backdrop-filter: blur(8px);
+      }
+
+      .subject-dialog {
+        width: min(420px, 100%);
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+        border: 1px solid var(--line-strong);
+        border-radius: 22px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+      }
+
+      .subject-dialog-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .subject-dialog-header h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .subject-options {
+        display: grid;
+        gap: 8px;
+      }
+
+      .subject-option {
+        min-height: 62px;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border: 1px solid color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 48%, transparent);
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--ink);
+        text-align: left;
+      }
+
+      .subject-option:hover,
+      .subject-option.selected {
+        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 52%, var(--surface));
+      }
+
+      .subject-option-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 34%, rgba(255,255,255,.88) 0 8px, transparent 9px),
+          radial-gradient(circle at 50% 110%, rgba(255,255,255,.62) 0 18px, transparent 19px),
+          var(--avatar-color, linear-gradient(135deg, var(--lavender), #f1c0b2));
+      }
+
+      .subject-option-copy strong,
+      .subject-option-copy span {
+        display: block;
+      }
+
+      .subject-option-copy strong {
+        font-size: 14px;
+      }
+
+      .subject-option-copy span {
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .subject-option svg {
+        width: 18px;
+        height: 18px;
+        color: var(--mode-ink, #2d235f);
+      }
+
+      body[data-theme="dark"] .nav-item,
+      body[data-theme="dark"] .account-panel,
+      body[data-theme="dark"] .project-card,
+      body[data-theme="dark"] .segmented,
+      body[data-theme="dark"] .select-field,
+      body[data-theme="dark"] .select-menu,
+      body[data-theme="dark"] .subject-option {
+        border-color: var(--line-strong);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+      }
+
+      body[data-theme="dark"] .project-card svg,
+      body[data-theme="dark"] .subject-picker-chevron,
+      body[data-theme="dark"] .subject-option svg {
+        color: var(--lavender);
+      }
+
+      body[data-theme="dark"] .stat,
+      body[data-theme="dark"] .list-row,
+      body[data-theme="dark"] .table-head,
+      body[data-theme="dark"] .message {
+        background: var(--surface-soft);
+      }
+
+      body[data-theme="dark"] .message.user,
+      body[data-theme="dark"] .nav-item.active {
+        color: #2d235f;
+      }
+
+      body[data-theme="dark"] .generation-work-preview::after {
+        background: rgba(20, 20, 28, 0.88);
+        color: #f8f6ff;
+      }
+
+      body[data-theme="dark"] input,
+      body[data-theme="dark"] textarea {
+        color: var(--ink);
       }
 
       .rail {
@@ -1031,7 +1254,7 @@
         display: grid;
         min-height: calc(100vh - 180px);
         gap: 14px;
-        padding: 4px 0 calc(var(--prompt-panel-height, 50vh) + 72px);
+        padding: 4px 0 calc(var(--prompt-panel-height, 25vh) + 72px);
       }
 
       .generation-gallery-header {
@@ -1120,7 +1343,7 @@
       }
 
       body[data-mode="character"] .character-only {
-        display: block;
+        display: grid;
       }
 
       .asset-card {
@@ -1381,7 +1604,7 @@
       }
     </style>
   </head>
-  <body data-mode="celebrity">
+  <body data-theme="light" data-mode="celebrity">
     <div class="desktop-shell">
       <aside class="sidebar" aria-label="FameFlow navigation">
         <div>
@@ -1392,13 +1615,6 @@
               <span>Creator workspace</span>
             </div>
           </div>
-
-          <div class="nav-label">Current project</div>
-          <button class="project-card active" type="button">
-            <span class="project-card-icon" aria-hidden="true"></span>
-            <span class="project-card-copy"><strong>FameFlow Studio</strong><span>Active project</span></span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
 
           <nav class="nav-group" aria-label="Workspace">
             <div class="nav-label">Create</div>
@@ -1461,6 +1677,9 @@
             <p id="page-subheading"></p>
           </div>
           <div class="topbar-actions">
+            <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Dark theme">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.1A8.4 8.4 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"/></svg>
+            </button>
             <button class="primary-button" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
               New campaign
@@ -1502,12 +1721,13 @@
                 <section class="panel prompt-panel" aria-label="Prompt builder">
                   <div class="prompt-resize-handle" id="prompt-resize-handle" role="separator" aria-label="Resize prompt panel" aria-orientation="horizontal" tabindex="0"></div>
                   <div class="prompt-toolbar">
-                    <button class="subject-picker ghost-button" type="button">
+                    <button class="subject-picker" id="subject-picker" type="button" aria-haspopup="dialog">
                       <span class="avatar-stack" aria-hidden="true"><span></span><span></span><span></span></span>
                       <span class="subject-copy">
                         <strong id="subject-title">Choose celebrity</strong>
                         <span id="subject-caption">Required for Celebrity mode</span>
                       </span>
+                      <svg class="subject-picker-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
                     </button>
                     <span class="prompt-status" id="prompt-status" role="status" aria-live="polite">Drag the top edge to resize</span>
                   </div>
@@ -1526,7 +1746,7 @@
                       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                         <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
                       </svg>
-                      <span>Enhance prompt</span>
+                      <span>Enhance</span>
                     </button>
                     <div class="select-row">
                       <div class="select-control" data-select="model">
@@ -1564,9 +1784,9 @@
                         </div>
                       </div>
                     </div>
-                    <button class="primary-button" id="generate-button" type="button">
-                      Generate
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    <button class="generate-action" id="generate-button" type="button" disabled>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3 4 14h7l-1 7 10-12h-7V3Z"/></svg>
+                      <span id="generate-label">Write prompt</span>
                     </button>
                   </div>
                 </section>
@@ -1838,28 +2058,38 @@
 
       <aside class="projects-sidebar" aria-label="Projects">
         <h2>Projects</h2>
-        <p>Switch context without leaving your workspace.</p>
-        <button class="project-card active" type="button">
+        <button class="project-card active" type="button" data-project="FameFlow Studio" data-project-detail="24 assets">
           <span class="project-card-icon" aria-hidden="true"></span>
           <span class="project-card-copy"><strong>FameFlow Studio</strong><span>Current project</span></span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
         </button>
-        <button class="project-card" type="button">
+        <button class="project-card" type="button" data-project="Summer Launch" data-project-detail="12 assets">
           <span class="project-card-icon" aria-hidden="true"></span>
           <span class="project-card-copy"><strong>Summer Launch</strong><span>12 assets</span></span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
         </button>
-        <button class="project-card" type="button">
+        <button class="project-card" type="button" data-project="Character Lab" data-project-detail="8 assets">
           <span class="project-card-icon" aria-hidden="true"></span>
           <span class="project-card-copy"><strong>Character Lab</strong><span>8 assets</span></span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
         </button>
-        <button class="project-card" type="button">
+        <button class="project-card project-create" type="button" data-project-create>
           <span class="project-card-icon" aria-hidden="true"></span>
           <span class="project-card-copy"><strong>New project</strong><span>Create a workspace</span></span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
       </aside>
+    </div>
+    <div class="subject-dialog-backdrop" id="subject-dialog" hidden>
+      <section class="subject-dialog" role="dialog" aria-modal="true" aria-labelledby="subject-dialog-title">
+        <div class="subject-dialog-header">
+          <h2 id="subject-dialog-title">Choose celebrity</h2>
+          <button class="icon-button" id="close-subject-dialog" type="button" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <div class="subject-options" id="subject-options"></div>
+      </section>
     </div>
     <iframe class="mobile-app-shell" src="../app.html" title="FameFlow mobile app"></iframe>
 
@@ -1893,21 +2123,112 @@
 
       const subjectTitle = document.querySelector("#subject-title");
       const subjectCaption = document.querySelector("#subject-caption");
+      const subjectPicker = document.querySelector("#subject-picker");
+      const subjectDialog = document.querySelector("#subject-dialog");
+      const subjectDialogTitle = document.querySelector("#subject-dialog-title");
+      const subjectOptions = document.querySelector("#subject-options");
+      const closeSubjectDialogButton = document.querySelector("#close-subject-dialog");
       const promptInput = document.querySelector("#prompt-input");
       const galleryCaption = document.querySelector("#generation-gallery-caption");
+      const generateButton = document.querySelector("#generate-button");
+      const generateLabel = document.querySelector("#generate-label");
+      const themeToggle = document.querySelector("#theme-toggle");
+      let selectedSubject = "";
 
-      document.querySelectorAll("[data-mode]").forEach((button) => {
+      const subjects = {
+        celebrity: [
+          { name: "Ava Stone", detail: "Fashion · 94% match", color: "linear-gradient(135deg, #dbd4fa, #f0b8a9)" },
+          { name: "Leo Hart", detail: "Lifestyle · 91% match", color: "linear-gradient(135deg, #c9e4ff, #7188a5)" },
+          { name: "Maya Chen", detail: "Beauty · 88% match", color: "linear-gradient(135deg, #f7dbe9, #a8758d)" },
+        ],
+        character: [
+          { name: "Mina", detail: "Original character · Editorial", color: "linear-gradient(135deg, #c6fce4, #67d7aa)" },
+          { name: "Amara", detail: "Original character · Lifestyle", color: "linear-gradient(135deg, #f1dfff, #a187c0)" },
+          { name: "Nova", detail: "Original character · Digital creator", color: "linear-gradient(135deg, #c9e8ff, #6978b8)" },
+        ],
+      };
+
+      const updateGenerateState = () => {
+        const hasPrompt = promptInput.value.trim().length > 0;
+        const hasSubject = Boolean(selectedSubject);
+        generateButton.disabled = !(hasPrompt && hasSubject);
+        generateButton.setAttribute("aria-disabled", String(generateButton.disabled));
+        generateLabel.textContent = !hasPrompt
+          ? "Write prompt"
+          : !hasSubject
+            ? `Add ${document.body.dataset.mode === "character" ? "character" : "celebrity"}`
+            : "Generate";
+      };
+
+      const selectSubject = (subjectName) => {
+        selectedSubject = subjectName;
+        subjectTitle.textContent = selectedSubject;
+        subjectCaption.textContent = document.body.dataset.mode === "character" ? "Character selected" : "Celebrity selected";
+        subjectPicker.classList.add("selected");
+        subjectDialog.hidden = true;
+        updateGenerateState();
+        subjectPicker.focus();
+      };
+
+      const renderSubjectOptions = () => {
+        const mode = document.body.dataset.mode;
+        subjectDialogTitle.textContent = mode === "character" ? "Choose character" : "Choose celebrity";
+        subjectOptions.innerHTML = subjects[mode].map((subject) => `
+          <button class="subject-option${selectedSubject === subject.name ? " selected" : ""}" type="button" data-subject="${subject.name}">
+            <span class="subject-option-avatar" style="--avatar-color: ${subject.color}"></span>
+            <span class="subject-option-copy"><strong>${subject.name}</strong><span>${subject.detail}</span></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        `).join("");
+      };
+
+      subjectOptions.addEventListener("click", (event) => {
+        const option = event.target.closest("[data-subject]");
+        if (!option) return;
+        event.stopPropagation();
+        selectSubject(option.dataset.subject);
+      }, true);
+
+      document.querySelectorAll(".segment[data-mode]").forEach((button) => {
         button.addEventListener("click", () => {
           const mode = button.dataset.mode;
           document.body.dataset.mode = mode;
           const isCharacter = mode === "character";
+          selectedSubject = "";
+          subjectPicker.classList.remove("selected");
           subjectTitle.textContent = isCharacter ? "Choose character" : "Choose celebrity";
           subjectCaption.textContent = isCharacter ? "Required for Character mode" : "Required for Celebrity mode";
           promptInput.placeholder = isCharacter
             ? "Describe the character, scene, mood, styling, wardrobe, camera angle, and output intent..."
             : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
           galleryCaption.textContent = `${isCharacter ? "Character" : "Celebrity"} works from your gallery — open one to reuse its prompt and settings.`;
+          renderSubjectOptions();
+          updateGenerateState();
         });
+      });
+
+      subjectPicker.addEventListener("click", () => {
+        renderSubjectOptions();
+        subjectDialog.hidden = false;
+      });
+
+      closeSubjectDialogButton.addEventListener("click", () => {
+        subjectDialog.hidden = true;
+        subjectPicker.focus();
+      });
+
+      subjectDialog.addEventListener("click", (event) => {
+        if (event.target === subjectDialog) {
+          subjectDialog.hidden = true;
+          subjectPicker.focus();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !subjectDialog.hidden) {
+          subjectDialog.hidden = true;
+          subjectPicker.focus();
+        }
       });
 
       document.querySelector("[data-view-link='gallery']").addEventListener("click", () => {
@@ -1921,7 +2242,6 @@
       const attachmentInput = document.querySelector("#attachment-input");
       const enhanceButton = document.querySelector("#enhance-button");
       const voiceButton = document.querySelector("#voice-button");
-      const generateButton = document.querySelector("#generate-button");
       let recognition;
       let promptBeforeEnhance = "";
       let enhancedPromptValue = "";
@@ -1941,12 +2261,12 @@
             <path d="M19 12H5" />
             <path d="M12 5l-7 7 7 7" />
           </svg>
-          <span>Undo enhance</span>
+          <span>Undo</span>
         ` : `
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
           </svg>
-          <span>Enhance prompt</span>
+          <span>Enhance</span>
         `;
       };
 
@@ -1964,8 +2284,8 @@
       };
 
       const setPromptHeight = (height) => {
-        const minHeight = 280;
-        const maxHeight = Math.round(window.innerHeight * 0.82);
+        const minHeight = 210;
+        const maxHeight = Math.round(window.innerHeight * 0.5);
         const nextHeight = Math.max(minHeight, Math.min(maxHeight, height));
         document.documentElement.style.setProperty("--prompt-panel-height", `${nextHeight}px`);
         resizeHandle.setAttribute("aria-valuenow", String(nextHeight));
@@ -2020,9 +2340,11 @@
       promptInput.addEventListener("input", () => {
         if (enhanceButton.dataset.state === "revert" && promptInput.value !== enhancedPromptValue) {
           resetEnhancePromptState();
+          updateGenerateState();
           return;
         }
         updateEnhancePromptAvailability();
+        updateGenerateState();
       });
 
       enhanceButton.addEventListener("click", () => {
@@ -2043,6 +2365,7 @@
         promptInput.value = enhancedPromptValue;
         setEnhancePromptState("revert");
         updateEnhancePromptAvailability();
+        updateGenerateState();
         promptInput.focus();
         setPromptStatus("Prompt enhanced", "success");
       });
@@ -2072,6 +2395,7 @@
           const transcript = event.results[0][0].transcript;
           promptInput.value = `${promptInput.value}${promptInput.value ? " " : ""}${transcript}`;
           updateEnhancePromptAvailability();
+          updateGenerateState();
           setPromptStatus("Voice added to prompt", "success");
         };
         recognition.onerror = (event) => {
@@ -2118,15 +2442,45 @@
       });
 
       generateButton.addEventListener("click", () => {
-        if (!promptInput.value.trim()) {
-          promptInput.focus();
-          setPromptStatus("Write a prompt before generating", "error");
-          return;
-        }
+        if (generateButton.disabled) return;
         setPromptStatus("Generation added to queue", "success");
       });
 
+      document.querySelectorAll("[data-project]").forEach((card) => {
+        card.addEventListener("click", () => {
+          if (card.classList.contains("active")) return;
+          document.querySelectorAll("[data-project]").forEach((item) => {
+            item.classList.toggle("active", item === card);
+            item.querySelector(".project-card-copy span").textContent = item === card ? "Current project" : item.dataset.projectDetail;
+          });
+          document.title = `FameFlow · ${card.dataset.project}`;
+          setPromptStatus(`Project: ${card.dataset.project}`, "success");
+        });
+      });
+
+      document.querySelector("[data-project-create]").addEventListener("click", () => {
+        setPromptStatus("New project setup is ready", "success");
+      });
+
+      const setTheme = (theme) => {
+        const isDark = theme === "dark";
+        document.body.dataset.theme = isDark ? "dark" : "light";
+        themeToggle.setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme");
+        themeToggle.title = isDark ? "Light theme" : "Dark theme";
+        themeToggle.innerHTML = isDark
+          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v2M12 19v2M5.6 5.6 7 7M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>`
+          : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.1A8.4 8.4 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"/></svg>`;
+        localStorage.setItem("fameflow-desktop-theme", document.body.dataset.theme);
+      };
+
+      themeToggle.addEventListener("click", () => {
+        setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
+      });
+
+      setTheme(localStorage.getItem("fameflow-desktop-theme") || "light");
+      renderSubjectOptions();
       updateEnhancePromptAvailability();
+      updateGenerateState();
     </script>
   </body>
 </html>
