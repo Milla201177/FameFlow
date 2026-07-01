@@ -677,7 +677,7 @@
         height: var(--prompt-panel-height, 25vh);
         min-width: 560px;
         min-height: 210px;
-        max-width: calc(100vw - 32px);
+        max-width: min(1100px, calc(100vw - 32px));
         max-height: 50vh;
         display: grid;
         grid-template-rows: 10px minmax(56px, 1fr) auto;
@@ -703,7 +703,7 @@
         position: relative;
         display: grid;
         place-items: center;
-        cursor: nwse-resize;
+        cursor: ns-resize;
         touch-action: none;
       }
 
@@ -720,6 +720,37 @@
       .prompt-resize-handle:focus-visible::before,
       .prompt-panel.resizing .prompt-resize-handle::before {
         width: 72px;
+        background: var(--mode-strong, var(--lavender-strong));
+      }
+
+      .prompt-width-resize-handle {
+        width: 12px;
+        height: 72px;
+        position: absolute;
+        top: 50%;
+        right: 2px;
+        z-index: 4;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        cursor: ew-resize;
+        touch-action: none;
+        transform: translateY(-50%);
+      }
+
+      .prompt-width-resize-handle::before {
+        content: "";
+        width: 4px;
+        height: 52px;
+        border-radius: 999px;
+        background: #c9c7d2;
+        transition: height 160ms ease, background 160ms ease;
+      }
+
+      .prompt-width-resize-handle:hover::before,
+      .prompt-width-resize-handle:focus-visible::before,
+      .prompt-panel.resizing .prompt-width-resize-handle::before {
+        height: 64px;
         background: var(--mode-strong, var(--lavender-strong));
       }
 
@@ -2243,6 +2274,7 @@
 
                 <section class="panel prompt-panel" aria-label="Prompt builder">
                   <div class="prompt-resize-handle" id="prompt-resize-handle" role="separator" aria-label="Resize prompt panel" aria-orientation="horizontal" tabindex="0"></div>
+                  <div class="prompt-width-resize-handle" id="prompt-width-resize-handle" role="separator" aria-label="Resize prompt panel width" aria-orientation="vertical" tabindex="0"></div>
                   <span class="prompt-status" id="prompt-status" role="status" aria-live="polite"></span>
                   <div class="prompt-editor">
                     <button class="icon-button" id="attach-button" type="button" aria-label="Attach file">
@@ -2768,10 +2800,10 @@
           <div class="asset-sheet-side">
             <p class="asset-sheet-prompt" id="asset-sheet-prompt"></p>
             <div class="asset-action-stack">
-              <button class="asset-primary-action" type="button" id="asset-primary-action">Make video</button>
-              <button class="asset-action" type="button">Use as reference in…</button>
-              <button class="asset-action" type="button">Download</button>
-              <button class="asset-primary-action" type="button">Recreate</button>
+              <button class="asset-primary-action" type="button" id="asset-make-video">Make video</button>
+              <button class="asset-action" type="button" id="asset-use-reference">Use as reference in…</button>
+              <button class="asset-action" type="button" id="asset-download">Download</button>
+              <button class="asset-primary-action" type="button" id="asset-recreate">Recreate</button>
             </div>
           </div>
         </div>
@@ -2829,7 +2861,10 @@
       const assetSheetMeta = document.querySelector("#asset-sheet-meta");
       const assetSheetPrompt = document.querySelector("#asset-sheet-prompt");
       const assetSheetPreview = document.querySelector("#asset-sheet-preview");
-      const assetPrimaryAction = document.querySelector("#asset-primary-action");
+      const assetMakeVideo = document.querySelector("#asset-make-video");
+      const assetUseReference = document.querySelector("#asset-use-reference");
+      const assetDownload = document.querySelector("#asset-download");
+      const assetRecreate = document.querySelector("#asset-recreate");
       const celebritySegment = document.querySelector(".segment[data-mode='celebrity']");
       const characterSegment = document.querySelector(".segment[data-mode='character']");
       const celebritySegmentMeta = document.querySelector("#celebrity-segment-meta");
@@ -2838,6 +2873,11 @@
       const characterSegmentAvatar = document.querySelector("#character-segment-avatar");
       let activeProject = "FameFlow Studio";
       let activeView = "generate";
+      let currentAsset = {
+        title: "Asset",
+        meta: "Image",
+        prompt: "",
+      };
       const selectedSubjects = {
         celebrity: "",
         character: "",
@@ -2976,6 +3016,7 @@
 
       const promptPanel = document.querySelector(".prompt-panel");
       const resizeHandle = document.querySelector("#prompt-resize-handle");
+      const widthResizeHandle = document.querySelector("#prompt-width-resize-handle");
       const promptStatus = document.querySelector("#prompt-status");
       const attachButton = document.querySelector("#attach-button");
       const attachmentInput = document.querySelector("#attachment-input");
@@ -3035,15 +3076,16 @@
 
       const setPromptWidth = (width) => {
         const minWidth = 560;
-        const maxWidth = window.innerWidth - 32;
+        const maxWidth = Math.min(1100, window.innerWidth - 32);
         const nextWidth = Math.max(minWidth, Math.min(maxWidth, width));
         promptPanel.style.width = `${nextWidth}px`;
+        widthResizeHandle.setAttribute("aria-valuenow", String(nextWidth));
+        widthResizeHandle.setAttribute("aria-valuemin", String(minWidth));
+        widthResizeHandle.setAttribute("aria-valuemax", String(maxWidth));
       };
 
       resizeHandle.addEventListener("pointerdown", (event) => {
         promptPanel.classList.add("resizing");
-        resizeStartX = event.clientX;
-        resizeStartWidth = promptPanel.getBoundingClientRect().width;
         resizeHandle.setPointerCapture(event.pointerId);
         event.preventDefault();
       });
@@ -3051,7 +3093,6 @@
       resizeHandle.addEventListener("pointermove", (event) => {
         if (!promptPanel.classList.contains("resizing")) return;
         setPromptHeight(window.innerHeight - event.clientY - 20);
-        setPromptWidth(resizeStartWidth + ((event.clientX - resizeStartX) * 2));
       });
 
       resizeHandle.addEventListener("pointerup", (event) => {
@@ -3065,15 +3106,41 @@
       });
 
       resizeHandle.addEventListener("keydown", (event) => {
-        if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
-        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          const direction = event.key === "ArrowUp" ? 1 : -1;
-          setPromptHeight(promptPanel.getBoundingClientRect().height + direction * 32);
-        } else {
-          const direction = event.key === "ArrowRight" ? 1 : -1;
-          setPromptWidth(promptPanel.getBoundingClientRect().width + direction * 48);
-        }
+        if (!["ArrowUp", "ArrowDown"].includes(event.key)) return;
+        const direction = event.key === "ArrowUp" ? 1 : -1;
+        setPromptHeight(promptPanel.getBoundingClientRect().height + direction * 32);
         setPromptStatus("Prompt panel resized", "success");
+        event.preventDefault();
+      });
+
+      widthResizeHandle.addEventListener("pointerdown", (event) => {
+        promptPanel.classList.add("resizing");
+        resizeStartX = event.clientX;
+        resizeStartWidth = promptPanel.getBoundingClientRect().width;
+        widthResizeHandle.setPointerCapture(event.pointerId);
+        event.preventDefault();
+      });
+
+      widthResizeHandle.addEventListener("pointermove", (event) => {
+        if (!promptPanel.classList.contains("resizing")) return;
+        setPromptWidth(resizeStartWidth + ((event.clientX - resizeStartX) * 2));
+      });
+
+      widthResizeHandle.addEventListener("pointerup", (event) => {
+        promptPanel.classList.remove("resizing");
+        if (widthResizeHandle.hasPointerCapture(event.pointerId)) widthResizeHandle.releasePointerCapture(event.pointerId);
+        setPromptStatus("Prompt panel width resized", "success");
+      });
+
+      widthResizeHandle.addEventListener("pointercancel", () => {
+        promptPanel.classList.remove("resizing");
+      });
+
+      widthResizeHandle.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        setPromptWidth(promptPanel.getBoundingClientRect().width + direction * 48);
+        setPromptStatus("Prompt panel width resized", "success");
         event.preventDefault();
       });
 
@@ -3333,16 +3400,75 @@
         const title = card.querySelector("strong")?.textContent || "Asset";
         const meta = card.querySelector("span")?.textContent || "Image";
         const preview = card.querySelector(".generation-work-preview, .asset-preview");
+        const prompt = `Cinematic ${title.toLowerCase()}, polished styling, clean composition, and campaign-ready output for ${activeProject}.`;
+        currentAsset = { title, meta, prompt };
         assetSheetTitle.textContent = title;
         assetSheetMeta.textContent = meta;
-        assetSheetPrompt.textContent = `Prompt: cinematic ${title.toLowerCase()}, polished styling, clean composition, and campaign-ready output for ${activeProject}.`;
+        assetSheetPrompt.textContent = `Prompt: ${prompt}`;
         assetSheetPreview.style.setProperty("--asset-image", getComputedStyle(preview).getPropertyValue("background-image"));
-        assetPrimaryAction.textContent = "Make video";
         assetSheet.hidden = false;
       };
 
       document.querySelectorAll(".generation-work, .asset-card").forEach((card) => {
         card.addEventListener("click", () => openAssetSheet(card));
+      });
+
+      const reuseAssetInGenerate = ({ media, asReference = false } = {}) => {
+        assetSheet.hidden = true;
+        openView("generate");
+        if (media) document.querySelector(`.segment[data-media="${media}"]`)?.click();
+        promptInput.value = currentAsset.prompt;
+        resetEnhancePromptState();
+        updateEnhancePromptAvailability();
+        updateGenerateState();
+        attachButton.classList.toggle("active", asReference);
+        attachButton.setAttribute("aria-label", asReference ? `Reference: ${currentAsset.title}` : "Attach file");
+        promptInput.focus();
+        setPromptStatus(
+          asReference ? `${currentAsset.title} added as reference` : `${currentAsset.title} opened in Generate`,
+          "success"
+        );
+      };
+
+      assetMakeVideo.addEventListener("click", () => {
+        reuseAssetInGenerate({ media: "Video" });
+      });
+
+      assetUseReference.addEventListener("click", () => {
+        reuseAssetInGenerate({ asReference: true });
+      });
+
+      assetRecreate.addEventListener("click", () => {
+        const media = currentAsset.meta.includes("Video")
+          ? "Video"
+          : currentAsset.meta.includes("Audio")
+            ? "Audio"
+            : "Image";
+        reuseAssetInGenerate({ media });
+      });
+
+      assetDownload.addEventListener("click", () => {
+        const safeTitle = currentAsset.title.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "").toLowerCase() || "fameflow-asset";
+        const escapeXml = (value) => value.replace(/[<>&'"]/g, (character) => ({
+          "<": "&lt;",
+          ">": "&gt;",
+          "&": "&amp;",
+          "'": "&apos;",
+          "\"": "&quot;",
+        })[character]);
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+          <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dbd4fa"/><stop offset="1" stop-color="#c6fce4"/></linearGradient></defs>
+          <rect width="1200" height="900" rx="48" fill="url(#bg)"/>
+          <text x="72" y="760" fill="#1e1e24" font-family="Inter,Arial,sans-serif" font-size="54" font-weight="700">${escapeXml(currentAsset.title)}</text>
+          <text x="72" y="824" fill="#4f4f59" font-family="Inter,Arial,sans-serif" font-size="30">${escapeXml(currentAsset.meta)}</text>
+        </svg>`;
+        const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${safeTitle}.svg`;
+        link.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setPromptStatus(`${currentAsset.title} downloaded`, "success");
       });
 
       const setTheme = (theme) => {
