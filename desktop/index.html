@@ -204,7 +204,6 @@
 
       .nav-item.active {
         background-color: var(--lavender);
-        background-image: radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.14) 0 2px, transparent 2.5px);
         color: #2d235f;
         box-shadow:
           inset 0 0 0 1px rgba(45, 35, 95, 0.12),
@@ -243,6 +242,12 @@
         background: transparent;
         color: inherit;
         text-align: left;
+      }
+
+      .account-trigger > svg {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
       }
 
       .account-row {
@@ -371,23 +376,54 @@
         gap: 10px;
       }
 
-      .topbar-rail {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .shell-toggle {
-        border-radius: 16px;
-      }
-
-      .shell-toggle.active {
-        background: color-mix(in srgb, var(--lavender) 40%, var(--surface));
-        color: var(--mode-ink, #2d235f);
-      }
-
       .theme-toggle {
         border-radius: 50%;
+      }
+
+      .edge-toggle {
+        width: 76px;
+        height: 76px;
+        position: fixed;
+        top: 104px;
+        z-index: 25;
+        display: grid;
+        place-items: center;
+        border: 2px solid color-mix(in srgb, var(--lavender-strong) 72%, transparent);
+        border-radius: 20px;
+        background: color-mix(in srgb, var(--lavender) 34%, var(--surface));
+        color: #2d235f;
+        box-shadow: 0 10px 24px rgba(63, 48, 120, 0.12);
+        transition: left 180ms ease, right 180ms ease, transform 180ms ease, opacity 180ms ease;
+      }
+
+      .edge-toggle:hover {
+        transform: translateY(-1px);
+      }
+
+      .edge-toggle svg {
+        width: 30px;
+        height: 30px;
+      }
+
+      .edge-toggle:not(.active) {
+        opacity: 0.9;
+        background: var(--surface);
+      }
+
+      .edge-toggle[data-side="left"] {
+        left: calc(var(--sidebar) - 38px);
+      }
+
+      .edge-toggle[data-side="right"] {
+        right: calc(var(--right-rail) - 38px);
+      }
+
+      body[data-left-collapsed="true"] .edge-toggle[data-side="left"] {
+        left: 12px;
+      }
+
+      body[data-right-collapsed="true"] .edge-toggle[data-side="right"] {
+        right: 12px;
       }
 
       .icon-button,
@@ -531,8 +567,9 @@
         min-height: 44px;
         display: inline-flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 8px;
+        padding: 0 12px;
         border-radius: 999px;
         background: transparent;
         color: var(--muted);
@@ -560,10 +597,28 @@
         height: 18px;
       }
 
+      .segment-icon {
+        flex: 0 0 18px;
+      }
+
+      .segment-avatar {
+        width: 22px;
+        height: 22px;
+        display: none;
+        flex: 0 0 22px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 34%, rgba(255,255,255,0.88) 0 5px, transparent 6px),
+          radial-gradient(circle at 50% 110%, rgba(255,255,255,0.62) 0 10px, transparent 11px),
+          var(--avatar-color, linear-gradient(135deg, var(--lavender), #f1c0b2));
+      }
+
       .segment-copy {
         min-width: 0;
+        flex: 1 1 auto;
         display: grid;
         gap: 1px;
+        text-align: left;
       }
 
       .segment-title {
@@ -585,6 +640,22 @@
 
       .segment.active .segment-meta,
       .segment.has-selection .segment-meta {
+        display: block;
+      }
+
+      .segment-chevron {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        margin-left: auto;
+        color: currentColor;
+      }
+
+      .segment.has-selection .segment-icon {
+        display: none;
+      }
+
+      .segment.has-selection .segment-avatar {
         display: block;
       }
 
@@ -658,106 +729,11 @@
       }
 
       .prompt-status {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 3;
-        max-width: 140px;
-        overflow: hidden;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 18px;
-        text-align: right;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        pointer-events: none;
-      }
-
-      .prompt-status.success {
-        color: #0b7657;
-      }
-
-      .prompt-status.error {
-        color: var(--danger);
+        display: none;
       }
 
       .subject-picker {
-        width: 100%;
-        min-width: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-height: 44px;
-        padding: 4px 10px 4px 6px;
-        border: 1px solid color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 64%, transparent);
-        border-radius: 16px;
-        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 28%, var(--surface));
-        color: var(--ink);
-        box-shadow: 0 4px 10px var(--mode-shadow, rgba(143, 124, 246, 0.16));
-        transition: transform 160ms ease, background 160ms ease;
-      }
-
-      .subject-picker:hover {
-        transform: translateY(-1px);
-        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 48%, var(--surface));
-      }
-
-      .subject-picker.selected {
-        background: var(--mode-soft, var(--lavender));
-      }
-
-      .subject-picker-chevron {
-        width: 18px;
-        height: 18px;
-        flex: 0 0 auto;
-        color: var(--mode-ink, #2d235f);
-      }
-
-      .avatar-stack {
-        position: relative;
-        width: 54px;
-        height: 32px;
-        flex: 0 0 auto;
-      }
-
-      .avatar-stack span {
-        position: absolute;
-        top: 2px;
-        width: 28px;
-        height: 28px;
-        border: 2px solid var(--surface);
-        border-radius: 50%;
-      }
-
-      .avatar-stack span:nth-child(1) {
-        left: 0;
-        background: linear-gradient(135deg, var(--lavender), #25222e);
-      }
-
-      .avatar-stack span:nth-child(2) {
-        left: 13px;
-        background: linear-gradient(135deg, #ffb59e, #f9d7bd);
-      }
-
-      .avatar-stack span:nth-child(3) {
-        left: 26px;
-        background: linear-gradient(135deg, var(--mint), #86c7ff);
-      }
-
-      .subject-copy strong,
-      .subject-copy span {
-        display: block;
-      }
-
-      .subject-copy strong {
-        font-size: 13px;
-        line-height: 18px;
-      }
-
-      .subject-copy span {
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 16px;
+        display: none;
       }
 
       .prompt-editor {
@@ -862,12 +838,6 @@
         box-shadow: none;
       }
 
-      .enhance-prompt svg {
-        width: 16px;
-        height: 16px;
-        flex: 0 0 auto;
-      }
-
       .enhance-control {
         grid-area: enhance;
         display: inline-flex;
@@ -883,15 +853,11 @@
         display: grid;
         place-items: center;
         padding: 0;
-        border: 1px solid var(--line-strong);
+        border: 1px solid currentColor;
         border-radius: 50%;
-        background: var(--surface);
-        color: var(--muted);
-      }
-
-      .enhance-help > svg {
-        width: 14px;
-        height: 14px;
+        color: currentColor;
+        font-size: 12px;
+        line-height: 1;
       }
 
       .enhance-tooltip {
@@ -1434,6 +1400,7 @@
         border-radius: var(--radius);
         background: var(--surface);
         box-shadow: 0 8px 24px rgba(31, 28, 45, 0.06);
+        cursor: pointer;
       }
 
       .generation-work-preview {
@@ -1496,6 +1463,104 @@
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
+        cursor: pointer;
+      }
+
+      .asset-sheet {
+        width: min(560px, 100%);
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius-sheet);
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 28px 64px rgba(0, 0, 0, 0.26);
+      }
+
+      .asset-sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .asset-sheet-header h2,
+      .asset-sheet-header p {
+        margin: 0;
+      }
+
+      .asset-sheet-header p {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 18px;
+      }
+
+      .asset-preview-large {
+        min-height: 240px;
+        border-radius: var(--radius-card);
+        background:
+          linear-gradient(180deg, transparent 55%, rgba(10, 12, 16, 0.36)),
+          var(--asset-image),
+          linear-gradient(135deg, var(--lavender), var(--mint));
+        background-size: cover;
+        background-position: center;
+      }
+
+      .asset-sheet-prompt {
+        margin: 0;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--surface-soft) 72%, var(--surface));
+        color: var(--ink);
+        line-height: 22px;
+      }
+
+      .asset-action-stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .asset-action-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .asset-action,
+      .asset-primary-action {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border-radius: 20px;
+        font-size: 18px;
+        line-height: 24px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .asset-primary-action {
+        background: #15151c;
+        color: #fff;
+      }
+
+      .asset-action {
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--surface-soft) 82%, var(--surface));
+        color: var(--ink);
+      }
+
+      .asset-sheet-details {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
       }
 
       .asset-preview {
@@ -2048,6 +2113,9 @@
           </div>
         </section>
       </aside>
+      <button class="edge-toggle" id="toggle-left-sidebar" data-side="left" type="button" aria-label="Toggle left menu" title="Left menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h10M7 16h10"/></svg>
+      </button>
 
       <main class="main">
         <header class="topbar">
@@ -2056,14 +2124,6 @@
             <p id="page-subheading"></p>
           </div>
           <div class="topbar-actions">
-            <div class="topbar-rail">
-              <button class="icon-button shell-toggle active" id="toggle-left-sidebar" type="button" aria-label="Toggle left menu" title="Left menu">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h16"/></svg>
-              </button>
-              <button class="icon-button shell-toggle active" id="toggle-right-sidebar" type="button" aria-label="Toggle right menu" title="Projects">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6h14M9 12h10M5 18h14"/></svg>
-              </button>
-            </div>
             <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Dark theme">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.1A8.4 8.4 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"/></svg>
             </button>
@@ -2082,28 +2142,24 @@
                   <div class="mode-control-stack">
                     <div class="segmented two" role="tablist" aria-label="Creation mode">
                       <button class="segment active" type="button" data-mode="celebrity">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
+                        <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
+                        <span class="segment-avatar" id="celebrity-segment-avatar"></span>
                         <span class="segment-copy">
                           <span class="segment-title">Celebrity</span>
                           <span class="segment-meta" id="celebrity-segment-meta">Choose celebrity</span>
                         </span>
+                        <svg class="segment-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
                       </button>
                       <button class="segment" type="button" data-mode="character">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
+                        <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
+                        <span class="segment-avatar" id="character-segment-avatar"></span>
                         <span class="segment-copy">
                           <span class="segment-title">Character</span>
-                          <span class="segment-meta" id="character-segment-meta">Optional</span>
+                          <span class="segment-meta" id="character-segment-meta">Choose character</span>
                         </span>
+                        <svg class="segment-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
                       </button>
                     </div>
-                    <button class="subject-picker" id="subject-picker" type="button" aria-haspopup="dialog">
-                      <span class="avatar-stack" aria-hidden="true"><span></span><span></span><span></span></span>
-                      <span class="subject-copy">
-                        <strong id="subject-title">Choose celebrity</strong>
-                        <span id="subject-caption">Required for Celebrity mode</span>
-                      </span>
-                      <svg class="subject-picker-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-                    </button>
                   </div>
                   <div class="segmented three" role="tablist" aria-label="Media type">
                     <button class="segment active" type="button" data-media="Image">
@@ -2137,15 +2193,10 @@
                   <div class="prompt-footer">
                     <div class="enhance-control">
                       <button class="enhance-prompt" id="enhance-button" type="button" data-state="enhance" disabled>
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                          <path d="M12 4.5 13.5 9l4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5L6 10.5 10.5 9 12 4.5Z" />
-                          <path d="M18.2 4.8 18.8 6.6 20.6 7.2 18.8 7.8 18.2 9.6 17.6 7.8 15.8 7.2 17.6 6.6 18.2 4.8Z" />
-                        </svg>
                         <span>Enhance</span>
-                      </button>
-                      <button class="enhance-help" type="button" aria-label="What does Enhance mean?" aria-describedby="enhance-tooltip">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 0 1 4.7.7c0 1.8-2.5 2-2.5 3.8M12 17h.01"/></svg>
-                        <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, styling, composition, and camera details to improve the result. You can undo it.</span>
+                        <span class="enhance-help" aria-describedby="enhance-tooltip" tabindex="0">?
+                          <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, styling, composition, and camera details to improve the result. You can undo it.</span>
+                        </span>
                       </button>
                     </div>
                     <div class="select-row">
@@ -2568,6 +2619,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
       </aside>
+      <button class="edge-toggle" id="toggle-right-sidebar" data-side="right" type="button" aria-label="Toggle right menu" title="Projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h10M7 16h10"/></svg>
+      </button>
     </div>
     <div class="subject-dialog-backdrop" id="subject-dialog" hidden>
       <section class="subject-dialog" role="dialog" aria-modal="true" aria-labelledby="subject-dialog-title">
@@ -2619,6 +2673,52 @@
         <button class="sheet-cancel" type="button" data-close-existing-campaign>Cancel</button>
       </section>
     </div>
+    <div class="sheet-backdrop" id="project-sheet" hidden>
+      <section class="choice-sheet" aria-label="Create project">
+        <h2>Create project</h2>
+        <div class="choice-list">
+          <label class="settings-field">
+            <strong>Project name</strong>
+            <input id="new-project-name" type="text" value="New campaign studio" />
+          </label>
+          <label class="settings-field">
+            <strong>Project type</strong>
+            <input id="new-project-type" type="text" value="Campaign workspace" />
+          </label>
+        </div>
+        <button class="settings-primary" id="confirm-create-project" type="button">Create project</button>
+        <button class="sheet-cancel" type="button" data-close-project-sheet>Cancel</button>
+      </section>
+    </div>
+    <div class="sheet-backdrop" id="asset-sheet" hidden>
+      <section class="asset-sheet" aria-label="Asset actions">
+        <div class="asset-sheet-header">
+          <div>
+            <h2 id="asset-sheet-title">Asset</h2>
+            <p id="asset-sheet-meta"></p>
+          </div>
+          <button class="icon-button" id="close-asset-sheet" type="button" aria-label="Close asset actions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <div class="asset-preview-large" id="asset-sheet-preview"></div>
+        <p class="asset-sheet-prompt" id="asset-sheet-prompt"></p>
+        <div class="asset-action-stack">
+          <button class="asset-primary-action" type="button" id="asset-primary-action">Make video</button>
+          <button class="asset-action" type="button">Use as reference in…</button>
+          <button class="asset-action" type="button">Save to asset library</button>
+          <div class="asset-action-row">
+            <button class="asset-primary-action" type="button">Draw & Edit</button>
+            <button class="asset-action" type="button">Download</button>
+          </div>
+          <button class="asset-primary-action" type="button">Recreate</button>
+          <div class="asset-sheet-details">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+            <span>Generation details</span>
+          </div>
+        </div>
+      </section>
+    </div>
     <iframe class="mobile-app-shell" src="../app.html" title="FameFlow mobile app"></iframe>
 
     <script>
@@ -2637,6 +2737,7 @@
           document.querySelectorAll("[data-view]").forEach((item) => item.classList.toggle("active", item === button));
           document.querySelectorAll(".view").forEach((section) => section.classList.toggle("active", section.id === `view-${view}`));
           activeView = view;
+          if (view === "settings") setSettingsView("home");
           updatePageHeading();
         });
       });
@@ -2649,9 +2750,6 @@
         });
       });
 
-      const subjectTitle = document.querySelector("#subject-title");
-      const subjectCaption = document.querySelector("#subject-caption");
-      const subjectPicker = document.querySelector("#subject-picker");
       const subjectDialog = document.querySelector("#subject-dialog");
       const subjectDialogTitle = document.querySelector("#subject-dialog-title");
       const subjectOptions = document.querySelector("#subject-options");
@@ -2667,13 +2765,25 @@
       const rightToggle = document.querySelector("#toggle-right-sidebar");
       const campaignSheet = document.querySelector("#campaign-sheet");
       const campaignSelectSheet = document.querySelector("#campaign-select-sheet");
+      const projectSheet = document.querySelector("#project-sheet");
+      const assetSheet = document.querySelector("#asset-sheet");
+      const assetSheetTitle = document.querySelector("#asset-sheet-title");
+      const assetSheetMeta = document.querySelector("#asset-sheet-meta");
+      const assetSheetPrompt = document.querySelector("#asset-sheet-prompt");
+      const assetSheetPreview = document.querySelector("#asset-sheet-preview");
+      const assetPrimaryAction = document.querySelector("#asset-primary-action");
       const celebritySegment = document.querySelector(".segment[data-mode='celebrity']");
       const characterSegment = document.querySelector(".segment[data-mode='character']");
       const celebritySegmentMeta = document.querySelector("#celebrity-segment-meta");
       const characterSegmentMeta = document.querySelector("#character-segment-meta");
+      const celebritySegmentAvatar = document.querySelector("#celebrity-segment-avatar");
+      const characterSegmentAvatar = document.querySelector("#character-segment-avatar");
       let activeProject = "FameFlow Studio";
       let activeView = "generate";
-      let selectedSubject = "";
+      const selectedSubjects = {
+        celebrity: "",
+        character: "",
+      };
 
       const updatePageHeading = () => {
         if (activeView === "generate") {
@@ -2702,10 +2812,16 @@
 
       const updateModeSelectionUI = () => {
         const mode = document.body.dataset.mode;
-        celebritySegment.classList.toggle("has-selection", mode === "celebrity" && Boolean(selectedSubject));
-        characterSegment.classList.toggle("has-selection", mode === "character" && Boolean(selectedSubject));
-        celebritySegmentMeta.textContent = mode === "celebrity" && selectedSubject ? selectedSubject : "Choose celebrity";
-        characterSegmentMeta.textContent = mode === "character" && selectedSubject ? selectedSubject : "Optional";
+        const celebritySelection = selectedSubjects.celebrity;
+        const characterSelection = selectedSubjects.character;
+        celebritySegment.classList.toggle("has-selection", Boolean(celebritySelection));
+        characterSegment.classList.toggle("has-selection", Boolean(characterSelection));
+        celebritySegmentMeta.textContent = celebritySelection || "Choose celebrity";
+        characterSegmentMeta.textContent = characterSelection || "Choose character";
+        const celebritySubject = subjects.celebrity.find((subject) => subject.name === celebritySelection);
+        const characterSubject = subjects.character.find((subject) => subject.name === characterSelection);
+        celebritySegmentAvatar.style.setProperty("--avatar-color", celebritySubject?.color || "linear-gradient(135deg, var(--lavender), #f1c0b2)");
+        characterSegmentAvatar.style.setProperty("--avatar-color", characterSubject?.color || "linear-gradient(135deg, var(--mint), #86c7ff)");
       };
 
       const subjects = {
@@ -2723,7 +2839,7 @@
 
       const updateGenerateState = () => {
         const hasPrompt = promptInput.value.trim().length > 0;
-        const hasSubject = Boolean(selectedSubject);
+        const hasSubject = Boolean(selectedSubjects[document.body.dataset.mode]);
         const requiresSubject = document.body.dataset.mode === "celebrity";
         generateButton.disabled = !hasPrompt || (requiresSubject && !hasSubject);
         generateButton.setAttribute("aria-disabled", String(generateButton.disabled));
@@ -2735,21 +2851,18 @@
       };
 
       const selectSubject = (subjectName) => {
-        selectedSubject = subjectName;
-        subjectTitle.textContent = selectedSubject;
-        subjectCaption.textContent = document.body.dataset.mode === "character" ? "Character selected" : "Celebrity selected";
-        subjectPicker.classList.add("selected");
+        selectedSubjects[document.body.dataset.mode] = subjectName;
         updateModeSelectionUI();
         subjectDialog.hidden = true;
         updateGenerateState();
-        subjectPicker.focus();
+        document.querySelector(`.segment[data-mode="${document.body.dataset.mode}"]`)?.focus();
       };
 
       const renderSubjectOptions = () => {
         const mode = document.body.dataset.mode;
         subjectDialogTitle.textContent = mode === "character" ? "Choose character" : "Choose celebrity";
         subjectOptions.innerHTML = subjects[mode].map((subject) => `
-          <button class="subject-option${selectedSubject === subject.name ? " selected" : ""}" type="button" data-subject="${subject.name}">
+          <button class="subject-option${selectedSubjects[mode] === subject.name ? " selected" : ""}" type="button" data-subject="${subject.name}">
             <span class="subject-option-avatar" style="--avatar-color: ${subject.color}"></span>
             <span class="subject-option-copy"><strong>${subject.name}</strong><span>${subject.detail}</span></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
@@ -2767,12 +2880,14 @@
       document.querySelectorAll(".segment[data-mode]").forEach((button) => {
         button.addEventListener("click", () => {
           const mode = button.dataset.mode;
+          const currentMode = document.body.dataset.mode;
+          if (currentMode === mode) {
+            renderSubjectOptions();
+            subjectDialog.hidden = false;
+            return;
+          }
           document.body.dataset.mode = mode;
           const isCharacter = mode === "character";
-          selectedSubject = "";
-          subjectPicker.classList.remove("selected");
-          subjectTitle.textContent = isCharacter ? "Choose character" : "Choose celebrity";
-          subjectCaption.textContent = isCharacter ? "Optional for Character mode" : "Required for Celebrity mode";
           promptInput.placeholder = isCharacter
             ? "Describe the character, scene, mood, styling, wardrobe, camera angle, and output intent..."
             : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
@@ -2782,27 +2897,22 @@
         });
       });
 
-      subjectPicker.addEventListener("click", () => {
-        renderSubjectOptions();
-        subjectDialog.hidden = false;
-      });
-
       closeSubjectDialogButton.addEventListener("click", () => {
         subjectDialog.hidden = true;
-        subjectPicker.focus();
+        document.querySelector(`.segment[data-mode="${document.body.dataset.mode}"]`)?.focus();
       });
 
       subjectDialog.addEventListener("click", (event) => {
         if (event.target === subjectDialog) {
           subjectDialog.hidden = true;
-          subjectPicker.focus();
+          document.querySelector(`.segment[data-mode="${document.body.dataset.mode}"]`)?.focus();
         }
       });
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && !subjectDialog.hidden) {
           subjectDialog.hidden = true;
-          subjectPicker.focus();
+          document.querySelector(`.segment[data-mode="${document.body.dataset.mode}"]`)?.focus();
         }
       });
 
@@ -2828,17 +2938,15 @@
         enhanceButton.classList.toggle("is-revert", isRevert);
         enhanceButton.setAttribute("aria-label", isRevert ? "Undo prompt enhancement" : "Enhance prompt");
         enhanceButton.innerHTML = isRevert ? `
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M19 12H5" />
-            <path d="M12 5l-7 7 7 7" />
-          </svg>
           <span>Undo enhance</span>
+          <span class="enhance-help" aria-describedby="enhance-tooltip" tabindex="0">?
+            <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, styling, composition, and camera details to improve the result. You can undo it.</span>
+          </span>
         ` : `
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M12 4.5 13.5 9l4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5L6 10.5 10.5 9 12 4.5Z" />
-            <path d="M18.2 4.8 18.8 6.6 20.6 7.2 18.8 7.8 18.2 9.6 17.6 7.8 15.8 7.2 17.6 6.6 18.2 4.8Z" />
-          </svg>
           <span>Enhance</span>
+          <span class="enhance-help" aria-describedby="enhance-tooltip" tabindex="0">?
+            <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, styling, composition, and camera details to improve the result. You can undo it.</span>
+          </span>
         `;
       };
 
@@ -3037,8 +3145,8 @@
       });
 
       document.querySelector("[data-project-create]").addEventListener("click", () => {
-        campaignSheet.hidden = false;
-        setPromptStatus("Choose how to add a campaign", "success");
+        projectSheet.hidden = false;
+        setPromptStatus("Project setup opened", "success");
       });
 
       const settingsViews = {
@@ -3098,12 +3206,24 @@
       campaignSelectSheet.addEventListener("click", (event) => {
         if (event.target === campaignSelectSheet) campaignSelectSheet.hidden = true;
       });
+      projectSheet.addEventListener("click", (event) => {
+        if (event.target === projectSheet) projectSheet.hidden = true;
+      });
+      assetSheet.addEventListener("click", (event) => {
+        if (event.target === assetSheet) assetSheet.hidden = true;
+      });
 
       document.querySelector("[data-close-campaign-sheet]").addEventListener("click", () => {
         campaignSheet.hidden = true;
       });
       document.querySelector("[data-close-existing-campaign]").addEventListener("click", () => {
         campaignSelectSheet.hidden = true;
+      });
+      document.querySelector("[data-close-project-sheet]").addEventListener("click", () => {
+        projectSheet.hidden = true;
+      });
+      document.querySelector("#close-asset-sheet").addEventListener("click", () => {
+        assetSheet.hidden = true;
       });
       document.querySelector("#campaign-new-option").addEventListener("click", () => {
         campaignSheet.hidden = true;
@@ -3120,6 +3240,30 @@
           openView("campaigns");
           setPromptStatus(`Campaign: ${button.dataset.openExistingCampaign}`, "success");
         });
+      });
+      document.querySelector("#confirm-create-project").addEventListener("click", () => {
+        const projectName = document.querySelector("#new-project-name").value.trim() || "New project";
+        projectSheet.hidden = true;
+        activeProject = projectName;
+        updatePageHeading();
+        setPromptStatus(`${projectName} created`, "success");
+      });
+
+      const openAssetSheet = (card) => {
+        const title = card.querySelector("strong")?.textContent || "Asset";
+        const meta = card.querySelector("span")?.textContent || "Image";
+        const preview = card.querySelector(".generation-work-preview, .asset-preview");
+        const mediaType = meta.toLowerCase().includes("video") ? "video" : meta.toLowerCase().includes("audio") ? "audio" : "image";
+        assetSheetTitle.textContent = title;
+        assetSheetMeta.textContent = meta;
+        assetSheetPrompt.textContent = `Prompt: cinematic ${title.toLowerCase()}, polished styling, clean composition, and campaign-ready output for ${activeProject}.`;
+        assetSheetPreview.style.setProperty("--asset-image", getComputedStyle(preview).getPropertyValue("background-image"));
+        assetPrimaryAction.textContent = mediaType === "image" ? "Make video" : mediaType === "audio" ? "Use in video" : "Open video";
+        assetSheet.hidden = false;
+      };
+
+      document.querySelectorAll(".generation-work, .asset-card").forEach((card) => {
+        card.addEventListener("click", () => openAssetSheet(card));
       });
 
       const setTheme = (theme) => {
