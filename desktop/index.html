@@ -15,7 +15,7 @@
         --mint-strong: #67d7aa;
         --ink: #1e1e24;
         --muted: #6f6f7a;
-        --faint: #a8a8b3;
+        --faint: #767681;
         --line: #e8e6f2;
         --line-strong: #d8d3ec;
         --warning: #f5d780;
@@ -55,8 +55,8 @@
         --surface: #14141c;
         --surface-soft: #1d1d27;
         --ink: #f8f6ff;
-        --muted: #aaa4b8;
-        --faint: #787382;
+        --muted: #d3cede;
+        --faint: #aaa4b8;
         --line: rgba(255, 255, 255, 0.1);
         --line-strong: rgba(255, 255, 255, 0.16);
         --shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
@@ -75,7 +75,7 @@
       body[data-mode="celebrity"] {
         --mode-soft: var(--lavender);
         --mode-strong: var(--lavender-strong);
-        --mode-ink: #2d235f;
+        --mode-ink: #24184f;
         --mode-shadow: rgba(143, 124, 246, 0.24);
       }
 
@@ -203,19 +203,19 @@
       }
 
       .nav-item.active {
-        background-color: var(--lavender);
-        color: #2d235f;
+        background-color: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
         box-shadow:
-          inset 0 0 0 1px rgba(45, 35, 95, 0.12),
-          0 4px 8px rgba(70, 55, 126, 0.12);
+          inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 38%, transparent),
+          0 4px 8px var(--mode-shadow, rgba(70, 55, 126, 0.12));
       }
 
       .nav-count {
         min-width: 28px;
         padding: 3px 8px;
         border-radius: 999px;
-        background: rgba(143, 124, 246, 0.12);
-        color: #2d235f;
+        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 74%, var(--surface));
+        color: var(--mode-ink, #2d235f);
         font-size: 12px;
         font-weight: 700;
         text-align: center;
@@ -317,9 +317,9 @@
         padding: 0 14px;
         border: 1px solid color-mix(in srgb, var(--lavender) 68%, #fff);
         border-radius: 999px;
-        background: var(--lavender);
-        color: #2d235f;
-        box-shadow: 0 6px 12px rgba(70, 55, 126, 0.18);
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
+        box-shadow: 0 6px 12px var(--mode-shadow, rgba(70, 55, 126, 0.18));
         font-weight: 700;
         white-space: nowrap;
       }
@@ -376,24 +376,29 @@
         gap: 10px;
       }
 
+      .topbar-start {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
       .theme-toggle {
         border-radius: 50%;
       }
 
       .edge-toggle {
-        width: 76px;
-        height: 76px;
-        position: fixed;
-        top: 104px;
-        z-index: 25;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
         display: grid;
         place-items: center;
-        border: 2px solid color-mix(in srgb, var(--lavender-strong) 72%, transparent);
-        border-radius: 20px;
-        background: color-mix(in srgb, var(--lavender) 34%, var(--surface));
-        color: #2d235f;
-        box-shadow: 0 10px 24px rgba(63, 48, 120, 0.12);
-        transition: left 180ms ease, right 180ms ease, transform 180ms ease, opacity 180ms ease;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 5px 14px rgba(63, 48, 120, 0.1);
+        transition: transform 180ms ease, background 180ms ease, color 180ms ease;
       }
 
       .edge-toggle:hover {
@@ -401,29 +406,13 @@
       }
 
       .edge-toggle svg {
-        width: 30px;
-        height: 30px;
+        width: 18px;
+        height: 18px;
       }
 
       .edge-toggle:not(.active) {
-        opacity: 0.9;
-        background: var(--surface);
-      }
-
-      .edge-toggle[data-side="left"] {
-        left: calc(var(--sidebar) - 38px);
-      }
-
-      .edge-toggle[data-side="right"] {
-        right: calc(var(--right-rail) - 38px);
-      }
-
-      body[data-left-collapsed="true"] .edge-toggle[data-side="left"] {
-        left: 12px;
-      }
-
-      body[data-right-collapsed="true"] .edge-toggle[data-side="right"] {
-        right: 12px;
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
       }
 
       .icon-button,
@@ -467,7 +456,7 @@
 
       .primary-button {
         background: var(--mode-strong, var(--lavender-strong));
-        color: #fff;
+        color: var(--mode-ink, #2d235f);
         box-shadow: 0 10px 20px var(--mode-shadow, rgba(143, 124, 246, 0.24));
         transition: background 180ms ease, box-shadow 180ms ease;
       }
@@ -567,7 +556,7 @@
         min-height: 44px;
         display: inline-flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         gap: 8px;
         padding: 0 12px;
         border-radius: 999px;
@@ -580,7 +569,6 @@
 
       .segment.active {
         background-color: var(--mode-soft, var(--lavender));
-        background-image: radial-gradient(circle at 22% 18%, rgba(255,255,255,0.75), transparent 34%);
         color: var(--mode-ink, #2d235f);
         box-shadow:
           inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, #8f7cf6) 50%, transparent),
@@ -590,6 +578,10 @@
       .segment.mint.active {
         background: var(--mint);
         color: #0b5b46;
+      }
+
+      .mode-segmented .segment {
+        justify-content: flex-start;
       }
 
       .segment svg {
@@ -665,10 +657,11 @@
         right: auto;
         bottom: 20px;
         left: 50%;
-        width: min(560px, calc((100vw - var(--sidebar) - var(--right-rail) - 64px) / 2));
+        width: min(760px, calc(100vw - 48px));
         height: var(--prompt-panel-height, 25vh);
-        min-width: 440px;
+        min-width: 560px;
         min-height: 210px;
+        max-width: calc(100vw - 32px);
         max-height: 50vh;
         display: grid;
         grid-template-rows: 10px minmax(56px, 1fr) auto;
@@ -694,7 +687,7 @@
         position: relative;
         display: grid;
         place-items: center;
-        cursor: ns-resize;
+        cursor: nwse-resize;
         touch-action: none;
       }
 
@@ -781,8 +774,8 @@
         grid-template-areas: "enhance selects generate";
         grid-template-columns: auto 1fr auto;
         align-items: center;
-        gap: 5px;
-        padding: 7px 8px;
+        gap: 8px;
+        padding: 8px 10px;
         border-top: 1px solid var(--line);
       }
 
@@ -1006,7 +999,7 @@
         border-radius: 999px;
         background-color: var(--mode-strong, var(--lavender-strong));
         background-image: radial-gradient(circle at 18% 28%, rgba(255,255,255,.25) 0 2px, transparent 2.5px);
-        color: #fff;
+        color: var(--mode-ink, #2d235f);
         box-shadow: 0 8px 16px var(--mode-shadow, rgba(143,124,246,.24));
         font-size: 13px;
         font-weight: 800;
@@ -1258,7 +1251,19 @@
 
       body[data-theme="dark"] .message.user,
       body[data-theme="dark"] .nav-item.active {
-        color: #2d235f;
+        color: var(--mode-ink, #2d235f);
+      }
+
+      body[data-theme="dark"] .page-title p,
+      body[data-theme="dark"] .panel-subtitle,
+      body[data-theme="dark"] .generation-work-copy span,
+      body[data-theme="dark"] .asset-body span,
+      body[data-theme="dark"] .project-card-copy span,
+      body[data-theme="dark"] .settings-card-copy span,
+      body[data-theme="dark"] .settings-summary span,
+      body[data-theme="dark"] .list-row span,
+      body[data-theme="dark"] .campaign-name span {
+        color: var(--muted);
       }
 
       body[data-theme="dark"] .generation-work-preview::after {
@@ -1371,6 +1376,12 @@
         color: #0b5b46;
       }
 
+      .list-row .pill {
+        display: inline-flex;
+        overflow: visible;
+        text-overflow: clip;
+      }
+
       .gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(160px, 1fr));
@@ -1467,10 +1478,13 @@
       }
 
       .asset-sheet {
-        width: min(560px, 100%);
+        width: min(920px, calc(100vw - 40px));
+        max-height: calc(100dvh - 40px);
         display: grid;
-        gap: 14px;
-        padding: 18px;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 16px;
+        padding: 20px;
+        overflow: hidden;
         border: 1px solid var(--line-strong);
         border-radius: var(--radius-sheet);
         background: var(--surface);
@@ -1496,8 +1510,16 @@
         line-height: 18px;
       }
 
+      .asset-sheet-content {
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: 18px;
+      }
+
       .asset-preview-large {
-        min-height: 240px;
+        min-height: 0;
+        height: 100%;
         border-radius: var(--radius-card);
         background:
           linear-gradient(180deg, transparent 55%, rgba(10, 12, 16, 0.36)),
@@ -1507,11 +1529,20 @@
         background-position: center;
       }
 
+      .asset-sheet-side {
+        min-height: 0;
+        display: grid;
+        grid-template-rows: minmax(120px, 1fr) auto;
+        gap: 12px;
+      }
+
       .asset-sheet-prompt {
         margin: 0;
         padding: 14px 16px;
+        min-height: 0;
+        overflow: auto;
         border: 1px solid var(--line);
-        border-radius: 18px;
+        border-radius: var(--radius-control);
         background: color-mix(in srgb, var(--surface-soft) 72%, var(--surface));
         color: var(--ink);
         line-height: 22px;
@@ -1530,37 +1561,28 @@
 
       .asset-action,
       .asset-primary-action {
-        min-height: 62px;
+        min-height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 0 18px;
-        border-radius: 20px;
-        font-size: 18px;
-        line-height: 24px;
+        border-radius: var(--radius-control);
+        font-size: 15px;
+        line-height: 20px;
         font-weight: 700;
         text-align: center;
       }
 
       .asset-primary-action {
-        background: #15151c;
-        color: #fff;
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 46%, transparent);
       }
 
       .asset-action {
         border: 1px solid var(--line);
         background: color-mix(in srgb, var(--surface-soft) 82%, var(--surface));
         color: var(--ink);
-      }
-
-      .asset-sheet-details {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
       }
 
       .asset-preview {
@@ -1726,11 +1748,16 @@
       .settings-stack {
         width: min(760px, 100%);
         display: grid;
-        gap: 16px;
+        gap: 28px;
       }
 
       .settings-view[hidden] {
         display: none !important;
+      }
+
+      .settings-view {
+        display: grid;
+        gap: 28px;
       }
 
       .settings-top {
@@ -1782,7 +1809,7 @@
       }
 
       .settings-card.meta-card {
-        grid-template-columns: 64px minmax(0, 1fr);
+        grid-template-columns: 56px minmax(0, 1fr) auto;
       }
 
       .settings-card-icon {
@@ -1829,7 +1856,7 @@
         border: 0;
         outline: 0;
         background: transparent;
-        color: var(--muted);
+        color: var(--ink);
         font-size: 17px;
         line-height: 24px;
       }
@@ -1902,6 +1929,15 @@
         color: #0b5b46;
         font-size: 14px;
         font-weight: 700;
+      }
+
+      body[data-theme="dark"] .settings-card,
+      body[data-theme="dark"] .settings-field,
+      body[data-theme="dark"] .settings-summary,
+      body[data-theme="dark"] .asset-sheet,
+      body[data-theme="dark"] .asset-action {
+        border-color: var(--line-strong);
+        color: var(--ink);
       }
 
       .sheet-backdrop {
@@ -1995,23 +2031,6 @@
           grid-template-columns: minmax(0, 1fr);
         }
 
-        .prompt-footer {
-          grid-template-areas:
-            "enhance generate"
-            "selects selects";
-          grid-template-columns: 1fr auto;
-        }
-
-        .select-row {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .select-field {
-          min-width: 0;
-          width: 100%;
-        }
-
         .rail {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -2022,6 +2041,22 @@
 
         .generation-gallery-grid {
           grid-template-columns: repeat(2, minmax(150px, 1fr));
+        }
+      }
+
+      @media (max-height: 680px) and (min-width: 901px) {
+        .asset-sheet {
+          max-height: calc(100dvh - 24px);
+          padding: 16px;
+        }
+
+        .asset-sheet-content {
+          gap: 14px;
+        }
+
+        .asset-action,
+        .asset-primary-action {
+          min-height: 42px;
         }
       }
 
@@ -2113,15 +2148,16 @@
           </div>
         </section>
       </aside>
-      <button class="edge-toggle" id="toggle-left-sidebar" data-side="left" type="button" aria-label="Toggle left menu" title="Left menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h10M7 16h10"/></svg>
-      </button>
-
       <main class="main">
         <header class="topbar">
-          <div class="page-title">
-            <h1 id="page-heading">Generate</h1>
-            <p id="page-subheading"></p>
+          <div class="topbar-start">
+            <button class="edge-toggle" id="toggle-left-sidebar" data-side="left" type="button" aria-label="Toggle left menu" title="Left menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h10M7 16h10"/></svg>
+            </button>
+            <div class="page-title">
+              <h1 id="page-heading">Generate</h1>
+              <p id="page-subheading"></p>
+            </div>
           </div>
           <div class="topbar-actions">
             <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Dark theme">
@@ -2130,6 +2166,9 @@
             <button class="primary-button" id="open-campaign-sheet" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
               New campaign
+            </button>
+            <button class="edge-toggle" id="toggle-right-sidebar" data-side="right" type="button" aria-label="Toggle right menu" title="Projects">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h10M7 16h10"/></svg>
             </button>
           </div>
         </header>
@@ -2140,7 +2179,7 @@
               <div class="workspace">
                 <div class="control-strip">
                   <div class="mode-control-stack">
-                    <div class="segmented two" role="tablist" aria-label="Creation mode">
+                    <div class="segmented two mode-segmented" role="tablist" aria-label="Creation mode">
                       <button class="segment active" type="button" data-mode="celebrity">
                         <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
                         <span class="segment-avatar" id="celebrity-segment-avatar"></span>
@@ -2578,7 +2617,8 @@
                     <span class="settings-card-icon green" aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7h8M8 12h8M8 17h5"/></svg>
                     </span>
-                    <span class="settings-card-copy"><strong>Meta Ads</strong><span>Last synced today.</span><span class="settings-status">Connected</span></span>
+                    <span class="settings-card-copy"><strong>Meta Ads</strong><span>Last synced today.</span></span>
+                    <span class="settings-status">Connected</span>
                   </section>
                   <button class="settings-card compact" id="connect-meta" type="button">
                     <span class="settings-card-copy"><strong>Reconnect</strong><span>Refresh your Meta Ads connection.</span></span>
@@ -2619,9 +2659,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         </button>
       </aside>
-      <button class="edge-toggle" id="toggle-right-sidebar" data-side="right" type="button" aria-label="Toggle right menu" title="Projects">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h10M7 16h10"/></svg>
-      </button>
     </div>
     <div class="subject-dialog-backdrop" id="subject-dialog" hidden>
       <section class="subject-dialog" role="dialog" aria-modal="true" aria-labelledby="subject-dialog-title">
@@ -2701,20 +2738,16 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>
           </button>
         </div>
-        <div class="asset-preview-large" id="asset-sheet-preview"></div>
-        <p class="asset-sheet-prompt" id="asset-sheet-prompt"></p>
-        <div class="asset-action-stack">
-          <button class="asset-primary-action" type="button" id="asset-primary-action">Make video</button>
-          <button class="asset-action" type="button">Use as reference in…</button>
-          <button class="asset-action" type="button">Save to asset library</button>
-          <div class="asset-action-row">
-            <button class="asset-primary-action" type="button">Draw & Edit</button>
-            <button class="asset-action" type="button">Download</button>
-          </div>
-          <button class="asset-primary-action" type="button">Recreate</button>
-          <div class="asset-sheet-details">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-            <span>Generation details</span>
+        <div class="asset-sheet-content">
+          <div class="asset-preview-large" id="asset-sheet-preview"></div>
+          <div class="asset-sheet-side">
+            <p class="asset-sheet-prompt" id="asset-sheet-prompt"></p>
+            <div class="asset-action-stack">
+              <button class="asset-primary-action" type="button" id="asset-primary-action">Make video</button>
+              <button class="asset-action" type="button">Use as reference in…</button>
+              <button class="asset-action" type="button">Download</button>
+              <button class="asset-primary-action" type="button">Recreate</button>
+            </div>
           </div>
         </div>
       </section>
@@ -2926,6 +2959,8 @@
       let recognition;
       let promptBeforeEnhance = "";
       let enhancedPromptValue = "";
+      let resizeStartX = 0;
+      let resizeStartWidth = 0;
 
       const setPromptStatus = (message, state = "") => {
         promptStatus.textContent = message;
@@ -2973,8 +3008,17 @@
         resizeHandle.setAttribute("aria-valuemax", String(maxHeight));
       };
 
+      const setPromptWidth = (width) => {
+        const minWidth = 560;
+        const maxWidth = window.innerWidth - 32;
+        const nextWidth = Math.max(minWidth, Math.min(maxWidth, width));
+        promptPanel.style.width = `${nextWidth}px`;
+      };
+
       resizeHandle.addEventListener("pointerdown", (event) => {
         promptPanel.classList.add("resizing");
+        resizeStartX = event.clientX;
+        resizeStartWidth = promptPanel.getBoundingClientRect().width;
         resizeHandle.setPointerCapture(event.pointerId);
         event.preventDefault();
       });
@@ -2982,6 +3026,7 @@
       resizeHandle.addEventListener("pointermove", (event) => {
         if (!promptPanel.classList.contains("resizing")) return;
         setPromptHeight(window.innerHeight - event.clientY - 20);
+        setPromptWidth(resizeStartWidth + ((event.clientX - resizeStartX) * 2));
       });
 
       resizeHandle.addEventListener("pointerup", (event) => {
@@ -2995,11 +3040,21 @@
       });
 
       resizeHandle.addEventListener("keydown", (event) => {
-        if (!["ArrowUp", "ArrowDown"].includes(event.key)) return;
-        const direction = event.key === "ArrowUp" ? 1 : -1;
-        setPromptHeight(promptPanel.getBoundingClientRect().height + direction * 32);
+        if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          const direction = event.key === "ArrowUp" ? 1 : -1;
+          setPromptHeight(promptPanel.getBoundingClientRect().height + direction * 32);
+        } else {
+          const direction = event.key === "ArrowRight" ? 1 : -1;
+          setPromptWidth(promptPanel.getBoundingClientRect().width + direction * 48);
+        }
         setPromptStatus("Prompt panel resized", "success");
         event.preventDefault();
+      });
+
+      window.addEventListener("resize", () => {
+        setPromptHeight(promptPanel.getBoundingClientRect().height);
+        setPromptWidth(promptPanel.getBoundingClientRect().width);
       });
 
       attachButton.addEventListener("click", () => attachmentInput.click());
@@ -3253,12 +3308,11 @@
         const title = card.querySelector("strong")?.textContent || "Asset";
         const meta = card.querySelector("span")?.textContent || "Image";
         const preview = card.querySelector(".generation-work-preview, .asset-preview");
-        const mediaType = meta.toLowerCase().includes("video") ? "video" : meta.toLowerCase().includes("audio") ? "audio" : "image";
         assetSheetTitle.textContent = title;
         assetSheetMeta.textContent = meta;
         assetSheetPrompt.textContent = `Prompt: cinematic ${title.toLowerCase()}, polished styling, clean composition, and campaign-ready output for ${activeProject}.`;
         assetSheetPreview.style.setProperty("--asset-image", getComputedStyle(preview).getPropertyValue("background-image"));
-        assetPrimaryAction.textContent = mediaType === "image" ? "Make video" : mediaType === "audio" ? "Use in video" : "Open video";
+        assetPrimaryAction.textContent = "Make video";
         assetSheet.hidden = false;
       };
 
