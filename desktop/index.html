@@ -446,6 +446,12 @@
         display: grid;
         grid-template-columns: minmax(280px, 420px) minmax(240px, 1fr);
         gap: 14px;
+        align-items: start;
+      }
+
+      .mode-control-stack {
+        display: grid;
+        gap: 7px;
       }
 
       .segmented {
@@ -511,7 +517,7 @@
         min-height: 210px;
         max-height: 50vh;
         display: grid;
-        grid-template-rows: 10px auto minmax(56px, 1fr) auto;
+        grid-template-rows: 10px minmax(56px, 1fr) auto;
         overflow: hidden;
         background: rgba(255, 255, 255, 0.96);
         box-shadow: 0 -18px 56px rgba(31, 28, 45, 0.16);
@@ -569,6 +575,10 @@
       }
 
       .prompt-status {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 3;
         max-width: 140px;
         overflow: hidden;
         color: var(--muted);
@@ -577,6 +587,7 @@
         text-align: right;
         text-overflow: ellipsis;
         white-space: nowrap;
+        pointer-events: none;
       }
 
       .prompt-status.success {
@@ -588,6 +599,7 @@
       }
 
       .subject-picker {
+        width: 100%;
         min-width: 0;
         display: flex;
         align-items: center;
@@ -724,7 +736,6 @@
       }
 
       .enhance-prompt {
-        grid-area: enhance;
         width: fit-content;
         min-height: 42px;
         display: inline-flex;
@@ -772,6 +783,67 @@
         width: 16px;
         height: 16px;
         flex: 0 0 auto;
+      }
+
+      .enhance-control {
+        grid-area: enhance;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .enhance-help {
+        width: 24px;
+        height: 24px;
+        position: relative;
+        flex: 0 0 24px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 1px solid var(--line-strong);
+        border-radius: 50%;
+        background: var(--surface);
+        color: var(--muted);
+      }
+
+      .enhance-help > svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .enhance-tooltip {
+        width: 238px;
+        position: absolute;
+        left: 0;
+        bottom: calc(100% + 9px);
+        z-index: 60;
+        padding: 10px 12px;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 14px 32px rgba(31, 28, 45, 0.18);
+        font-size: 12px;
+        line-height: 17px;
+        font-weight: 500;
+        text-align: left;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(4px);
+        transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+        pointer-events: none;
+      }
+
+      .enhance-help:hover .enhance-tooltip,
+      .enhance-help:focus .enhance-tooltip,
+      .enhance-help:focus-visible .enhance-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      body[data-theme="dark"] .enhance-tooltip {
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.36);
       }
 
       .select-control {
@@ -1692,14 +1764,24 @@
             <div class="generate-grid">
               <div class="workspace">
                 <div class="control-strip">
-                  <div class="segmented two" role="tablist" aria-label="Creation mode">
-                    <button class="segment active" type="button" data-mode="celebrity">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
-                      Celebrity
-                    </button>
-                    <button class="segment" type="button" data-mode="character">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
-                      Character
+                  <div class="mode-control-stack">
+                    <div class="segmented two" role="tablist" aria-label="Creation mode">
+                      <button class="segment active" type="button" data-mode="celebrity">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
+                        Celebrity
+                      </button>
+                      <button class="segment" type="button" data-mode="character">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
+                        Character
+                      </button>
+                    </div>
+                    <button class="subject-picker" id="subject-picker" type="button" aria-haspopup="dialog">
+                      <span class="avatar-stack" aria-hidden="true"><span></span><span></span><span></span></span>
+                      <span class="subject-copy">
+                        <strong id="subject-title">Choose celebrity</strong>
+                        <span id="subject-caption">Required for Celebrity mode</span>
+                      </span>
+                      <svg class="subject-picker-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
                     </button>
                   </div>
                   <div class="segmented three" role="tablist" aria-label="Media type">
@@ -1720,17 +1802,7 @@
 
                 <section class="panel prompt-panel" aria-label="Prompt builder">
                   <div class="prompt-resize-handle" id="prompt-resize-handle" role="separator" aria-label="Resize prompt panel" aria-orientation="horizontal" tabindex="0"></div>
-                  <div class="prompt-toolbar">
-                    <button class="subject-picker" id="subject-picker" type="button" aria-haspopup="dialog">
-                      <span class="avatar-stack" aria-hidden="true"><span></span><span></span><span></span></span>
-                      <span class="subject-copy">
-                        <strong id="subject-title">Choose celebrity</strong>
-                        <span id="subject-caption">Required for Celebrity mode</span>
-                      </span>
-                      <svg class="subject-picker-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-                    </button>
-                    <span class="prompt-status" id="prompt-status" role="status" aria-live="polite">Drag the top edge to resize</span>
-                  </div>
+                  <span class="prompt-status" id="prompt-status" role="status" aria-live="polite"></span>
                   <div class="prompt-editor">
                     <button class="icon-button" id="attach-button" type="button" aria-label="Attach file">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11.6 12.3 20.7a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 1 1 4.5 4.5l-9.3 9.3a1.5 1.5 0 0 1-2.1-2.1l8.6-8.6"/></svg>
@@ -1742,12 +1814,18 @@
                     </button>
                   </div>
                   <div class="prompt-footer">
-                    <button class="enhance-prompt" id="enhance-button" type="button" data-state="enhance" disabled>
-                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
-                      </svg>
-                      <span>Enhance</span>
-                    </button>
+                    <div class="enhance-control">
+                      <button class="enhance-prompt" id="enhance-button" type="button" data-state="enhance" disabled>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+                        </svg>
+                        <span>Enhance</span>
+                      </button>
+                      <button class="enhance-help" type="button" aria-label="What does Enhance mean?" aria-describedby="enhance-tooltip">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 0 1 4.7.7c0 1.8-2.5 2-2.5 3.8M12 17h.01"/></svg>
+                        <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, styling, composition, and camera details to improve the result. You can undo it.</span>
+                      </button>
+                    </div>
                     <div class="select-row">
                       <div class="select-control" data-select="model">
                         <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
@@ -2151,12 +2229,13 @@
       const updateGenerateState = () => {
         const hasPrompt = promptInput.value.trim().length > 0;
         const hasSubject = Boolean(selectedSubject);
-        generateButton.disabled = !(hasPrompt && hasSubject);
+        const requiresSubject = document.body.dataset.mode === "celebrity";
+        generateButton.disabled = !hasPrompt || (requiresSubject && !hasSubject);
         generateButton.setAttribute("aria-disabled", String(generateButton.disabled));
         generateLabel.textContent = !hasPrompt
           ? "Write prompt"
-          : !hasSubject
-            ? `Add ${document.body.dataset.mode === "character" ? "character" : "celebrity"}`
+          : requiresSubject && !hasSubject
+            ? "Add celebrity"
             : "Generate";
       };
 
@@ -2197,7 +2276,7 @@
           selectedSubject = "";
           subjectPicker.classList.remove("selected");
           subjectTitle.textContent = isCharacter ? "Choose character" : "Choose celebrity";
-          subjectCaption.textContent = isCharacter ? "Required for Character mode" : "Required for Celebrity mode";
+          subjectCaption.textContent = isCharacter ? "Optional for Character mode" : "Required for Celebrity mode";
           promptInput.placeholder = isCharacter
             ? "Describe the character, scene, mood, styling, wardrobe, camera angle, and output intent..."
             : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
