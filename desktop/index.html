@@ -25,6 +25,9 @@
         --shadow: 0 12px 32px rgba(31, 28, 45, 0.08);
         --sidebar: 236px;
         --right-rail: 236px;
+        --radius-card: 20px;
+        --radius-control: 16px;
+        --radius-sheet: 24px;
       }
 
       * {
@@ -97,6 +100,19 @@
         min-height: 100vh;
         display: grid;
         grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--right-rail);
+        transition: grid-template-columns 180ms ease;
+      }
+
+      body[data-left-collapsed="true"] .desktop-shell {
+        grid-template-columns: 0 minmax(0, 1fr) var(--right-rail);
+      }
+
+      body[data-right-collapsed="true"] .desktop-shell {
+        grid-template-columns: var(--sidebar) minmax(0, 1fr) 0;
+      }
+
+      body[data-left-collapsed="true"][data-right-collapsed="true"] .desktop-shell {
+        grid-template-columns: 0 minmax(0, 1fr) 0;
       }
 
       .sidebar {
@@ -110,6 +126,16 @@
         border-right: 1px solid var(--line);
         background: rgba(255, 255, 255, 0.76);
         backdrop-filter: blur(18px);
+        overflow: hidden;
+        transition: opacity 180ms ease, transform 180ms ease, padding 180ms ease, border-color 180ms ease;
+      }
+
+      body[data-left-collapsed="true"] .sidebar {
+        padding-inline: 0;
+        border-right-color: transparent;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-14px);
       }
 
       body[data-theme="dark"] .sidebar,
@@ -202,15 +228,29 @@
         margin-top: auto;
         padding: 12px;
         border: 1px solid color-mix(in srgb, var(--lavender) 78%, transparent);
-        border-radius: 16px;
+        border-radius: var(--radius-card);
         background: var(--surface);
         box-shadow: 0 4px 8px rgba(70, 55, 126, 0.1);
+      }
+
+      .account-trigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0;
+        background: transparent;
+        color: inherit;
+        text-align: left;
       }
 
       .account-row {
         display: flex;
         align-items: center;
         gap: 10px;
+        min-width: 0;
+        flex: 1 1 auto;
       }
 
       .avatar {
@@ -329,6 +369,21 @@
         display: flex;
         align-items: center;
         gap: 10px;
+      }
+
+      .topbar-rail {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .shell-toggle {
+        border-radius: 16px;
+      }
+
+      .shell-toggle.active {
+        background: color-mix(in srgb, var(--lavender) 40%, var(--surface));
+        color: var(--mode-ink, #2d235f);
       }
 
       .theme-toggle {
@@ -503,6 +558,34 @@
       .segment svg {
         width: 18px;
         height: 18px;
+      }
+
+      .segment-copy {
+        min-width: 0;
+        display: grid;
+        gap: 1px;
+      }
+
+      .segment-title {
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 700;
+      }
+
+      .segment-meta {
+        display: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 10px;
+        line-height: 13px;
+        font-weight: 600;
+        opacity: 0.76;
+      }
+
+      .segment.active .segment-meta,
+      .segment.has-selection .segment-meta {
+        display: block;
       }
 
       .prompt-panel {
@@ -939,9 +1022,6 @@
       .select-option:hover,
       .select-option.selected {
         background-color: var(--lavender);
-        background-image:
-          radial-gradient(circle at 18% 28%, rgba(45, 35, 95, 0.16) 0 2px, transparent 2.5px),
-          radial-gradient(circle at 76% 68%, rgba(45, 35, 95, 0.12) 0 2px, transparent 2.5px);
         color: var(--mode-ink, #2d235f);
       }
 
@@ -988,10 +1068,19 @@
         flex-direction: column;
         gap: 12px;
         padding: 20px 12px;
-        overflow: auto;
+        overflow: hidden auto;
         border-left: 1px solid var(--line);
         background: rgba(255, 255, 255, 0.76);
         backdrop-filter: blur(18px);
+        transition: opacity 180ms ease, transform 180ms ease, padding 180ms ease, border-color 180ms ease;
+      }
+
+      body[data-right-collapsed="true"] .projects-sidebar {
+        padding-inline: 0;
+        border-left-color: transparent;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(14px);
       }
 
       .projects-sidebar h2,
@@ -1330,23 +1419,7 @@
       }
 
       .generation-gallery-header {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 20px;
-      }
-
-      .generation-gallery-header h2 {
-        margin: 0;
-        font-size: 20px;
-        line-height: 26px;
-      }
-
-      .generation-gallery-header p {
-        margin: 3px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 18px;
+        display: none;
       }
 
       .generation-gallery-grid {
@@ -1585,30 +1658,262 @@
         outline: none;
       }
 
-      .settings-grid {
+      .settings-stack {
+        width: min(760px, 100%);
         display: grid;
-        grid-template-columns: repeat(3, minmax(220px, 1fr));
         gap: 16px;
       }
 
-      .settings-tile {
-        min-height: 150px;
-        display: grid;
-        align-content: start;
+      .settings-view[hidden] {
+        display: none !important;
+      }
+
+      .settings-top {
+        display: flex;
+        align-items: center;
         gap: 12px;
-        padding: 18px;
+      }
+
+      .back-link {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
         border: 1px solid var(--line);
-        border-radius: var(--radius);
+        border-radius: 50%;
         background: var(--surface);
+        color: var(--ink);
       }
 
-      .settings-tile strong {
+      .settings-title {
+        margin: 0;
+        font-size: 28px;
+        line-height: 34px;
+      }
+
+      .settings-card-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .settings-card {
+        min-height: 88px;
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-card);
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 8px 24px rgba(31, 28, 45, 0.08);
+        text-align: left;
+      }
+
+      .settings-card.compact {
+        min-height: 64px;
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .settings-card.meta-card {
+        grid-template-columns: 64px minmax(0, 1fr);
+      }
+
+      .settings-card-icon {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--lavender) 34%, var(--surface));
+        color: var(--mode-ink, #2d235f);
+      }
+
+      .settings-card-icon.green {
+        background: color-mix(in srgb, var(--mint) 46%, var(--surface));
+        color: #0b5b46;
+      }
+
+      .settings-card-copy strong,
+      .settings-field strong {
+        display: block;
         font-size: 18px;
+        line-height: 24px;
       }
 
-      .settings-tile span {
+      .settings-card-copy span,
+      .settings-field span {
+        display: block;
         color: var(--muted);
         line-height: 22px;
+      }
+
+      .settings-field {
+        display: grid;
+        gap: 6px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-card);
+        background: var(--surface);
+        box-shadow: 0 8px 24px rgba(31, 28, 45, 0.08);
+      }
+
+      .settings-field input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 24px;
+      }
+
+      .settings-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-card);
+        background: var(--surface);
+        box-shadow: 0 8px 24px rgba(31, 28, 45, 0.08);
+      }
+
+      .settings-summary div {
+        display: grid;
+        gap: 4px;
+      }
+
+      .settings-summary div + div {
+        padding-left: 16px;
+        border-left: 1px solid var(--line);
+      }
+
+      .settings-summary span {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .settings-summary strong {
+        font-size: 24px;
+        line-height: 30px;
+      }
+
+      .settings-primary,
+      .settings-danger {
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+      }
+
+      .settings-primary {
+        background: var(--lavender);
+        color: #2d235f;
+        box-shadow: 0 8px 18px rgba(70, 55, 126, 0.16);
+      }
+
+      .settings-danger {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .settings-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: max-content;
+        min-height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--mint) 58%, var(--surface));
+        color: #0b5b46;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .sheet-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: rgba(16, 16, 18, 0.42);
+        backdrop-filter: blur(8px);
+      }
+
+      .choice-sheet {
+        width: min(420px, 100%);
+        display: grid;
+        gap: 14px;
+        padding: 20px;
+        border: 1px solid color-mix(in srgb, var(--lavender) 74%, transparent);
+        border-radius: var(--radius-sheet);
+        background: var(--surface);
+        box-shadow: 0 24px 44px rgba(31, 28, 45, 0.18);
+      }
+
+      .choice-sheet h2,
+      .choice-sheet p {
+        margin: 0;
+      }
+
+      .choice-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .choice-option {
+        min-height: 74px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-card);
+        background: var(--surface);
+        color: var(--ink);
+        text-align: left;
+      }
+
+      .choice-option.active,
+      .choice-option:hover {
+        border-color: color-mix(in srgb, var(--lavender-strong) 52%, transparent);
+        background: color-mix(in srgb, var(--lavender) 32%, var(--surface));
+      }
+
+      .choice-copy,
+      .choice-option > span {
+        display: grid;
+        gap: 2px;
+      }
+
+      .choice-option strong {
+        font-size: 17px;
+        line-height: 24px;
+      }
+
+      .choice-option span span {
+        color: var(--muted);
+        line-height: 20px;
+      }
+
+      .sheet-cancel {
+        min-height: 48px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink);
+        font-weight: 700;
       }
 
       .mobile-app-shell {
@@ -1728,16 +2033,18 @@
         </div>
 
         <section class="account-panel" aria-label="Account">
-          <div class="account-row">
-            <span class="avatar" aria-hidden="true"></span>
-            <div>
-              <strong>Olivia Reed</strong>
-              <span>Pro workspace</span>
+          <button class="account-trigger" id="account-trigger" type="button" aria-label="Open account settings">
+            <div class="account-row">
+              <span class="avatar" aria-hidden="true"></span>
+              <div>
+                <strong>Olivia Reed</strong>
+              </div>
             </div>
-          </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
           <div class="credit-row">
             <span class="credit-copy"><strong>200</strong><span>credits</span></span>
-            <button class="cash-button" type="button">Add cash</button>
+            <button class="cash-button" id="open-cash" type="button">Add cash</button>
           </div>
         </section>
       </aside>
@@ -1749,10 +2056,18 @@
             <p id="page-subheading"></p>
           </div>
           <div class="topbar-actions">
+            <div class="topbar-rail">
+              <button class="icon-button shell-toggle active" id="toggle-left-sidebar" type="button" aria-label="Toggle left menu" title="Left menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h16"/></svg>
+              </button>
+              <button class="icon-button shell-toggle active" id="toggle-right-sidebar" type="button" aria-label="Toggle right menu" title="Projects">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6h14M9 12h10M5 18h14"/></svg>
+              </button>
+            </div>
             <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Dark theme">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.1A8.4 8.4 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"/></svg>
             </button>
-            <button class="primary-button" type="button">
+            <button class="primary-button" id="open-campaign-sheet" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
               New campaign
             </button>
@@ -1768,11 +2083,17 @@
                     <div class="segmented two" role="tablist" aria-label="Creation mode">
                       <button class="segment active" type="button" data-mode="celebrity">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
-                        Celebrity
+                        <span class="segment-copy">
+                          <span class="segment-title">Celebrity</span>
+                          <span class="segment-meta" id="celebrity-segment-meta">Choose celebrity</span>
+                        </span>
                       </button>
                       <button class="segment" type="button" data-mode="character">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
-                        Character
+                        <span class="segment-copy">
+                          <span class="segment-title">Character</span>
+                          <span class="segment-meta" id="character-segment-meta">Optional</span>
+                        </span>
                       </button>
                     </div>
                     <button class="subject-picker" id="subject-picker" type="button" aria-haspopup="dialog">
@@ -1817,7 +2138,8 @@
                     <div class="enhance-control">
                       <button class="enhance-prompt" id="enhance-button" type="button" data-state="enhance" disabled>
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                          <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+                          <path d="M12 4.5 13.5 9l4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5L6 10.5 10.5 9 12 4.5Z" />
+                          <path d="M18.2 4.8 18.8 6.6 20.6 7.2 18.8 7.8 18.2 9.6 17.6 7.8 15.8 7.2 17.6 6.6 18.2 4.8Z" />
                         </svg>
                         <span>Enhance</span>
                       </button>
@@ -1869,15 +2191,7 @@
                   </div>
                 </section>
 
-                <section class="generation-gallery" aria-labelledby="generation-gallery-title">
-                  <div class="generation-gallery-header">
-                    <div>
-                      <h2 id="generation-gallery-title">Ready to reuse</h2>
-                      <p id="generation-gallery-caption">Celebrity works from your gallery — open one to reuse its prompt and settings.</p>
-                    </div>
-                    <button class="secondary-button" type="button" data-view-link="gallery">View all</button>
-                  </div>
-
+                <section class="generation-gallery" aria-label="Reusable gallery works">
                   <div class="generation-gallery-grid celebrity-only">
                     <article class="generation-work">
                       <div class="generation-work-preview" data-format="9:16" style="--work-image: radial-gradient(circle at 50% 33%, #e8bfa9 0 11%, transparent 12%), radial-gradient(ellipse at 50% 84%, #26354d 0 35%, transparent 36%), linear-gradient(135deg, #dbe8f5, #7891ad);"></div>
@@ -2125,10 +2439,106 @@
           </section>
 
           <section class="view" id="view-settings">
-            <div class="settings-grid">
-              <section class="settings-tile"><strong>Account</strong><span>Name, email, password, workspace access.</span><button class="secondary-button" type="button">Manage</button></section>
-              <section class="settings-tile"><strong>Credits & Plan</strong><span>Pro plan with 1,240 credits available.</span><button class="secondary-button" type="button">Buy credits</button></section>
-              <section class="settings-tile"><strong>Connected Accounts</strong><span>Meta Ads connected. Last synced today.</span><button class="secondary-button" type="button">Reconnect</button></section>
+            <div class="settings-stack">
+              <section class="settings-view" id="settings-home-view">
+                <h1 class="settings-title">Account settings</h1>
+                <div class="settings-card-list">
+                  <button class="settings-card" type="button" data-settings-view="account">
+                    <span class="settings-card-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
+                    </span>
+                    <span class="settings-card-copy"><strong>Account</strong><span>Name, email, password, workspace access.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                  <button class="settings-card" type="button" data-settings-view="credits">
+                    <span class="settings-card-icon green" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </span>
+                    <span class="settings-card-copy"><strong>Credits & Plan</strong><span>Manage balance, top up, and billing.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                  <button class="settings-card" type="button" data-settings-view="connected">
+                    <span class="settings-card-icon green" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 1 0-7l1.6-1.6a5 5 0 0 1 7.1 7.1L17 13"/><path d="M14 11a5 5 0 0 1 0 7L12.4 19.6a5 5 0 0 1-7.1-7.1L7 11"/></svg>
+                    </span>
+                    <span class="settings-card-copy"><strong>Connected Accounts</strong><span>Reconnect and manage linked services.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                </div>
+              </section>
+
+              <section class="settings-view" id="settings-account-view" hidden>
+                <div class="settings-top">
+                  <button class="back-link" type="button" data-settings-view="home" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                  </button>
+                  <h1 class="settings-title">Account</h1>
+                </div>
+                <div class="settings-card-list">
+                  <label class="settings-field">
+                    <strong>Name</strong>
+                    <input id="account-name-field" type="text" value="Olivia Reed" />
+                  </label>
+                  <label class="settings-field">
+                    <strong>Email</strong>
+                    <input id="account-email-field" type="email" value="olivia@fameflow.ai" />
+                  </label>
+                  <button class="settings-card compact" id="change-password" type="button">
+                    <span class="settings-card-copy"><strong>Change password</strong><span>Update your login security.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                  <button class="settings-primary" id="save-account" type="button">Save</button>
+                  <button class="settings-danger" id="logout-button" type="button">Log out</button>
+                </div>
+              </section>
+
+              <section class="settings-view" id="settings-credits-view" hidden>
+                <div class="settings-top">
+                  <button class="back-link" type="button" data-settings-view="home" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                  </button>
+                  <h1 class="settings-title">Credits & Plan</h1>
+                </div>
+                <div class="settings-card-list">
+                  <section class="settings-summary">
+                    <div><span>Available</span><strong>200</strong></div>
+                    <div><span>Plan</span><strong>Pro</strong></div>
+                  </section>
+                  <button class="settings-card compact" id="buy-credits" type="button">
+                    <span class="settings-card-copy"><strong>Buy credits</strong><span>Add more generation credits.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                  <button class="settings-card compact" id="upgrade-plan" type="button">
+                    <span class="settings-card-copy"><strong>Upgrade plan</strong><span>Unlock more features and faster models.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                </div>
+              </section>
+
+              <section class="settings-view" id="settings-connected-view" hidden>
+                <div class="settings-top">
+                  <button class="back-link" type="button" data-settings-view="home" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                  </button>
+                  <h1 class="settings-title">Connected Accounts</h1>
+                </div>
+                <div class="settings-card-list">
+                  <section class="settings-card meta-card">
+                    <span class="settings-card-icon green" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7h8M8 12h8M8 17h5"/></svg>
+                    </span>
+                    <span class="settings-card-copy"><strong>Meta Ads</strong><span>Last synced today.</span><span class="settings-status">Connected</span></span>
+                  </section>
+                  <button class="settings-card compact" id="connect-meta" type="button">
+                    <span class="settings-card-copy"><strong>Reconnect</strong><span>Refresh your Meta Ads connection.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                  <button class="settings-card compact" id="disconnect-meta" type="button">
+                    <span class="settings-card-copy"><strong>Disconnect</strong><span>Remove Meta Ads integration.</span></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                  </button>
+                </div>
+              </section>
             </div>
           </section>
         </div>
@@ -2136,6 +2546,7 @@
 
       <aside class="projects-sidebar" aria-label="Projects">
         <h2>Projects</h2>
+        <p>Switch active workspace</p>
         <button class="project-card active" type="button" data-project="FameFlow Studio" data-project-detail="24 assets">
           <span class="project-card-icon" aria-hidden="true"></span>
           <span class="project-card-copy"><strong>FameFlow Studio</strong><span>Current project</span></span>
@@ -2169,6 +2580,45 @@
         <div class="subject-options" id="subject-options"></div>
       </section>
     </div>
+    <div class="sheet-backdrop" id="campaign-sheet" hidden>
+      <section class="choice-sheet" aria-label="Add campaign">
+        <h2>Add campaign</h2>
+        <div class="choice-list">
+          <button class="choice-option" id="campaign-new-option" type="button">
+            <span>
+              <strong>New campaign</strong>
+              <span>Create a campaign from scratch.</span>
+            </span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+          <button class="choice-option" id="campaign-existing-option" type="button">
+            <span>
+              <strong>Existing campaign</strong>
+              <span>Open one of your current campaigns.</span>
+            </span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        </div>
+        <button class="sheet-cancel" type="button" data-close-campaign-sheet>Cancel</button>
+      </section>
+    </div>
+    <div class="sheet-backdrop" id="campaign-select-sheet" hidden>
+      <section class="choice-sheet" aria-label="Select campaign">
+        <h2>Select campaign</h2>
+        <div class="choice-list">
+          <button class="choice-option active" type="button" data-open-existing-campaign="Summer Launch">
+            <span class="choice-copy"><strong>Summer Launch</strong><span>Active campaign</span></span>
+          </button>
+          <button class="choice-option" type="button" data-open-existing-campaign="Awareness Push">
+            <span class="choice-copy"><strong>Awareness Push</strong><span>Draft campaign</span></span>
+          </button>
+          <button class="choice-option" type="button" data-open-existing-campaign="Spring Promo">
+            <span class="choice-copy"><strong>Spring Promo</strong><span>Completed campaign</span></span>
+          </button>
+        </div>
+        <button class="sheet-cancel" type="button" data-close-existing-campaign>Cancel</button>
+      </section>
+    </div>
     <iframe class="mobile-app-shell" src="../app.html" title="FameFlow mobile app"></iframe>
 
     <script>
@@ -2186,8 +2636,8 @@
           const view = button.dataset.view;
           document.querySelectorAll("[data-view]").forEach((item) => item.classList.toggle("active", item === button));
           document.querySelectorAll(".view").forEach((section) => section.classList.toggle("active", section.id === `view-${view}`));
-          document.querySelector("#page-heading").textContent = titles[view][0];
-          document.querySelector("#page-subheading").textContent = titles[view][1];
+          activeView = view;
+          updatePageHeading();
         });
       });
 
@@ -2207,11 +2657,56 @@
       const subjectOptions = document.querySelector("#subject-options");
       const closeSubjectDialogButton = document.querySelector("#close-subject-dialog");
       const promptInput = document.querySelector("#prompt-input");
-      const galleryCaption = document.querySelector("#generation-gallery-caption");
       const generateButton = document.querySelector("#generate-button");
       const generateLabel = document.querySelector("#generate-label");
       const themeToggle = document.querySelector("#theme-toggle");
+      const pageHeading = document.querySelector("#page-heading");
+      const pageSubheading = document.querySelector("#page-subheading");
+      const accountTrigger = document.querySelector("#account-trigger");
+      const leftToggle = document.querySelector("#toggle-left-sidebar");
+      const rightToggle = document.querySelector("#toggle-right-sidebar");
+      const campaignSheet = document.querySelector("#campaign-sheet");
+      const campaignSelectSheet = document.querySelector("#campaign-select-sheet");
+      const celebritySegment = document.querySelector(".segment[data-mode='celebrity']");
+      const characterSegment = document.querySelector(".segment[data-mode='character']");
+      const celebritySegmentMeta = document.querySelector("#celebrity-segment-meta");
+      const characterSegmentMeta = document.querySelector("#character-segment-meta");
+      let activeProject = "FameFlow Studio";
+      let activeView = "generate";
       let selectedSubject = "";
+
+      const updatePageHeading = () => {
+        if (activeView === "generate") {
+          pageHeading.textContent = `Generate • ${activeProject}`;
+          pageSubheading.textContent = "";
+          return;
+        }
+        pageHeading.textContent = titles[activeView][0];
+        pageSubheading.textContent = titles[activeView][1];
+      };
+
+      const updateSidebarToggles = () => {
+        const leftOpen = document.body.dataset.leftCollapsed !== "true";
+        const rightOpen = document.body.dataset.rightCollapsed !== "true";
+        leftToggle.classList.toggle("active", leftOpen);
+        rightToggle.classList.toggle("active", rightOpen);
+        leftToggle.setAttribute("aria-pressed", String(leftOpen));
+        rightToggle.setAttribute("aria-pressed", String(rightOpen));
+      };
+
+      const setSidebarState = (side, open) => {
+        document.body.dataset[side === "left" ? "leftCollapsed" : "rightCollapsed"] = open ? "false" : "true";
+        localStorage.setItem(`fameflow-desktop-${side}-sidebar`, open ? "open" : "closed");
+        updateSidebarToggles();
+      };
+
+      const updateModeSelectionUI = () => {
+        const mode = document.body.dataset.mode;
+        celebritySegment.classList.toggle("has-selection", mode === "celebrity" && Boolean(selectedSubject));
+        characterSegment.classList.toggle("has-selection", mode === "character" && Boolean(selectedSubject));
+        celebritySegmentMeta.textContent = mode === "celebrity" && selectedSubject ? selectedSubject : "Choose celebrity";
+        characterSegmentMeta.textContent = mode === "character" && selectedSubject ? selectedSubject : "Optional";
+      };
 
       const subjects = {
         celebrity: [
@@ -2244,6 +2739,7 @@
         subjectTitle.textContent = selectedSubject;
         subjectCaption.textContent = document.body.dataset.mode === "character" ? "Character selected" : "Celebrity selected";
         subjectPicker.classList.add("selected");
+        updateModeSelectionUI();
         subjectDialog.hidden = true;
         updateGenerateState();
         subjectPicker.focus();
@@ -2280,7 +2776,7 @@
           promptInput.placeholder = isCharacter
             ? "Describe the character, scene, mood, styling, wardrobe, camera angle, and output intent..."
             : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
-          galleryCaption.textContent = `${isCharacter ? "Character" : "Celebrity"} works from your gallery — open one to reuse its prompt and settings.`;
+          updateModeSelectionUI();
           renderSubjectOptions();
           updateGenerateState();
         });
@@ -2310,10 +2806,6 @@
         }
       });
 
-      document.querySelector("[data-view-link='gallery']").addEventListener("click", () => {
-        document.querySelector("[data-view='gallery']").click();
-      });
-
       const promptPanel = document.querySelector(".prompt-panel");
       const resizeHandle = document.querySelector("#prompt-resize-handle");
       const promptStatus = document.querySelector("#prompt-status");
@@ -2340,10 +2832,11 @@
             <path d="M19 12H5" />
             <path d="M12 5l-7 7 7 7" />
           </svg>
-          <span>Undo</span>
+          <span>Undo enhance</span>
         ` : `
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
+            <path d="M12 4.5 13.5 9l4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5L6 10.5 10.5 9 12 4.5Z" />
+            <path d="M18.2 4.8 18.8 6.6 20.6 7.2 18.8 7.8 18.2 9.6 17.6 7.8 15.8 7.2 17.6 6.6 18.2 4.8Z" />
           </svg>
           <span>Enhance</span>
         `;
@@ -2525,6 +3018,8 @@
         setPromptStatus("Generation added to queue", "success");
       });
 
+      const projectSidebar = document.querySelector(".projects-sidebar");
+
       document.querySelectorAll("[data-project]").forEach((card) => {
         card.addEventListener("click", () => {
           if (card.classList.contains("active")) return;
@@ -2532,13 +3027,99 @@
             item.classList.toggle("active", item === card);
             item.querySelector(".project-card-copy span").textContent = item === card ? "Current project" : item.dataset.projectDetail;
           });
+          const firstProjectCard = projectSidebar.querySelector(".project-card");
+          if (firstProjectCard && firstProjectCard !== card) projectSidebar.insertBefore(card, firstProjectCard);
+          activeProject = card.dataset.project;
+          updatePageHeading();
           document.title = `FameFlow · ${card.dataset.project}`;
           setPromptStatus(`Project: ${card.dataset.project}`, "success");
         });
       });
 
       document.querySelector("[data-project-create]").addEventListener("click", () => {
-        setPromptStatus("New project setup is ready", "success");
+        campaignSheet.hidden = false;
+        setPromptStatus("Choose how to add a campaign", "success");
+      });
+
+      const settingsViews = {
+        home: document.querySelector("#settings-home-view"),
+        account: document.querySelector("#settings-account-view"),
+        credits: document.querySelector("#settings-credits-view"),
+        connected: document.querySelector("#settings-connected-view"),
+      };
+
+      const openView = (view) => {
+        document.querySelector(`[data-view="${view}"]`)?.click();
+      };
+
+      const setSettingsView = (view) => {
+        Object.entries(settingsViews).forEach(([key, element]) => {
+          element.hidden = key !== view;
+        });
+      };
+
+      accountTrigger.addEventListener("click", () => {
+        openView("settings");
+        setSettingsView("account");
+      });
+
+      document.querySelector("#open-cash").addEventListener("click", (event) => {
+        event.stopPropagation();
+        openView("settings");
+        setSettingsView("credits");
+        setPromptStatus("Credits opened", "success");
+      });
+
+      document.querySelectorAll("[data-settings-view]").forEach((button) => {
+        button.addEventListener("click", () => {
+          openView("settings");
+          setSettingsView(button.dataset.settingsView);
+        });
+      });
+
+      document.querySelector("#save-account").addEventListener("click", () => setPromptStatus("Account updated", "success"));
+      document.querySelector("#change-password").addEventListener("click", () => setPromptStatus("Password flow opened", "success"));
+      document.querySelector("#logout-button").addEventListener("click", () => setPromptStatus("Logout ready", "success"));
+      document.querySelector("#buy-credits").addEventListener("click", () => setPromptStatus("Payment options opened", "success"));
+      document.querySelector("#upgrade-plan").addEventListener("click", () => setPromptStatus("Plan options opened", "success"));
+      document.querySelector("#connect-meta").addEventListener("click", () => setPromptStatus("Meta Ads reconnected", "success"));
+      document.querySelector("#disconnect-meta").addEventListener("click", () => setPromptStatus("Meta Ads disconnected", "success"));
+
+      leftToggle.addEventListener("click", () => setSidebarState("left", document.body.dataset.leftCollapsed === "true"));
+      rightToggle.addEventListener("click", () => setSidebarState("right", document.body.dataset.rightCollapsed === "true"));
+
+      document.querySelector("#open-campaign-sheet").addEventListener("click", () => {
+        campaignSheet.hidden = false;
+      });
+
+      campaignSheet.addEventListener("click", (event) => {
+        if (event.target === campaignSheet) campaignSheet.hidden = true;
+      });
+      campaignSelectSheet.addEventListener("click", (event) => {
+        if (event.target === campaignSelectSheet) campaignSelectSheet.hidden = true;
+      });
+
+      document.querySelector("[data-close-campaign-sheet]").addEventListener("click", () => {
+        campaignSheet.hidden = true;
+      });
+      document.querySelector("[data-close-existing-campaign]").addEventListener("click", () => {
+        campaignSelectSheet.hidden = true;
+      });
+      document.querySelector("#campaign-new-option").addEventListener("click", () => {
+        campaignSheet.hidden = true;
+        openView("campaigns");
+        setPromptStatus("New campaign setup opened", "success");
+      });
+      document.querySelector("#campaign-existing-option").addEventListener("click", () => {
+        campaignSheet.hidden = true;
+        campaignSelectSheet.hidden = false;
+      });
+      document.querySelectorAll("[data-open-existing-campaign]").forEach((button) => {
+        button.addEventListener("click", () => {
+          campaignSelectSheet.hidden = true;
+          openView("campaigns");
+          setPromptStatus(`Campaign: ${button.dataset.openExistingCampaign}`, "success");
+        });
       });
 
       const setTheme = (theme) => {
@@ -2557,6 +3138,12 @@
       });
 
       setTheme(localStorage.getItem("fameflow-desktop-theme") || "light");
+      document.body.dataset.leftCollapsed = localStorage.getItem("fameflow-desktop-left-sidebar") === "closed" ? "true" : "false";
+      document.body.dataset.rightCollapsed = localStorage.getItem("fameflow-desktop-right-sidebar") === "closed" ? "true" : "false";
+      setSettingsView("home");
+      updateSidebarToggles();
+      updatePageHeading();
+      updateModeSelectionUI();
       renderSubjectOptions();
       updateEnhancePromptAvailability();
       updateGenerateState();
