@@ -1465,6 +1465,7 @@
       body[data-theme="dark"] .search,
       body[data-theme="dark"] .sort-toggle,
       body[data-theme="dark"] .favorites-filter-toggle:not(.active),
+      body[data-theme="dark"] .copilot-recommendation:not(.active),
       body[data-theme="dark"] .select-field {
         border-color: rgba(219, 212, 250, 0.34);
         background: color-mix(in srgb, var(--surface-soft) 84%, #ffffff 2%);
@@ -1482,6 +1483,7 @@
       body[data-theme="dark"] .account-trigger:hover,
       body[data-theme="dark"] .sort-toggle:hover,
       body[data-theme="dark"] .favorites-filter-toggle:not(.active):hover,
+      body[data-theme="dark"] .copilot-recommendation:not(.active):hover,
       body[data-theme="dark"] .select-field:hover {
         border-color: rgba(219, 212, 250, 0.62);
         background: color-mix(in srgb, var(--lavender) 12%, var(--surface-soft));
@@ -2099,11 +2101,16 @@
       }
 
       .chat-input {
+        position: relative;
+        z-index: 5;
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
         gap: 10px;
         padding: 16px;
         border-top: 1px solid var(--line);
+        background: var(--surface);
+        pointer-events: auto;
       }
 
       .copilot-layout > .rail {
@@ -2117,12 +2124,67 @@
         overflow-y: auto;
       }
 
-      .chat-input input {
-        min-height: 44px;
-        padding: 0 14px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
+      .chat-input textarea {
+        width: 100%;
+        min-height: 48px;
+        max-height: 132px;
+        padding: 12px 14px;
+        resize: vertical;
+        border: 1px solid var(--line-strong);
+        border-radius: 18px;
         outline: none;
+        background: var(--surface-soft);
+        color: var(--ink);
+        line-height: 22px;
+        pointer-events: auto;
+      }
+
+      .chat-input .primary-button {
+        min-height: 48px;
+      }
+
+      .primary-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.46;
+        box-shadow: none;
+      }
+
+      .copilot-setup-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .copilot-recommendation {
+        width: 100%;
+        color: var(--ink);
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+      }
+
+      .copilot-recommendation:hover,
+      .copilot-recommendation.active {
+        border-color: var(--mode-strong, var(--lavender-strong));
+        background: var(--mode-tint-quiet, var(--surface-soft));
+        transform: translateY(-1px);
+      }
+
+      .list-row .recommendation-tail {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        overflow: visible;
+      }
+
+      .recommendation-tail svg {
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+      }
+
+      .copilot-use-setup {
+        width: 100%;
+        margin-top: auto;
       }
 
       .settings-stack {
@@ -3004,17 +3066,26 @@
                   <div class="message"><strong>Co-Pilot</strong><br />I can set this up as a celebrity image and short video campaign. Choose a celebrity or use a generated character?</div>
                 </div>
                 <div class="chat-input">
-                  <input id="copilot-input" type="text" placeholder="Describe your campaign or creative idea" />
+                  <textarea id="copilot-input" rows="2" placeholder="Describe your campaign or creative idea"></textarea>
                   <button class="primary-button" id="copilot-send" type="button">Send</button>
                 </div>
               </section>
               <aside class="rail">
-                <section class="panel rail-panel">
+                <section class="panel rail-panel copilot-setup-panel">
                   <h2 class="panel-title">Recommended setup</h2>
                   <div class="list">
-                    <div class="list-row"><span class="thumb"></span><div><strong>Mode</strong><span>Celebrity</span></div><span class="pill">Star</span></div>
-                    <div class="list-row"><span class="thumb" style="--thumb: linear-gradient(135deg, #c6fce4, #67d7aa)"></span><div><strong>Format</strong><span>Video + Images</span></div><span class="pill mint">Ready</span></div>
+                    <button class="list-row copilot-recommendation" id="copilot-mode-recommendation" type="button" aria-label="Change recommended mode">
+                      <span class="thumb"></span>
+                      <span><strong>Mode</strong><span id="copilot-mode-value">Celebrity</span></span>
+                      <span class="recommendation-tail"><span class="pill" id="copilot-mode-pill">Star</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 6 6 6-6 6"/></svg></span>
+                    </button>
+                    <button class="list-row copilot-recommendation" id="copilot-format-recommendation" type="button" aria-label="Change recommended format">
+                      <span class="thumb" style="--thumb: linear-gradient(135deg, #c6fce4, #67d7aa)"></span>
+                      <span><strong>Format</strong><span id="copilot-format-value">Video + Images</span></span>
+                      <span class="recommendation-tail"><span class="pill mint">Ready</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 6 6 6-6 6"/></svg></span>
+                    </button>
                   </div>
+                  <button class="primary-button copilot-use-setup" id="copilot-use-setup" type="button">Use setup in Generate</button>
                 </section>
               </aside>
             </div>
@@ -3315,6 +3386,12 @@
       const copilotMessages = document.querySelector("#copilot-messages");
       const copilotInput = document.querySelector("#copilot-input");
       const copilotSend = document.querySelector("#copilot-send");
+      const copilotModeRecommendation = document.querySelector("#copilot-mode-recommendation");
+      const copilotFormatRecommendation = document.querySelector("#copilot-format-recommendation");
+      const copilotModeValue = document.querySelector("#copilot-mode-value");
+      const copilotModePill = document.querySelector("#copilot-mode-pill");
+      const copilotFormatValue = document.querySelector("#copilot-format-value");
+      const copilotUseSetup = document.querySelector("#copilot-use-setup");
       const favoritesGrid = document.querySelector("#favorites-grid");
       const favoritesEmpty = document.querySelector("#favorites-empty");
       const favoritesCount = document.querySelector("#favorites-count");
@@ -3827,6 +3904,22 @@
         setPromptStatus("Generation added to queue", "success");
       });
 
+      const copilotFormats = ["Video + Images", "Images", "Video", "Audio"];
+      let copilotRecommendedMode = "Celebrity";
+      let copilotFormatIndex = 0;
+
+      const renderCopilotSetup = () => {
+        copilotModeValue.textContent = copilotRecommendedMode;
+        copilotModePill.textContent = copilotRecommendedMode === "Celebrity" ? "Star" : "Creator";
+        copilotFormatValue.textContent = copilotFormats[copilotFormatIndex];
+      };
+
+      const highlightCopilotRecommendation = (activeButton) => {
+        [copilotModeRecommendation, copilotFormatRecommendation].forEach((button) => {
+          button.classList.toggle("active", button === activeButton);
+        });
+      };
+
       const updateCopilotSendState = () => {
         copilotSend.disabled = !copilotInput.value.trim();
       };
@@ -3835,12 +3928,16 @@
         const idea = copilotInput.value.trim();
         if (!idea) return;
         const normalizedIdea = idea.toLowerCase();
-        const mode = normalizedIdea.includes("character") ? "Character" : "Celebrity";
-        const format = normalizedIdea.includes("audio")
-          ? "audio"
-          : normalizedIdea.includes("video")
-            ? "video"
-            : "image";
+        copilotRecommendedMode = normalizedIdea.includes("character") ? "Character" : "Celebrity";
+        const inferredFormat = normalizedIdea.includes("audio")
+          ? "Audio"
+          : normalizedIdea.includes("video") && normalizedIdea.includes("image")
+            ? "Video + Images"
+            : normalizedIdea.includes("video")
+              ? "Video"
+              : "Images";
+        copilotFormatIndex = copilotFormats.indexOf(inferredFormat);
+        renderCopilotSetup();
 
         const userMessage = document.createElement("div");
         userMessage.className = "message user";
@@ -3852,7 +3949,7 @@
         const replyTitle = document.createElement("strong");
         replyTitle.textContent = "Co-Pilot";
         reply.append(replyTitle, document.createElement("br"));
-        reply.append(`I prepared a ${mode.toLowerCase()} ${format} setup and copied the idea into Generate. You can refine it there before starting generation.`);
+        reply.append(`I prepared a ${copilotRecommendedMode.toLowerCase()} ${inferredFormat.toLowerCase()} setup and copied the idea into Generate. You can refine it there before starting generation.`);
         copilotMessages.append(reply);
 
         promptInput.value = idea;
@@ -3872,6 +3969,45 @@
         }
       });
       copilotSend.addEventListener("click", sendCopilotMessage);
+      copilotModeRecommendation.addEventListener("click", () => {
+        copilotRecommendedMode = copilotRecommendedMode === "Celebrity" ? "Character" : "Celebrity";
+        renderCopilotSetup();
+        highlightCopilotRecommendation(copilotModeRecommendation);
+      });
+      copilotFormatRecommendation.addEventListener("click", () => {
+        copilotFormatIndex = (copilotFormatIndex + 1) % copilotFormats.length;
+        renderCopilotSetup();
+        highlightCopilotRecommendation(copilotFormatRecommendation);
+      });
+      copilotUseSetup.addEventListener("click", () => {
+        const userMessages = copilotMessages.querySelectorAll(".message.user");
+        const lastUserMessage = userMessages[userMessages.length - 1]?.textContent.trim() || "";
+        const idea = copilotInput.value.trim() || lastUserMessage;
+        const mode = copilotRecommendedMode.toLowerCase();
+        document.body.dataset.mode = mode;
+        document.querySelectorAll(".segment[data-mode]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.mode === mode);
+        });
+        promptInput.placeholder = mode === "character"
+          ? "Describe the character, scene, mood, styling, wardrobe, camera angle, and output intent..."
+          : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
+        const recommendedFormat = copilotFormats[copilotFormatIndex];
+        const media = recommendedFormat === "Audio" ? "Audio" : recommendedFormat === "Images" ? "Image" : "Video";
+        document.querySelectorAll(".segment[data-media]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.media === media);
+        });
+        promptInput.value = idea;
+        updateModeSelectionUI();
+        renderWorkCreatorFilter();
+        resetEnhancePromptState();
+        updateEnhancePromptAvailability();
+        updateGenerateState();
+        applyGenerationFilters();
+        openView("generate");
+        promptInput.focus();
+        setPromptStatus("Co-Pilot setup applied", "success");
+      });
+      renderCopilotSetup();
       updateCopilotSendState();
 
       const projectSidebar = document.querySelector(".projects-sidebar");
