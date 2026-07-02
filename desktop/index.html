@@ -575,7 +575,7 @@
       .generation-filter-controls {
         min-width: 0;
         display: grid;
-        grid-template-columns: 90px 36px 118px 86px;
+        grid-template-columns: 90px 118px 86px 36px;
         align-items: center;
         gap: 8px;
       }
@@ -853,15 +853,6 @@
         box-shadow: 0 12px 32px rgba(24, 105, 79, 0.1);
       }
 
-      .prompt-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 7px 10px;
-        border-bottom: 1px solid var(--line);
-      }
-
       .prompt-setup {
         display: grid;
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
@@ -901,10 +892,6 @@
       }
 
       .prompt-status {
-        display: none;
-      }
-
-      .subject-picker {
         display: none;
       }
 
@@ -989,7 +976,7 @@
         color: var(--ink);
         font-size: 14px;
         line-height: 20px;
-        padding-top: 7px;
+        padding-top: 14px;
       }
 
       .prompt-editor textarea::placeholder {
@@ -1469,8 +1456,38 @@
         box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
       }
 
+      body[data-theme="dark"] .secondary-button:not(.active),
+      body[data-theme="dark"] .icon-button:not(.active),
+      body[data-theme="dark"] .edge-toggle.active,
+      body[data-theme="dark"] .nav-item:not(.active),
+      body[data-theme="dark"] .project-card:not(.active),
+      body[data-theme="dark"] .account-trigger,
+      body[data-theme="dark"] .search,
+      body[data-theme="dark"] .sort-toggle,
+      body[data-theme="dark"] .favorites-filter-toggle:not(.active),
+      body[data-theme="dark"] .select-field {
+        border-color: rgba(219, 212, 250, 0.34);
+        background: color-mix(in srgb, var(--surface-soft) 84%, #ffffff 2%);
+        color: var(--ink);
+        box-shadow:
+          inset 0 0 0 1px rgba(219, 212, 250, 0.05),
+          0 5px 14px rgba(0, 0, 0, 0.24);
+      }
+
+      body[data-theme="dark"] .secondary-button:not(.active):hover,
+      body[data-theme="dark"] .icon-button:not(.active):hover,
+      body[data-theme="dark"] .edge-toggle.active:hover,
+      body[data-theme="dark"] .nav-item:not(.active):hover,
+      body[data-theme="dark"] .project-card:not(.active):hover,
+      body[data-theme="dark"] .account-trigger:hover,
+      body[data-theme="dark"] .sort-toggle:hover,
+      body[data-theme="dark"] .favorites-filter-toggle:not(.active):hover,
+      body[data-theme="dark"] .select-field:hover {
+        border-color: rgba(219, 212, 250, 0.62);
+        background: color-mix(in srgb, var(--lavender) 12%, var(--surface-soft));
+      }
+
       body[data-theme="dark"] .project-card svg,
-      body[data-theme="dark"] .subject-picker-chevron,
       body[data-theme="dark"] .subject-option svg {
         color: var(--lavender);
       }
@@ -1517,6 +1534,21 @@
       body[data-theme="dark"] .generation-work-preview::after {
         background: rgba(20, 20, 28, 0.88);
         color: #f8f6ff;
+      }
+
+      body[data-theme="dark"] .pill:not(.mint) {
+        border: 1px solid rgba(219, 212, 250, 0.28);
+        background: rgba(143, 124, 246, 0.16);
+        color: #eeeaff;
+      }
+
+      body[data-theme="dark"] .pill.mint {
+        border: 1px solid rgba(198, 252, 228, 0.34);
+      }
+
+      body[data-theme="dark"] .settings-card-icon,
+      body[data-theme="dark"] .settings-card-icon.green {
+        color: var(--ink);
       }
 
       body[data-theme="dark"] input,
@@ -1643,10 +1675,6 @@
         padding: 4px 0 calc(var(--prompt-panel-height, 25vh) + 72px);
       }
 
-      .generation-gallery-header {
-        display: none;
-      }
-
       .generation-gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(170px, 1fr));
@@ -1756,8 +1784,13 @@
         line-height: 18px;
       }
 
-      .character-only,
-      body[data-mode="character"] .celebrity-only {
+      .celebrity-only,
+      .character-only {
+        display: none;
+      }
+
+      body[data-mode="celebrity"] .celebrity-only,
+      body[data-mode="character"] .character-only {
         display: grid;
       }
 
@@ -1973,11 +2006,11 @@
 
       .table-row {
         display: grid;
-        grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(110px, 0.7fr)) 120px;
+        grid-template-columns: minmax(170px, 1.4fr) repeat(4, minmax(70px, 0.7fr)) 76px;
         align-items: center;
-        gap: 16px;
+        gap: 10px;
         min-height: 68px;
-        padding: 0 18px;
+        padding: 0 12px;
         border-top: 1px solid var(--line);
       }
 
@@ -2287,6 +2320,29 @@
         color: var(--ink);
       }
 
+      body[data-theme="dark"] .back-link,
+      body[data-theme="dark"] .choice-option,
+      body[data-theme="dark"] .sheet-cancel,
+      body[data-theme="dark"] .settings-danger,
+      body[data-theme="dark"] .asset-action {
+        border-color: rgba(219, 212, 250, 0.34);
+        box-shadow: inset 0 0 0 1px rgba(219, 212, 250, 0.04);
+      }
+
+      body[data-theme="dark"] .settings-card {
+        border-color: rgba(219, 212, 250, 0.26);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      body[data-theme="dark"] .back-link:hover,
+      body[data-theme="dark"] .choice-option:hover,
+      body[data-theme="dark"] .sheet-cancel:hover,
+      body[data-theme="dark"] .settings-danger:hover,
+      body[data-theme="dark"] .asset-action:hover,
+      body[data-theme="dark"] .settings-card:hover {
+        border-color: rgba(219, 212, 250, 0.58);
+      }
+
       .sheet-backdrop {
         position: fixed;
         inset: 0;
@@ -2448,6 +2504,26 @@
         }
       }
 
+      @media (max-width: 1050px) and (min-width: 901px) {
+        .toolbar-row {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .toolbar-row .search {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .table {
+          overflow-x: auto;
+        }
+
+        .table-row {
+          min-width: 620px;
+        }
+      }
+
       @media (max-width: 900px) {
         html,
         body {
@@ -2583,9 +2659,6 @@
                         <button class="select-option" type="button" role="menuitem" data-value="Audio" data-work-filter="audio">Audio</button>
                       </div>
                     </div>
-                    <button class="sort-toggle" id="work-sort-toggle" type="button" data-sort="newest" aria-label="Newest first" title="Newest first">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h9M4 11h7M4 16h5M18 4v16m0 0-3-3m3 3 3-3"/></svg>
-                    </button>
                     <div class="select-control generation-mode-filter" data-select="creator">
                       <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
                         <strong id="work-creator-filter-label">All celebrities</strong>
@@ -2601,6 +2674,9 @@
                     <button class="favorites-filter-toggle" id="favorites-filter-toggle" type="button" aria-pressed="false">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 5.7c-2-2-5.1-1.7-6.8.4L12 8.5l-2-2.4C8.3 4 5.2 3.7 3.2 5.7c-2.2 2.2-2.1 5.8.2 7.9L12 21l8.6-7.4c2.3-2.1 2.4-5.7.2-7.9Z"/></svg>
                       Favorites
+                    </button>
+                    <button class="sort-toggle" id="work-sort-toggle" type="button" data-sort="newest" aria-label="Newest first" title="Newest first">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h9M4 11h7M4 16h5M18 4v16m0 0-3-3m3 3 3-3"/></svg>
                     </button>
                   </div>
                 </div>
@@ -2922,14 +2998,14 @@
           <section class="view" id="view-copilot">
             <div class="copilot-layout">
               <section class="prompt-chat" aria-label="Co-Pilot chat">
-                <div class="message-stack">
+                <div class="message-stack" id="copilot-messages" aria-live="polite">
                   <div class="message"><strong>Co-Pilot</strong><br />Tell me what you want to make, and I’ll prepare the right mode, format, prompt, and campaign settings.</div>
                   <div class="message user">Build a TikTok launch concept for a new summer collection.</div>
-                  <div class="message"><strong>Co-Pilot</strong><br />I can set this up as a celebrity image and short video campaign. Choose an influencer or use a generated character?</div>
+                  <div class="message"><strong>Co-Pilot</strong><br />I can set this up as a celebrity image and short video campaign. Choose a celebrity or use a generated character?</div>
                 </div>
                 <div class="chat-input">
-                  <input type="text" placeholder="Describe your campaign or creative idea" />
-                  <button class="primary-button" type="button">Send</button>
+                  <input id="copilot-input" type="text" placeholder="Describe your campaign or creative idea" />
+                  <button class="primary-button" id="copilot-send" type="button">Send</button>
                 </div>
               </section>
               <aside class="rail">
@@ -3236,6 +3312,9 @@
       const workCreatorFilterLabel = document.querySelector("#work-creator-filter-label");
       const workCreatorFilterOptions = document.querySelectorAll("[data-creator-filter]");
       const favoritesFilterToggle = document.querySelector("#favorites-filter-toggle");
+      const copilotMessages = document.querySelector("#copilot-messages");
+      const copilotInput = document.querySelector("#copilot-input");
+      const copilotSend = document.querySelector("#copilot-send");
       const favoritesGrid = document.querySelector("#favorites-grid");
       const favoritesEmpty = document.querySelector("#favorites-empty");
       const favoritesCount = document.querySelector("#favorites-count");
@@ -3747,6 +3826,53 @@
         if (generateButton.disabled) return;
         setPromptStatus("Generation added to queue", "success");
       });
+
+      const updateCopilotSendState = () => {
+        copilotSend.disabled = !copilotInput.value.trim();
+      };
+
+      const sendCopilotMessage = () => {
+        const idea = copilotInput.value.trim();
+        if (!idea) return;
+        const normalizedIdea = idea.toLowerCase();
+        const mode = normalizedIdea.includes("character") ? "Character" : "Celebrity";
+        const format = normalizedIdea.includes("audio")
+          ? "audio"
+          : normalizedIdea.includes("video")
+            ? "video"
+            : "image";
+
+        const userMessage = document.createElement("div");
+        userMessage.className = "message user";
+        userMessage.textContent = idea;
+        copilotMessages.append(userMessage);
+
+        const reply = document.createElement("div");
+        reply.className = "message";
+        const replyTitle = document.createElement("strong");
+        replyTitle.textContent = "Co-Pilot";
+        reply.append(replyTitle, document.createElement("br"));
+        reply.append(`I prepared a ${mode.toLowerCase()} ${format} setup and copied the idea into Generate. You can refine it there before starting generation.`);
+        copilotMessages.append(reply);
+
+        promptInput.value = idea;
+        resetEnhancePromptState();
+        updateEnhancePromptAvailability();
+        updateGenerateState();
+        copilotInput.value = "";
+        updateCopilotSendState();
+        copilotMessages.scrollTop = copilotMessages.scrollHeight;
+      };
+
+      copilotInput.addEventListener("input", updateCopilotSendState);
+      copilotInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendCopilotMessage();
+        }
+      });
+      copilotSend.addEventListener("click", sendCopilotMessage);
+      updateCopilotSendState();
 
       const projectSidebar = document.querySelector(".projects-sidebar");
 
