@@ -552,27 +552,38 @@
 
       .generation-filter-strip .search {
         min-width: 0;
+        min-height: 38px;
+        grid-template-columns: 16px minmax(0, 1fr);
+        gap: 8px;
+        padding: 0 12px;
+        border-color: var(--line-strong);
+        border-radius: 999px;
+        box-shadow: 0 4px 10px rgba(31, 28, 45, 0.06);
+      }
+
+      .generation-filter-strip .search svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .control-strip.generation-filter-strip {
+        grid-template-columns: minmax(120px, 1fr) auto;
+        gap: 8px;
+        align-items: center;
       }
 
       .generation-filter-controls {
         min-width: 0;
         display: grid;
-        grid-template-columns: minmax(260px, 1fr) minmax(150px, auto) minmax(140px, auto);
-        align-items: start;
+        grid-template-columns: 106px 38px 132px;
+        align-items: center;
         gap: 8px;
       }
 
-      .generation-filter-controls .segmented {
-        min-width: 0;
-      }
-
-      .segmented.four {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-
       .sort-toggle,
+      .generation-media-filter .select-field,
       .generation-mode-filter .select-field {
-        min-height: 52px;
+        min-height: 38px;
         border: 1px solid var(--line-strong);
         border-radius: 999px;
         background: var(--surface);
@@ -581,21 +592,24 @@
       }
 
       .sort-toggle {
+        width: 38px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 7px;
-        padding: 0 14px;
-        font-size: 12px;
-        font-weight: 700;
-        white-space: nowrap;
+        padding: 0;
       }
 
       .sort-toggle svg {
-        width: 17px;
-        height: 17px;
+        width: 18px;
+        height: 18px;
+        transition: transform 160ms ease;
       }
 
+      .sort-toggle[data-sort="oldest"] svg {
+        transform: rotate(180deg);
+      }
+
+      .generation-media-filter .select-menu,
       .generation-mode-filter .select-menu {
         top: calc(100% + 8px);
         bottom: auto;
@@ -2377,16 +2391,6 @@
         }
       }
 
-      @media (max-width: 1050px) and (min-width: 901px) {
-        .generation-filter-controls {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .generation-filter-controls .segmented {
-          grid-column: 1 / -1;
-        }
-      }
-
       @media (max-height: 680px) and (min-width: 901px) {
         .asset-sheet {
           max-height: calc(100dvh - 24px);
@@ -2526,25 +2530,31 @@
                     <input id="generation-search" type="search" placeholder="Search prompt" />
                   </label>
                   <div class="generation-filter-controls">
-                    <div class="segmented four" role="tablist" aria-label="Generated works media filter">
-                      <button class="segment active" type="button" data-work-filter="all">All</button>
-                      <button class="segment" type="button" data-work-filter="image">Images</button>
-                      <button class="segment" type="button" data-work-filter="video">Video</button>
-                      <button class="segment" type="button" data-work-filter="audio">Audio</button>
-                    </div>
-                    <button class="sort-toggle" id="work-sort-toggle" type="button" data-sort="newest" aria-label="Sort newest to oldest">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5v14m0 0-3-3m3 3 3-3M16 19V5m0 0-3 3m3-3 3 3"/></svg>
-                      <span>Newest → oldest</span>
-                    </button>
-                    <div class="select-control generation-mode-filter" data-select="works-mode">
+                    <div class="select-control generation-media-filter" data-select="media">
                       <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
-                        <strong>All creators</strong>
+                        <strong>All media</strong>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
                       </button>
                       <div class="select-menu" role="menu" hidden>
-                        <button class="select-option selected" type="button" role="menuitem" data-value="All creators" data-mode-filter="all">All creators</button>
-                        <button class="select-option" type="button" role="menuitem" data-value="Celebrity" data-mode-filter="celebrity">Celebrity</button>
-                        <button class="select-option" type="button" role="menuitem" data-value="Character" data-mode-filter="character">Character</button>
+                        <button class="select-option selected" type="button" role="menuitem" data-value="All media" data-work-filter="all">All</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Images" data-work-filter="image">Images</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Video" data-work-filter="video">Video</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Audio" data-work-filter="audio">Audio</button>
+                      </div>
+                    </div>
+                    <button class="sort-toggle" id="work-sort-toggle" type="button" data-sort="newest" aria-label="Newest first" title="Newest first">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h9M4 11h7M4 16h5M18 4v16m0 0-3-3m3 3 3-3"/></svg>
+                    </button>
+                    <div class="select-control generation-mode-filter" data-select="creator">
+                      <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
+                        <strong id="work-creator-filter-label">All celebrities</strong>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+                      </button>
+                      <div class="select-menu" id="work-creator-filter-menu" role="menu" hidden>
+                        <button class="select-option selected" type="button" role="menuitem" data-value="All celebrities" data-creator-filter="all">All celebrities</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Ava Stone" data-creator-filter="Ava Stone">Ava Stone</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Leo Hart" data-creator-filter="Leo Hart">Leo Hart</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Maya Chen" data-creator-filter="Maya Chen">Maya Chen</button>
                       </div>
                     </div>
                   </div>
@@ -3178,7 +3188,8 @@
       const generationSearch = document.querySelector("#generation-search");
       const workFilterButtons = document.querySelectorAll("[data-work-filter]");
       const workSortToggle = document.querySelector("#work-sort-toggle");
-      const workModeFilterOptions = document.querySelectorAll("[data-mode-filter]");
+      const workCreatorFilterLabel = document.querySelector("#work-creator-filter-label");
+      const workCreatorFilterOptions = document.querySelectorAll("[data-creator-filter]");
       const favoritesGrid = document.querySelector("#favorites-grid");
       const favoritesEmpty = document.querySelector("#favorites-empty");
       const favoritesCount = document.querySelector("#favorites-count");
@@ -3190,7 +3201,7 @@
         prompt: "",
       };
       let activeWorkFilter = "all";
-      let activeWorkMode = "all";
+      let activeWorkCreator = "all";
       let workSortDirection = "newest";
       const selectedSubjects = {
         celebrity: "",
@@ -3259,6 +3270,22 @@
         ],
       };
 
+      const renderWorkCreatorFilter = () => {
+        const mode = document.body.dataset.mode;
+        const modeSubjects = subjects[mode];
+        const allLabel = mode === "celebrity" ? "All celebrities" : "All characters";
+        activeWorkCreator = "all";
+        workCreatorFilterLabel.textContent = allLabel;
+        workCreatorFilterOptions.forEach((option, index) => {
+          const subject = modeSubjects[index - 1];
+          const label = index === 0 ? allLabel : subject.name;
+          option.dataset.value = label;
+          option.dataset.creatorFilter = index === 0 ? "all" : subject.name;
+          option.textContent = label;
+          option.classList.toggle("selected", index === 0);
+        });
+      };
+
       const updateGenerateState = () => {
         const hasPrompt = promptInput.value.trim().length > 0;
         const hasSubject = Boolean(selectedSubjects[document.body.dataset.mode]);
@@ -3272,9 +3299,18 @@
             : "Generate";
       };
 
+      const workCreators = {
+        celebrity: ["Ava Stone", "Leo Hart", "Maya Chen", "Ava Stone", "Leo Hart", "Maya Chen", "Leo Hart", "Ava Stone", "Maya Chen", "Leo Hart", "Ava Stone", "Maya Chen", "Ava Stone"],
+        character: ["Mina", "Mina", "Amara", "Nova", "Mina", "Nova", "Amara", "Amara", "Nova", "Amara", "Mina", "Nova", "Mina"],
+      };
+
       document.querySelectorAll(".generation-gallery-grid").forEach((grid) => {
+        const mode = grid.classList.contains("celebrity-only") ? "celebrity" : "character";
         [...grid.children].forEach((card, index) => {
-          if (card.classList.contains("generation-work")) card.dataset.workOrder = String(index);
+          if (!card.classList.contains("generation-work")) return;
+          card.dataset.workOrder = String(index);
+          card.dataset.workMode = mode;
+          card.dataset.creator = workCreators[mode][index] || subjects[mode][0].name;
         });
       });
 
@@ -3296,9 +3332,10 @@
           const title = card.querySelector("strong")?.textContent.toLowerCase() || "";
           const meta = card.querySelector(".generation-work-copy span")?.textContent.toLowerCase() || "";
           const matchesType = activeWorkFilter === "all" || meta.includes(activeWorkFilter);
-          const matchesMode = activeWorkMode === "all" || meta.includes(activeWorkMode);
-          const matchesQuery = !query || `${title} ${meta}`.includes(query);
-          card.hidden = !(matchesType && matchesMode && matchesQuery);
+          const matchesMode = card.dataset.workMode === document.body.dataset.mode;
+          const matchesCreator = activeWorkCreator === "all" || card.dataset.creator === activeWorkCreator;
+          const matchesQuery = !query || `${title} ${meta} ${card.dataset.creator}`.toLowerCase().includes(query);
+          card.hidden = !(matchesType && matchesMode && matchesCreator && matchesQuery);
         });
       };
 
@@ -3315,14 +3352,15 @@
         workSortDirection = workSortDirection === "newest" ? "oldest" : "newest";
         const newestFirst = workSortDirection === "newest";
         workSortToggle.dataset.sort = workSortDirection;
-        workSortToggle.setAttribute("aria-label", newestFirst ? "Sort newest to oldest" : "Sort oldest to newest");
-        workSortToggle.querySelector("span").textContent = newestFirst ? "Newest → oldest" : "Oldest → newest";
+        const label = newestFirst ? "Newest first" : "Oldest first";
+        workSortToggle.setAttribute("aria-label", label);
+        workSortToggle.title = label;
         applyGenerationFilters();
       });
 
-      workModeFilterOptions.forEach((option) => {
+      workCreatorFilterOptions.forEach((option) => {
         option.addEventListener("click", () => {
-          activeWorkMode = option.dataset.modeFilter;
+          activeWorkCreator = option.dataset.creatorFilter;
           applyGenerationFilters();
         });
       });
@@ -3370,6 +3408,7 @@
             : "Describe the celebrity scene, mood, styling, wardrobe, camera angle, and output intent...";
           updateModeSelectionUI();
           renderSubjectOptions();
+          renderWorkCreatorFilter();
           updateGenerateState();
           applyGenerationFilters();
         });
@@ -3952,6 +3991,7 @@
       updatePageHeading();
       updateModeSelectionUI();
       renderSubjectOptions();
+      renderWorkCreatorFilter();
       updateEnhancePromptAvailability();
       updateGenerateState();
       applyGenerationFilters();
