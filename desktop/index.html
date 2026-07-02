@@ -567,7 +567,7 @@
       }
 
       .control-strip.generation-filter-strip {
-        grid-template-columns: minmax(120px, 1fr) auto;
+        grid-template-columns: minmax(80px, 1fr) auto;
         gap: 8px;
         align-items: center;
       }
@@ -575,12 +575,13 @@
       .generation-filter-controls {
         min-width: 0;
         display: grid;
-        grid-template-columns: 106px 38px 132px;
+        grid-template-columns: 90px 36px 118px 86px;
         align-items: center;
         gap: 8px;
       }
 
       .sort-toggle,
+      .favorites-filter-toggle,
       .generation-media-filter .select-field,
       .generation-mode-filter .select-field {
         min-height: 38px;
@@ -592,7 +593,7 @@
       }
 
       .sort-toggle {
-        width: 38px;
+        width: 36px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -607,6 +608,28 @@
 
       .sort-toggle[data-sort="oldest"] svg {
         transform: rotate(180deg);
+      }
+
+      .favorites-filter-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 0 9px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .favorites-filter-toggle svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .favorites-filter-toggle.active {
+        border-color: var(--mode-strong, var(--lavender-strong));
+        background: var(--mode-tint, var(--lavender));
+        color: var(--mode-ink, #2d235f);
       }
 
       .generation-media-filter .select-menu,
@@ -966,6 +989,7 @@
         color: var(--ink);
         font-size: 14px;
         line-height: 20px;
+        padding-top: 7px;
       }
 
       .prompt-editor textarea::placeholder {
@@ -1451,6 +1475,10 @@
         color: var(--lavender);
       }
 
+      body[data-theme="dark"] .nav-label {
+        color: var(--muted);
+      }
+
       body[data-theme="dark"] .stat,
       body[data-theme="dark"] .list-row,
       body[data-theme="dark"] .table-head,
@@ -1468,6 +1496,8 @@
       body[data-theme="dark"] .segment.active,
       body[data-theme="dark"] .select-option:hover,
       body[data-theme="dark"] .select-option.selected,
+      body[data-theme="dark"] .secondary-button.active,
+      body[data-theme="dark"] .favorites-filter-toggle.active,
       body[data-theme="dark"] .asset-primary-action {
         color: var(--ink);
       }
@@ -1953,6 +1983,17 @@
 
       .table-row:first-child {
         border-top: 0;
+      }
+
+      .table-row.selected {
+        background: var(--mode-tint-quiet, var(--surface-soft));
+        box-shadow: inset 3px 0 var(--mode-strong, var(--lavender-strong));
+      }
+
+      .secondary-button.active {
+        border-color: var(--mode-strong, var(--lavender-strong));
+        background: var(--mode-tint, var(--lavender));
+        color: var(--mode-ink, #2d235f);
       }
 
       .table-head {
@@ -2557,6 +2598,10 @@
                         <button class="select-option" type="button" role="menuitem" data-value="Maya Chen" data-creator-filter="Maya Chen">Maya Chen</button>
                       </div>
                     </div>
+                    <button class="favorites-filter-toggle" id="favorites-filter-toggle" type="button" aria-pressed="false">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 5.7c-2-2-5.1-1.7-6.8.4L12 8.5l-2-2.4C8.3 4 5.2 3.7 3.2 5.7c-2.2 2.2-2.1 5.8.2 7.9L12 21l8.6-7.4c2.3-2.1 2.4-5.7.2-7.9Z"/></svg>
+                      Favorites
+                    </button>
                   </div>
                 </div>
 
@@ -2832,21 +2877,21 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
                   <input type="search" placeholder="Search campaigns" />
                 </label>
-                <button class="primary-button" type="button">New campaign</button>
+                <button class="primary-button" id="campaign-page-new" type="button">New campaign</button>
               </div>
               <div class="table">
                 <div class="table-row table-head"><span>Campaign</span><span>Status</span><span>Platform</span><span>Assets</span><span>Budget</span><span></span></div>
-                <div class="table-row">
+                <div class="table-row" data-campaign="Summer Launch">
                   <div class="campaign-name"><span class="thumb" style="--thumb: linear-gradient(135deg, #ead8ff, #9beedd)"></span><div><strong>Summer Launch</strong><span>Fresh collection visuals</span></div></div>
-                  <span class="pill mint">Active</span><span>Instagram</span><span>18</span><span>$5,000</span><button class="secondary-button" type="button">Open</button>
+                  <span class="pill mint">Active</span><span>Instagram</span><span>18</span><span>$5,000</span><button class="secondary-button" type="button" data-open-campaign>Open</button>
                 </div>
-                <div class="table-row">
+                <div class="table-row" data-campaign="Awareness Push">
                   <div class="campaign-name"><span class="thumb" style="--thumb: linear-gradient(135deg, #dbd4fa, #f5f1ff)"></span><div><strong>Awareness Push</strong><span>Creator-first brand set</span></div></div>
-                  <span class="pill">Draft</span><span>TikTok</span><span>6</span><span>$2,800</span><button class="secondary-button" type="button">Open</button>
+                  <span class="pill">Draft</span><span>TikTok</span><span>6</span><span>$2,800</span><button class="secondary-button" type="button" data-open-campaign>Open</button>
                 </div>
-                <div class="table-row">
+                <div class="table-row" data-campaign="Spring Promo">
                   <div class="campaign-name"><span class="thumb" style="--thumb: linear-gradient(135deg, #c6fce4, #f4fbf8)"></span><div><strong>Spring Promo</strong><span>Completed content pack</span></div></div>
-                  <span class="pill">Completed</span><span>YouTube</span><span>24</span><span>$3,200</span><button class="secondary-button" type="button">Open</button>
+                  <span class="pill">Completed</span><span>YouTube</span><span>24</span><span>$3,200</span><button class="secondary-button" type="button" data-open-campaign>Open</button>
                 </div>
               </div>
             </div>
@@ -2857,19 +2902,19 @@
               <div class="toolbar-row">
                 <label class="search">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
-                  <input type="search" placeholder="Search influencers by niche, location, match score" />
+                  <input id="influencer-search" type="search" placeholder="Search influencers by niche, location, match score" />
                 </label>
                 <div class="segmented three" role="tablist" aria-label="Influencer filters">
-                  <button class="segment active" type="button">All</button>
-                  <button class="segment" type="button">Fashion</button>
-                  <button class="segment" type="button">High match</button>
+                  <button class="segment active" type="button" data-influencer-filter="all">All</button>
+                  <button class="segment" type="button" data-influencer-filter="fashion">Fashion</button>
+                  <button class="segment" type="button" data-influencer-filter="high">High match</button>
                 </div>
               </div>
               <div class="table">
                 <div class="table-row table-head"><span>Influencer</span><span>Niche</span><span>Audience</span><span>Match</span><span>Status</span><span></span></div>
-                <div class="table-row"><div class="campaign-name"><span class="avatar"></span><div><strong>Nigel Green</strong><span>US · 25</span></div></div><span>Fashion</span><span>120K</span><span>91%</span><span class="pill mint">High</span><button class="secondary-button" type="button">Add</button></div>
-                <div class="table-row"><div class="campaign-name"><span class="avatar"></span><div><strong>Sofia Moore</strong><span>UK · 23</span></div></div><span>Fashion</span><span>98K</span><span>88%</span><span class="pill mint">High</span><button class="secondary-button" type="button">Add</button></div>
-                <div class="table-row"><div class="campaign-name"><span class="avatar"></span><div><strong>Mia Johnson</strong><span>US · 28</span></div></div><span>Lifestyle</span><span>75K</span><span>76%</span><span class="pill">Good</span><button class="secondary-button" type="button">Add</button></div>
+                <div class="table-row" data-influencer="Nigel Green" data-niche="fashion" data-match="high"><div class="campaign-name"><span class="avatar"></span><div><strong>Nigel Green</strong><span>US · 25</span></div></div><span>Fashion</span><span>120K</span><span>91%</span><span class="pill mint">High</span><button class="secondary-button" type="button" data-add-influencer>Add</button></div>
+                <div class="table-row" data-influencer="Sofia Moore" data-niche="fashion" data-match="high"><div class="campaign-name"><span class="avatar"></span><div><strong>Sofia Moore</strong><span>UK · 23</span></div></div><span>Fashion</span><span>98K</span><span>88%</span><span class="pill mint">High</span><button class="secondary-button" type="button" data-add-influencer>Add</button></div>
+                <div class="table-row" data-influencer="Mia Johnson" data-niche="lifestyle" data-match="good"><div class="campaign-name"><span class="avatar"></span><div><strong>Mia Johnson</strong><span>US · 28</span></div></div><span>Lifestyle</span><span>75K</span><span>76%</span><span class="pill">Good</span><button class="secondary-button" type="button" data-add-influencer>Add</button></div>
               </div>
             </div>
           </section>
@@ -3190,10 +3235,12 @@
       const workSortToggle = document.querySelector("#work-sort-toggle");
       const workCreatorFilterLabel = document.querySelector("#work-creator-filter-label");
       const workCreatorFilterOptions = document.querySelectorAll("[data-creator-filter]");
+      const favoritesFilterToggle = document.querySelector("#favorites-filter-toggle");
       const favoritesGrid = document.querySelector("#favorites-grid");
       const favoritesEmpty = document.querySelector("#favorites-empty");
       const favoritesCount = document.querySelector("#favorites-count");
       let activeProject = "FameFlow Studio";
+      let activeCampaign = "Summer Launch";
       let activeView = "generate";
       let currentAsset = {
         title: "Asset",
@@ -3203,6 +3250,7 @@
       let activeWorkFilter = "all";
       let activeWorkCreator = "all";
       let workSortDirection = "newest";
+      let showFavoriteWorksOnly = false;
       const selectedSubjects = {
         celebrity: "",
         character: "",
@@ -3334,8 +3382,9 @@
           const matchesType = activeWorkFilter === "all" || meta.includes(activeWorkFilter);
           const matchesMode = card.dataset.workMode === document.body.dataset.mode;
           const matchesCreator = activeWorkCreator === "all" || card.dataset.creator === activeWorkCreator;
+          const matchesFavorites = !showFavoriteWorksOnly || favoriteIds.has(card.dataset.favoriteId);
           const matchesQuery = !query || `${title} ${meta} ${card.dataset.creator}`.toLowerCase().includes(query);
-          card.hidden = !(matchesType && matchesMode && matchesCreator && matchesQuery);
+          card.hidden = !(matchesType && matchesMode && matchesCreator && matchesFavorites && matchesQuery);
         });
       };
 
@@ -3355,6 +3404,13 @@
         const label = newestFirst ? "Newest first" : "Oldest first";
         workSortToggle.setAttribute("aria-label", label);
         workSortToggle.title = label;
+        applyGenerationFilters();
+      });
+
+      favoritesFilterToggle.addEventListener("click", () => {
+        showFavoriteWorksOnly = !showFavoriteWorksOnly;
+        favoritesFilterToggle.classList.toggle("active", showFavoriteWorksOnly);
+        favoritesFilterToggle.setAttribute("aria-pressed", String(showFavoriteWorksOnly));
         applyGenerationFilters();
       });
 
@@ -3800,6 +3856,9 @@
         campaignSheet.hidden = true;
         campaignSelectSheet.hidden = false;
       });
+      document.querySelector("#campaign-page-new").addEventListener("click", () => {
+        campaignSheet.hidden = false;
+      });
       document.querySelectorAll("[data-open-existing-campaign]").forEach((button) => {
         button.addEventListener("click", () => {
           campaignSelectSheet.hidden = true;
@@ -3807,6 +3866,75 @@
           setPromptStatus(`Campaign: ${button.dataset.openExistingCampaign}`, "success");
         });
       });
+      document.querySelectorAll("[data-open-campaign]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const row = button.closest("[data-campaign]");
+          activeCampaign = row.dataset.campaign;
+          document.querySelectorAll("[data-campaign]").forEach((campaignRow) => {
+            const isActive = campaignRow === row;
+            campaignRow.classList.toggle("selected", isActive);
+            const campaignButton = campaignRow.querySelector("[data-open-campaign]");
+            campaignButton.classList.toggle("active", isActive);
+            campaignButton.textContent = isActive ? "Opened" : "Open";
+          });
+          pageHeading.textContent = `Campaigns • ${activeCampaign}`;
+          document.title = `FameFlow · ${activeCampaign}`;
+          setPromptStatus(`${activeCampaign} opened`, "success");
+        });
+      });
+
+      let addedInfluencers = new Set();
+      try {
+        const savedInfluencers = JSON.parse(localStorage.getItem("fameflow-desktop-influencers") || "[]");
+        if (Array.isArray(savedInfluencers)) addedInfluencers = new Set(savedInfluencers);
+      } catch {
+        addedInfluencers = new Set();
+      }
+      const influencerSearch = document.querySelector("#influencer-search");
+      const influencerFilterButtons = document.querySelectorAll("[data-influencer-filter]");
+      let activeInfluencerFilter = "all";
+
+      const syncInfluencerButtons = () => {
+        document.querySelectorAll("[data-influencer]").forEach((row) => {
+          const isAdded = addedInfluencers.has(row.dataset.influencer);
+          const button = row.querySelector("[data-add-influencer]");
+          row.classList.toggle("selected", isAdded);
+          button.classList.toggle("active", isAdded);
+          button.textContent = isAdded ? "Added" : "Add";
+          button.setAttribute("aria-pressed", String(isAdded));
+        });
+      };
+
+      const applyInfluencerFilters = () => {
+        const query = influencerSearch.value.trim().toLowerCase();
+        document.querySelectorAll("[data-influencer]").forEach((row) => {
+          const matchesFilter = activeInfluencerFilter === "all"
+            || row.dataset.niche === activeInfluencerFilter
+            || row.dataset.match === activeInfluencerFilter;
+          const matchesQuery = !query || row.textContent.toLowerCase().includes(query);
+          row.hidden = !(matchesFilter && matchesQuery);
+        });
+      };
+
+      influencerSearch.addEventListener("input", applyInfluencerFilters);
+      influencerFilterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activeInfluencerFilter = button.dataset.influencerFilter;
+          applyInfluencerFilters();
+        });
+      });
+      document.querySelectorAll("[data-add-influencer]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const influencerName = button.closest("[data-influencer]").dataset.influencer;
+          if (addedInfluencers.has(influencerName)) addedInfluencers.delete(influencerName);
+          else addedInfluencers.add(influencerName);
+          localStorage.setItem("fameflow-desktop-influencers", JSON.stringify([...addedInfluencers]));
+          syncInfluencerButtons();
+          setPromptStatus(`${influencerName} ${addedInfluencers.has(influencerName) ? "added to" : "removed from"} ${activeCampaign}`, "success");
+        });
+      });
+      syncInfluencerButtons();
+
       document.querySelector("#confirm-create-project").addEventListener("click", () => {
         const projectName = document.querySelector("#new-project-name").value.trim() || "New project";
         projectSheet.hidden = true;
@@ -3896,6 +4024,7 @@
         }
         localStorage.setItem("fameflow-desktop-favorites", JSON.stringify([...favoriteIds]));
         renderFavorites();
+        applyGenerationFilters();
       };
 
       document.addEventListener("click", (event) => {
