@@ -157,6 +157,26 @@
         --mode-tint-quiet: color-mix(in srgb, var(--mode) 12%, var(--surface));
       }
 
+      body[data-theme="dark"] .segmented,
+      body[data-theme="dark"] .subject-row,
+      body[data-theme="dark"] .media-tabbar,
+      body[data-theme="dark"] .prompt-area,
+      body[data-theme="dark"] .idea-input-row,
+      body[data-theme="dark"] .copilot-composer,
+      body[data-theme="dark"] .gallery-mode,
+      body[data-theme="dark"] .gallery-filter-trigger,
+      body[data-theme="dark"] .custom-select .select-trigger {
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+          0 var(--s1) var(--s3) rgba(0, 0, 0, 0.22);
+      }
+
+      body[data-theme="dark"] .round-button,
+      body[data-theme="dark"] .composer-icon {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
       .phone {
         --content-width: calc(min(100vw, 390px) - (var(--screen-padding) * 2));
         --header-height: var(--s7);
@@ -238,19 +258,39 @@
 
       .brand-lockup {
         min-width: 0;
+        position: relative;
         display: flex;
         align-items: center;
         gap: var(--s2);
         border-radius: 999px;
       }
 
+      .brand-lockup::before {
+        content: "";
+        width: 52px;
+        height: 48px;
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(232, 226, 255, 0.62) 0%, rgba(198, 252, 228, 0.24) 46%, transparent 72%);
+        filter: blur(6px);
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
       .brand-logo {
         width: var(--s5);
         height: var(--s5);
+        position: relative;
+        z-index: 1;
         object-fit: contain;
+        filter: drop-shadow(0 5px 10px rgba(109, 85, 232, 0.18));
       }
 
       .brand-name {
+        position: relative;
+        z-index: 1;
         font-size: var(--type-h2-size);
         line-height: var(--type-h2-line);
         font-weight: var(--type-h2-weight);
@@ -324,7 +364,7 @@
       }
 
       .gallery-mode {
-        display: none;
+        display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: var(--s1);
         padding: var(--s1);
@@ -1725,7 +1765,7 @@
       .idea-input-row {
         display: grid;
         grid-template-columns: auto minmax(0, 1fr) auto auto;
-        align-items: start;
+        align-items: end;
         gap: var(--s2);
         min-height: var(--s7);
         padding: var(--s3);
@@ -1736,7 +1776,9 @@
 
       .idea-input-row input {
         min-width: 0;
-        align-self: stretch;
+        height: var(--s6);
+        align-self: end;
+        padding: 14px 0 2px;
         border: 0;
         outline: 0;
         background: transparent;
@@ -1975,8 +2017,11 @@
       }
 
       .mode-switch .segment[data-mode-button="character"].active {
-        border-style: dashed;
+        border-style: solid;
         border-color: color-mix(in srgb, var(--mode-ink) 46%, transparent);
+        box-shadow:
+          inset 0 0 0 2px color-mix(in srgb, var(--mode-ink) 18%, transparent),
+          0 var(--s1) var(--s2) rgba(24, 105, 79, 0.16);
       }
 
       .mode-icon {
@@ -2375,7 +2420,7 @@
       }
 
       body[data-theme="dark"] .mode-badge {
-        color: #f8f6ff;
+        color: var(--mode-ink);
         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
       }
 
@@ -2443,12 +2488,14 @@
       .prompt-area {
         position: relative;
         z-index: 2;
-        min-height: clamp(240px, 38dvh, 360px);
+        height: 100%;
+        min-height: 0;
+        max-height: 320px;
         display: grid;
         grid-template-rows: minmax(0, 1fr) auto auto;
-        gap: var(--s3);
+        gap: var(--s2);
         align-content: stretch;
-        padding: var(--s3);
+        padding: 12px;
         border: 1px solid var(--divider);
         border-radius: var(--s4);
         background: var(--field);
@@ -2472,7 +2519,7 @@
         grid-template-columns: auto minmax(0, 1fr) auto;
         align-items: start;
         gap: var(--s2);
-        min-height: var(--s8);
+        min-height: 40px;
         height: 100%;
       }
 
@@ -2483,7 +2530,7 @@
       }
 
       .generate-settings-row .select-trigger {
-        min-height: var(--s8);
+        min-height: 48px;
         padding: 0 var(--s5) 0 var(--s3);
         border-radius: var(--radius-card);
       }
@@ -2511,7 +2558,7 @@
 
       .enhance-prompt {
         width: fit-content;
-        min-height: var(--button-height);
+        min-height: 40px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -2629,13 +2676,13 @@
       }
 
       .copilot-composer {
-        min-height: var(--s7);
+        min-height: var(--s8);
         margin-bottom: var(--s2);
         display: grid;
         grid-template-columns: auto 1fr auto auto;
-        align-items: center;
+        align-items: end;
         gap: var(--s2);
-        padding: 0 var(--s2) 0 var(--s3);
+        padding: var(--s2);
         border: 1px solid var(--divider);
         border-radius: 999px;
         background: var(--field);
@@ -2643,6 +2690,8 @@
 
       .copilot-composer input {
         min-width: 0;
+        height: var(--s6);
+        padding: 14px 0 2px;
         border: 0;
         outline: 0;
         background: transparent;
@@ -2838,12 +2887,27 @@
 
       .settings-card.meta-card {
         grid-template-columns: var(--s8) minmax(0, 1fr);
+        grid-template-areas:
+          "icon copy"
+          "icon status";
         align-items: center;
+        column-gap: var(--s3);
+        row-gap: var(--s2);
       }
 
       .settings-card.meta-card .settings-card-copy {
+        grid-area: copy;
         display: grid;
         gap: var(--s1);
+      }
+
+      .settings-card.meta-card .meta-icon {
+        grid-area: icon;
+      }
+
+      .settings-card.meta-card .settings-status {
+        grid-area: status;
+        justify-self: start;
       }
 
       .settings-card-icon {
@@ -2993,6 +3057,29 @@
         line-height: var(--type-caption-line);
       }
 
+      .settings-card.meta-card .settings-status {
+        color: #0b5b46;
+      }
+
+      body[data-theme="dark"] .settings-card,
+      body[data-theme="dark"] .settings-field,
+      body[data-theme="dark"] .settings-summary {
+        border-color: rgba(255, 255, 255, 0.18);
+        background: #171720;
+        box-shadow: 0 var(--s2) var(--s4) rgba(0, 0, 0, 0.24);
+      }
+
+      body[data-theme="dark"] .meta-icon {
+        background: rgba(219, 212, 250, 0.16);
+        color: #a994ff;
+      }
+
+      body[data-theme="dark"] .settings-card.meta-card .settings-status {
+        border: 1px solid rgba(11, 91, 70, 0.28);
+        background: var(--character);
+        color: #0b5b46;
+      }
+
       .bottom-nav {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -3072,29 +3159,6 @@
       .round-button .icon {
         width: var(--s4);
         height: var(--s4);
-      }
-
-      .toast {
-        position: absolute;
-        left: var(--s4);
-        right: var(--s4);
-        bottom: calc(var(--s9) + var(--s4));
-        transform: translateY(var(--s3));
-        opacity: 0;
-        pointer-events: none;
-        padding: var(--s3);
-        border-radius: var(--radius);
-        background: #17151f;
-        color: #ffffff;
-        font-size: var(--type-body-size);
-        line-height: var(--type-body-line);
-        font-weight: var(--type-body-weight);
-        transition: 180ms ease;
-      }
-
-      .toast.visible {
-        opacity: 1;
-        transform: translateY(0);
       }
 
       .sheet-backdrop {
@@ -3983,9 +4047,11 @@
         padding-inline: var(--s4);
       }
 
-      @media (max-width: 340px) {
+      @media (max-width: 380px) {
         :root {
-          --screen-padding: 12px;
+          --screen-padding: 16px;
+          --type-h1-size: 28px;
+          --type-h1-line: 34px;
           --type-body-size: 15px;
           --type-body-line: 21px;
           --type-h2-size: 20px;
@@ -4035,9 +4101,30 @@
           margin-right: 8px;
           font-size: 14px;
         }
+
+        .generate-settings-row .select-label {
+          font-size: 12px;
+        }
+
+        .gallery-mode {
+          gap: 2px;
+          padding: 3px;
+        }
+
+        .gallery-mode button {
+          min-height: 36px;
+          padding-inline: 4px;
+          font-size: 11px;
+        }
       }
 
-      @media (max-height: 700px) {
+      @media (max-width: 340px) {
+        :root {
+          --screen-padding: 12px;
+        }
+      }
+
+      @media (max-height: 760px) {
         .phone {
           --header-height: 48px;
         }
@@ -4113,6 +4200,21 @@
 
         .nav-item {
           min-height: 48px;
+        }
+      }
+
+      @media (max-height: 600px) {
+        .prompt-area {
+          gap: var(--s1);
+          padding: var(--s2);
+        }
+
+        .enhance-prompt {
+          min-height: 36px;
+        }
+
+        .generate-settings-row .select-trigger {
+          min-height: 44px;
         }
       }
 
@@ -4428,8 +4530,8 @@
       </section>
 
       <section class="gallery-content" id="gallery-screen" hidden>
-        <h1 class="gallery-title">Favorites</h1>
-        <div class="gallery-mode" role="tablist" aria-label="Favorites filter">
+        <h1 class="gallery-title">Gallery</h1>
+        <div class="gallery-mode" role="tablist" aria-label="Gallery filter">
           <button class="active" type="button" data-gallery-view="all">All</button>
           <button type="button" data-gallery-view="celebrity">Celebrity</button>
           <button type="button" data-gallery-view="character">Character</button>
@@ -4466,7 +4568,7 @@
           </div>
         </div>
 
-        <p class="gallery-helper" id="gallery-helper">AI-generated images for your original characters.</p>
+        <p class="gallery-helper" id="gallery-helper">All generated celebrity and character media.</p>
         <div class="gallery-grid" id="gallery-grid"></div>
         <section class="gallery-empty" id="gallery-empty" hidden>
           <div class="empty-orb">
@@ -4490,7 +4592,7 @@
         </section>
       </section>
 
-      <section class="gallery-viewer" id="gallery-viewer" aria-label="Favorite work preview" hidden>
+      <section class="gallery-viewer" id="gallery-viewer" aria-label="Gallery work preview" hidden>
         <div class="viewer-header">
           <div class="viewer-title">
             <strong id="viewer-title">Generation</strong>
@@ -4969,8 +5071,8 @@
               <span class="settings-card-copy">
                 <strong>Meta Ads</strong>
                 <span id="meta-status-detail">Last synced today</span>
-                <span class="settings-status" id="meta-status-pill">Connected</span>
               </span>
+              <span class="settings-status" id="meta-status-pill">Connected</span>
             </section>
             <button class="settings-card compact" id="connect-meta" type="button">
               <span class="settings-card-copy"><strong>Reconnect</strong><span>Refresh your Meta Ads connection</span></span>
@@ -5047,12 +5149,10 @@
               <rect x="5" y="14" width="5" height="5" rx="1" />
               <rect x="14" y="14" width="5" height="5" rx="1" />
             </svg>
-            Favorites
+            Gallery
           </button>
         </nav>
       </div>
-
-      <div class="toast" id="toast">Generation started.</div>
 
       <div class="sheet-backdrop" id="sheet">
         <section class="sheet" aria-label="Subject picker">
@@ -5226,7 +5326,7 @@
                     </svg>
                   </button>
                   <button class="menu-item" type="button" data-menu-screen="gallery">
-                    <span>Favorites</span>
+                    <span>Gallery</span>
                     <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="m9 6 6 6-6 6" />
                     </svg>
@@ -5517,7 +5617,6 @@
       const cashChoices = [...document.querySelectorAll("[data-cash-amount]")];
       const subjectList = document.querySelector("#subject-list");
       const modeBadge = document.querySelector("#mode-badge");
-      const toast = document.querySelector("#toast");
       let activeMode = "celebrity";
       let activeSubject = "";
       let activeSubjectBackground = "";
@@ -5538,7 +5637,7 @@
       let selectedCatalogInfluencer = "";
       let selectedExistingCampaign = "Awareness Push";
       let campaignHasPreselectedInfluencer = false;
-      let galleryView = "favorites";
+      let galleryView = "all";
       let gallerySubject = "all";
       let galleryMedia = "All media";
       let activeGalleryMenu = "";
@@ -5724,12 +5823,7 @@
         `).join("");
       }
 
-      function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add("visible");
-        clearTimeout(showToast.timer);
-        showToast.timer = setTimeout(() => toast.classList.remove("visible"), 1800);
-      }
+      function showToast() {}
 
       function setEnhancePromptState(state) {
         const isRevert = state === "revert";
@@ -5922,6 +6016,13 @@
         gallerySubjectLabel.textContent = gallerySubject === "all" ? galleryLabel(galleryView) : gallerySubject;
         galleryMediaLabel.textContent = galleryMedia;
         galleryMediaIcon.innerHTML = mediaIcons[galleryMedia] || mediaIcons.Images;
+        document.querySelector("#gallery-helper").textContent = galleryView === "favorites"
+          ? "Only works saved with the heart button."
+          : galleryView === "celebrity"
+            ? "Generated celebrity images, videos, and audio."
+            : galleryView === "character"
+              ? "Generated character images, videos, and audio."
+              : "All generated celebrity and character media.";
 
         gallerySubjectOptions.innerHTML = subjectOptions.map((subject) => {
           const active = subject === gallerySubject;

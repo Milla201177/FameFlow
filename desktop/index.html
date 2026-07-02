@@ -161,16 +161,44 @@
       }
 
       .brand {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 0 8px 4px;
       }
 
+      .brand::before {
+        content: "";
+        width: 64px;
+        height: 58px;
+        position: absolute;
+        left: -4px;
+        top: 50%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(232, 226, 255, 0.62) 0%, rgba(198, 252, 228, 0.24) 46%, transparent 72%);
+        filter: blur(7px);
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
       .brand img {
         width: 40px;
         height: 40px;
+        position: relative;
+        z-index: 1;
         object-fit: contain;
+        filter: drop-shadow(0 6px 12px rgba(109, 85, 232, 0.2));
+      }
+
+      .brand > div {
+        position: relative;
+        z-index: 1;
+      }
+
+      .sidebar > div:first-child {
+        display: grid;
+        gap: 24px;
       }
 
       .brand strong {
@@ -217,6 +245,14 @@
       .nav-item svg {
         width: 20px;
         height: 20px;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .nav-item[data-view="copilot"] > svg,
+      .nav-item[data-view="campaigns"] > svg {
+        transform: scale(1.12);
       }
 
       .nav-item.active {
@@ -402,6 +438,14 @@
         display: flex;
         align-items: center;
         gap: 12px;
+      }
+
+      .topbar-start > .edge-toggle {
+        margin-left: -24px;
+      }
+
+      .topbar-actions > .edge-toggle:last-child {
+        margin-right: -24px;
       }
 
       .theme-toggle {
@@ -2546,6 +2590,14 @@
         .topbar {
           gap: 12px;
           padding: 14px 16px;
+        }
+
+        .topbar-start > .edge-toggle {
+          margin-left: -8px;
+        }
+
+        .topbar-actions > .edge-toggle:last-child {
+          margin-right: -8px;
         }
 
         .page-title h1 {
