@@ -550,6 +550,10 @@
         align-items: start;
       }
 
+      .generation-filter-strip .search {
+        min-width: 0;
+      }
+
       .mode-control-stack {
         display: grid;
         gap: 7px;
@@ -681,11 +685,11 @@
         width: min(760px, calc(100vw - 48px));
         height: var(--prompt-panel-height, 25vh);
         min-width: 560px;
-        min-height: 210px;
+        min-height: 270px;
         max-width: min(1100px, calc(100vw - 32px));
         max-height: 50vh;
         display: grid;
-        grid-template-rows: 10px minmax(56px, 1fr) auto;
+        grid-template-rows: 10px auto minmax(56px, 1fr) auto;
         overflow: hidden;
         background: rgba(255, 255, 255, 0.96);
         box-shadow: 0 -18px 56px rgba(31, 28, 45, 0.16);
@@ -772,6 +776,44 @@
         gap: 12px;
         padding: 7px 10px;
         border-bottom: 1px solid var(--line);
+      }
+
+      .prompt-setup {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+        gap: 8px;
+        padding: 7px 10px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .prompt-setup .mode-control-stack {
+        min-width: 0;
+      }
+
+      .prompt-setup .segmented {
+        gap: 4px;
+        padding: 3px;
+        box-shadow: none;
+      }
+
+      .prompt-setup .segment {
+        min-height: 38px;
+        padding-inline: 9px;
+      }
+
+      .prompt-setup .segment-title {
+        font-size: 11px;
+        line-height: 14px;
+      }
+
+      .prompt-setup .segment-meta {
+        font-size: 9px;
+        line-height: 11px;
+      }
+
+      .prompt-setup .segment svg {
+        width: 16px;
+        height: 16px;
       }
 
       .prompt-status {
@@ -871,8 +913,8 @@
 
       .prompt-footer {
         display: grid;
-        grid-template-areas: "enhance selects generate";
-        grid-template-columns: auto 1fr auto;
+        grid-template-areas: "selects enhance generate";
+        grid-template-columns: minmax(0, 1fr) auto auto;
         align-items: center;
         gap: 8px;
         padding: 8px 10px;
@@ -957,7 +999,8 @@
         width: 238px;
         max-width: calc(100vw - 32px);
         position: absolute;
-        left: 0;
+        right: 0;
+        left: auto;
         bottom: calc(100% + 9px);
         z-index: 60;
         padding: 10px 12px;
@@ -1520,12 +1563,62 @@
       }
 
       .generation-work {
+        position: relative;
         overflow: hidden;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
         box-shadow: 0 8px 24px rgba(31, 28, 45, 0.06);
         cursor: pointer;
+      }
+
+      .favorite-button {
+        width: 36px;
+        height: 36px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.62);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.88);
+        color: #34323b;
+        box-shadow: 0 6px 16px rgba(20, 18, 28, 0.16);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+      }
+
+      .favorite-button:hover {
+        transform: scale(1.06);
+      }
+
+      .favorite-button svg {
+        width: 18px;
+        height: 18px;
+        fill: transparent;
+        transition: fill 160ms ease;
+      }
+
+      .favorite-button.active {
+        background: var(--mode-strong, var(--lavender-strong));
+        color: #ffffff;
+      }
+
+      .favorite-button.active svg {
+        fill: currentColor;
+      }
+
+      body[data-theme="dark"] .favorite-button {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(20, 20, 28, 0.88);
+        color: #ffffff;
+      }
+
+      body[data-theme="dark"] .favorite-button.active {
+        background: var(--mode-strong, var(--lavender-strong));
       }
 
       .generation-work-preview {
@@ -1585,11 +1678,37 @@
       }
 
       .asset-card {
+        position: relative;
         overflow: hidden;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
         cursor: pointer;
+      }
+
+      .favorites-empty {
+        min-height: 280px;
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: 8px;
+        padding: 32px;
+        border: 1px dashed var(--line-strong);
+        border-radius: var(--radius-card);
+        background: var(--surface);
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .favorites-empty svg {
+        width: 34px;
+        height: 34px;
+        color: var(--mode-strong, var(--lavender-strong));
+      }
+
+      .favorites-empty strong {
+        color: var(--ink);
+        font-size: 18px;
       }
 
       .asset-sheet {
@@ -2249,9 +2368,9 @@
               <span></span>
             </button>
             <button class="nav-item" type="button" data-view="gallery">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="m7 16 4-4 3 3 2-2 1 3"/></svg>
-              Gallery
-              <span></span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 5.7c-2-2-5.1-1.7-6.8.4L12 8.5l-2-2.4C8.3 4 5.2 3.7 3.2 5.7c-2.2 2.2-2.1 5.8.2 7.9L12 21l8.6-7.4c2.3-2.1 2.4-5.7.2-7.9Z"/></svg>
+              Favorites
+              <span class="nav-count" id="favorites-count">0</span>
             </button>
 
             <div class="nav-label">Campaigns</div>
@@ -2320,42 +2439,15 @@
           <section class="view active" id="view-generate">
             <div class="generate-grid">
               <div class="workspace">
-                <div class="control-strip">
-                  <div class="mode-control-stack">
-                    <div class="segmented two mode-segmented" role="tablist" aria-label="Creation mode">
-                      <button class="segment active" type="button" data-mode="celebrity">
-                        <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
-                        <span class="segment-avatar" id="celebrity-segment-avatar"></span>
-                        <span class="segment-copy">
-                          <span class="segment-title">Celebrity</span>
-                          <span class="segment-meta" id="celebrity-segment-meta">Choose celebrity</span>
-                        </span>
-                        <svg class="segment-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-                      </button>
-                      <button class="segment" type="button" data-mode="character">
-                        <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
-                        <span class="segment-avatar" id="character-segment-avatar"></span>
-                        <span class="segment-copy">
-                          <span class="segment-title">Character</span>
-                          <span class="segment-meta" id="character-segment-meta">Choose character</span>
-                        </span>
-                        <svg class="segment-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="segmented three" role="tablist" aria-label="Media type">
-                    <button class="segment active" type="button" data-media="Image">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="m7 16 4-4 3 3 2-2 1 3"/></svg>
-                      Image
-                    </button>
-                    <button class="segment" type="button" data-media="Video">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="7" width="12" height="10" rx="2"/><circle cx="10" cy="12" r="2"/><path d="m16 10 4-2v8l-4-2"/></svg>
-                      Video
-                    </button>
-                    <button class="segment" type="button" data-media="Audio">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
-                      Audio
-                    </button>
+                <div class="control-strip generation-filter-strip">
+                  <label class="search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
+                    <input id="generation-search" type="search" placeholder="Search works" />
+                  </label>
+                  <div class="segmented three" role="tablist" aria-label="Generated works filter">
+                    <button class="segment active" type="button" data-work-filter="all">All</button>
+                    <button class="segment" type="button" data-work-filter="image">Images</button>
+                    <button class="segment" type="button" data-work-filter="video">Video</button>
                   </div>
                 </div>
 
@@ -2363,6 +2455,35 @@
                   <div class="prompt-resize-handle" id="prompt-resize-handle" role="separator" aria-label="Resize prompt panel" aria-orientation="horizontal" tabindex="0"></div>
                   <div class="prompt-width-resize-handle" id="prompt-width-resize-handle" role="separator" aria-label="Resize prompt panel width" aria-orientation="vertical" tabindex="0"></div>
                   <span class="prompt-status" id="prompt-status" role="status" aria-live="polite"></span>
+                  <div class="prompt-setup">
+                    <div class="mode-control-stack">
+                      <div class="segmented two mode-segmented" role="tablist" aria-label="Creation mode">
+                        <button class="segment active" type="button" data-mode="celebrity">
+                          <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.4 9.1 21 9.4l-5.1 4.1 1.7 6.5-5.6-3.6L6.4 20l1.7-6.5L3 9.4l6.6-.3L12 3Z"/></svg>
+                          <span class="segment-avatar" id="celebrity-segment-avatar"></span>
+                          <span class="segment-copy">
+                            <span class="segment-title">Celebrity</span>
+                            <span class="segment-meta" id="celebrity-segment-meta">Choose celebrity</span>
+                          </span>
+                          <svg class="segment-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                        </button>
+                        <button class="segment" type="button" data-mode="character">
+                          <svg class="segment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 21c1.4-4 4-6 7-6s5.6 2 7 6"/></svg>
+                          <span class="segment-avatar" id="character-segment-avatar"></span>
+                          <span class="segment-copy">
+                            <span class="segment-title">Character</span>
+                            <span class="segment-meta" id="character-segment-meta">Choose character</span>
+                          </span>
+                          <svg class="segment-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="segmented three" role="tablist" aria-label="Media type">
+                      <button class="segment active" type="button" data-media="Image">Image</button>
+                      <button class="segment" type="button" data-media="Video">Video</button>
+                      <button class="segment" type="button" data-media="Audio">Audio</button>
+                    </div>
+                  </div>
                   <div class="prompt-editor">
                     <button class="icon-button" id="attach-button" type="button" aria-label="Attach file">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11.6 12.3 20.7a5 5 0 0 1-7.1-7.1l9.2-9.2a3.2 3.2 0 1 1 4.5 4.5l-9.3 9.3a1.5 1.5 0 0 1-2.1-2.1l8.6-8.6"/></svg>
@@ -2420,12 +2541,12 @@
                     </div>
                     <button class="generate-action" id="generate-button" type="button" disabled>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3 4 14h7l-1 7 10-12h-7V3Z"/></svg>
-                      <span id="generate-label">Write prompt</span>
+                      <span id="generate-label">Enter prompt first</span>
                     </button>
                   </div>
                 </section>
 
-                <section class="generation-gallery" aria-label="Reusable gallery works">
+                <section class="generation-gallery" aria-label="Generated works">
                   <div class="generation-gallery-grid celebrity-only">
                     <article class="generation-work">
                       <div class="generation-work-preview" data-format="9:16" style="--work-image: radial-gradient(circle at 50% 33%, #e8bfa9 0 11%, transparent 12%), radial-gradient(ellipse at 50% 84%, #26354d 0 35%, transparent 36%), linear-gradient(135deg, #dbe8f5, #7891ad);"></div>
@@ -2578,22 +2699,11 @@
 
           <section class="view" id="view-gallery">
             <div class="page-grid">
-              <div class="toolbar-row">
-                <label class="search">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
-                  <input type="search" placeholder="Search assets, subjects, campaigns" />
-                </label>
-                <div class="segmented three" role="tablist" aria-label="Gallery media filter">
-                  <button class="segment active" type="button">All</button>
-                  <button class="segment" type="button">Images</button>
-                  <button class="segment" type="button">Video</button>
-                </div>
-              </div>
-              <div class="gallery-grid">
-                <article class="asset-card"><div class="asset-preview" style="--thumb: linear-gradient(135deg, #dbd4fa, #8f7cf6)"></div><div class="asset-body"><strong>Ava hero portrait</strong><span>Celebrity · Image</span></div></article>
-                <article class="asset-card"><div class="asset-preview" style="--thumb: linear-gradient(135deg, #c6fce4, #67d7aa)"></div><div class="asset-body"><strong>Mina launch reel</strong><span>Character · Video</span></div></article>
-                <article class="asset-card"><div class="asset-preview" style="--thumb: linear-gradient(135deg, #f5f1ff, #dbd4fa)"></div><div class="asset-body"><strong>Product close-up</strong><span>Campaign · Image</span></div></article>
-                <article class="asset-card"><div class="asset-preview" style="--thumb: linear-gradient(135deg, #e8e6f2, #ffffff)"></div><div class="asset-body"><strong>Voiceover test</strong><span>Audio · 0:24</span></div></article>
+              <div class="gallery-grid" id="favorites-grid"></div>
+              <div class="favorites-empty" id="favorites-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 5.7c-2-2-5.1-1.7-6.8.4L12 8.5l-2-2.4C8.3 4 5.2 3.7 3.2 5.7c-2.2 2.2-2.1 5.8.2 7.9L12 21l8.6-7.4c2.3-2.1 2.4-5.7.2-7.9Z"/></svg>
+                <strong>No favorites yet</strong>
+                <span>Tap the heart on a work to save it here.</span>
               </div>
             </div>
           </section>
@@ -2901,7 +3011,7 @@
       const titles = {
         generate: ["Generate", ""],
         copilot: ["Co-Pilot", "Turn loose creative ideas into structured generation setups."],
-        gallery: ["Gallery", "Review, filter, and reuse generated assets."],
+        gallery: ["Favorites", "Works you saved with the heart button."],
         campaigns: ["Campaigns", "Plan influencer campaigns and track generated content."],
         influencers: ["Influencers", "Browse AI influencers and add them to campaign briefs."],
         settings: ["Settings", "Manage account, credits, and connected services."],
@@ -2914,6 +3024,7 @@
           document.querySelectorAll(".view").forEach((section) => section.classList.toggle("active", section.id === `view-${view}`));
           activeView = view;
           if (view === "settings") setSettingsView("home");
+          if (view === "gallery") renderFavorites();
           updatePageHeading();
         });
       });
@@ -2957,6 +3068,11 @@
       const characterSegmentMeta = document.querySelector("#character-segment-meta");
       const celebritySegmentAvatar = document.querySelector("#celebrity-segment-avatar");
       const characterSegmentAvatar = document.querySelector("#character-segment-avatar");
+      const generationSearch = document.querySelector("#generation-search");
+      const workFilterButtons = document.querySelectorAll("[data-work-filter]");
+      const favoritesGrid = document.querySelector("#favorites-grid");
+      const favoritesEmpty = document.querySelector("#favorites-empty");
+      const favoritesCount = document.querySelector("#favorites-count");
       let activeProject = "FameFlow Studio";
       let activeView = "generate";
       let currentAsset = {
@@ -2964,6 +3080,7 @@
         meta: "Image",
         prompt: "",
       };
+      let activeWorkFilter = "all";
       const selectedSubjects = {
         celebrity: "",
         character: "",
@@ -3038,11 +3155,31 @@
         generateButton.disabled = !hasPrompt || (requiresSubject && !hasSubject);
         generateButton.setAttribute("aria-disabled", String(generateButton.disabled));
         generateLabel.textContent = !hasPrompt
-          ? "Write prompt"
+          ? "Enter prompt first"
           : requiresSubject && !hasSubject
             ? "Add celebrity"
             : "Generate";
       };
+
+      const applyGenerationFilters = () => {
+        const query = generationSearch.value.trim().toLowerCase();
+        document.querySelectorAll(".generation-work").forEach((card) => {
+          const title = card.querySelector("strong")?.textContent.toLowerCase() || "";
+          const meta = card.querySelector(".generation-work-copy span")?.textContent.toLowerCase() || "";
+          const matchesType = activeWorkFilter === "all" || meta.includes(activeWorkFilter);
+          const matchesQuery = !query || `${title} ${meta}`.includes(query);
+          card.hidden = !(matchesType && matchesQuery);
+        });
+      };
+
+      generationSearch.addEventListener("input", applyGenerationFilters);
+
+      workFilterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activeWorkFilter = button.dataset.workFilter;
+          applyGenerationFilters();
+        });
+      });
 
       const selectSubject = (subjectName) => {
         selectedSubjects[document.body.dataset.mode] = subjectName;
@@ -3088,6 +3225,7 @@
           updateModeSelectionUI();
           renderSubjectOptions();
           updateGenerateState();
+          applyGenerationFilters();
         });
       });
 
@@ -3161,7 +3299,7 @@
       };
 
       const setPromptHeight = (height) => {
-        const minHeight = 210;
+        const minHeight = 270;
         const maxHeight = Math.round(window.innerHeight * 0.5);
         const nextHeight = Math.max(minHeight, Math.min(maxHeight, height));
         document.documentElement.style.setProperty("--prompt-panel-height", `${nextHeight}px`);
@@ -3505,8 +3643,80 @@
         assetSheet.hidden = false;
       };
 
-      document.querySelectorAll(".generation-work, .asset-card").forEach((card) => {
-        card.addEventListener("click", () => openAssetSheet(card));
+      const favoriteCatalog = new Map();
+      let favoriteIds = new Set();
+
+      try {
+        const savedFavorites = JSON.parse(localStorage.getItem("fameflow-desktop-favorites") || "[]");
+        if (Array.isArray(savedFavorites)) favoriteIds = new Set(savedFavorites);
+      } catch {
+        favoriteIds = new Set();
+      }
+
+      document.querySelectorAll(".generation-work").forEach((card, index) => {
+        const title = card.querySelector("strong")?.textContent || `work-${index + 1}`;
+        const slug = title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+        const favoriteId = `${index + 1}-${slug}`;
+        card.dataset.favoriteId = favoriteId;
+        card.insertAdjacentHTML("afterbegin", `
+          <button class="favorite-button" type="button" aria-label="Add ${title} to favorites" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 5.7c-2-2-5.1-1.7-6.8.4L12 8.5l-2-2.4C8.3 4 5.2 3.7 3.2 5.7c-2.2 2.2-2.1 5.8.2 7.9L12 21l8.6-7.4c2.3-2.1 2.4-5.7.2-7.9Z"/></svg>
+          </button>
+        `);
+        favoriteCatalog.set(favoriteId, card);
+      });
+
+      favoriteIds = new Set([...favoriteIds].filter((favoriteId) => favoriteCatalog.has(favoriteId)));
+
+      const syncFavoriteButtons = () => {
+        document.querySelectorAll("[data-favorite-id]").forEach((card) => {
+          const button = card.querySelector(".favorite-button");
+          if (!button) return;
+          const isFavorite = favoriteIds.has(card.dataset.favoriteId);
+          const title = card.querySelector("strong")?.textContent || "work";
+          button.classList.toggle("active", isFavorite);
+          button.setAttribute("aria-pressed", String(isFavorite));
+          button.setAttribute("aria-label", `${isFavorite ? "Remove" : "Add"} ${title} ${isFavorite ? "from" : "to"} favorites`);
+        });
+      };
+
+      const renderFavorites = () => {
+        favoritesGrid.innerHTML = "";
+        favoriteCatalog.forEach((sourceCard, favoriteId) => {
+          if (!favoriteIds.has(favoriteId)) return;
+          const clone = sourceCard.cloneNode(true);
+          clone.hidden = false;
+          favoritesGrid.append(clone);
+        });
+        const hasFavorites = favoriteIds.size > 0;
+        favoritesGrid.hidden = !hasFavorites;
+        favoritesEmpty.hidden = hasFavorites;
+        favoritesCount.textContent = String(favoriteIds.size);
+        syncFavoriteButtons();
+      };
+
+      const toggleFavorite = (card) => {
+        const favoriteId = card.dataset.favoriteId;
+        if (!favoriteId) return;
+        if (favoriteIds.has(favoriteId)) {
+          favoriteIds.delete(favoriteId);
+        } else {
+          favoriteIds.add(favoriteId);
+        }
+        localStorage.setItem("fameflow-desktop-favorites", JSON.stringify([...favoriteIds]));
+        renderFavorites();
+      };
+
+      document.addEventListener("click", (event) => {
+        const favoriteButton = event.target.closest(".favorite-button");
+        if (favoriteButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          toggleFavorite(favoriteButton.closest("[data-favorite-id]"));
+          return;
+        }
+        const card = event.target.closest(".generation-work, .asset-card");
+        if (card) openAssetSheet(card);
       });
 
       const reuseAssetInGenerate = ({ media, asReference = false } = {}) => {
@@ -3592,6 +3802,8 @@
       renderSubjectOptions();
       updateEnhancePromptAvailability();
       updateGenerateState();
+      applyGenerationFilters();
+      renderFavorites();
     </script>
   </body>
 </html>

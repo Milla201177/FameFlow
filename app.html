@@ -324,7 +324,7 @@
       }
 
       .gallery-mode {
-        display: grid;
+        display: none;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: var(--s1);
         padding: var(--s1);
@@ -4428,8 +4428,8 @@
       </section>
 
       <section class="gallery-content" id="gallery-screen" hidden>
-        <h1 class="gallery-title">Gallery</h1>
-        <div class="gallery-mode" role="tablist" aria-label="Gallery filter">
+        <h1 class="gallery-title">Favorites</h1>
+        <div class="gallery-mode" role="tablist" aria-label="Favorites filter">
           <button class="active" type="button" data-gallery-view="all">All</button>
           <button type="button" data-gallery-view="celebrity">Celebrity</button>
           <button type="button" data-gallery-view="character">Character</button>
@@ -4476,8 +4476,8 @@
               <circle cx="17" cy="16" r="3" />
             </svg>
           </div>
-          <h2>No audio yet</h2>
-          <p>You haven’t created any character audio yet. Generate audio or switch to another media type.</p>
+          <h2 id="gallery-empty-title">No favorites yet</h2>
+          <p id="gallery-empty-copy">Tap the heart on a work to save it here.</p>
           <button class="empty-primary" id="gallery-create-audio" type="button">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M9 18V5l11-2v13" />
@@ -4490,7 +4490,7 @@
         </section>
       </section>
 
-      <section class="gallery-viewer" id="gallery-viewer" aria-label="Gallery preview" hidden>
+      <section class="gallery-viewer" id="gallery-viewer" aria-label="Favorite work preview" hidden>
         <div class="viewer-header">
           <div class="viewer-title">
             <strong id="viewer-title">Generation</strong>
@@ -5047,7 +5047,7 @@
               <rect x="5" y="14" width="5" height="5" rx="1" />
               <rect x="14" y="14" width="5" height="5" rx="1" />
             </svg>
-            Gallery
+            Favorites
           </button>
         </nav>
       </div>
@@ -5226,7 +5226,7 @@
                     </svg>
                   </button>
                   <button class="menu-item" type="button" data-menu-screen="gallery">
-                    <span>Gallery</span>
+                    <span>Favorites</span>
                     <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="m9 6 6 6-6 6" />
                     </svg>
@@ -5538,7 +5538,7 @@
       let selectedCatalogInfluencer = "";
       let selectedExistingCampaign = "Awareness Push";
       let campaignHasPreselectedInfluencer = false;
-      let galleryView = "all";
+      let galleryView = "favorites";
       let gallerySubject = "all";
       let galleryMedia = "All media";
       let activeGalleryMenu = "";
@@ -5643,6 +5643,15 @@
         { id: "leo", category: "celebrity", subject: "Leonardo DiCaprio", media: "Images", favorite: false, accent: "#dbd4fa", ink: "#4d35c7", portrait: "#deb28d", thumb: "linear-gradient(135deg, #2d303a, #c5a17d 52%, #ead6be)" },
         { id: "selena", category: "celebrity", subject: "Selena Gomez", media: "Images", favorite: false, accent: "#dbd4fa", ink: "#4d35c7", portrait: "#d69a78", thumb: "linear-gradient(135deg, #3c2f29, #d8b08d 52%, #efe6dd)" }
       ];
+
+      try {
+        const savedFavoriteIds = JSON.parse(localStorage.getItem("fameflow-app-favorites") || "null");
+        if (Array.isArray(savedFavoriteIds)) {
+          galleryItems.forEach((item) => {
+            item.favorite = savedFavoriteIds.includes(item.id);
+          });
+        }
+      } catch {}
 
       function setMode(mode) {
         if (!modeData[mode]) mode = "celebrity";
@@ -5997,10 +6006,17 @@
       function renderGallery() {
         renderGalleryFilters();
         const items = galleryFilteredItems();
-        const isEmptyAudio = galleryMedia === "Audio" && items.length === 0;
-        galleryGrid.hidden = isEmptyAudio;
-        galleryEmpty.hidden = !isEmptyAudio;
-        if (!isEmptyAudio) {
+        const isEmpty = items.length === 0;
+        const isEmptyFavorites = galleryView === "favorites" && isEmpty;
+        galleryGrid.hidden = isEmpty;
+        galleryEmpty.hidden = !isEmpty;
+        document.querySelector("#gallery-empty-title").textContent = isEmptyFavorites ? "No favorites yet" : "No audio yet";
+        document.querySelector("#gallery-empty-copy").textContent = isEmptyFavorites
+          ? "Tap the heart on a work to save it here."
+          : "You haven’t created any character audio yet. Generate audio or switch to another media type.";
+        document.querySelector("#gallery-create-audio").hidden = isEmptyFavorites;
+        document.querySelector("#gallery-view-images").hidden = isEmptyFavorites;
+        if (!isEmpty) {
           galleryGrid.innerHTML = items.map(renderGalleryCard).join("");
         }
       }
@@ -6357,6 +6373,9 @@
           const item = galleryItems.find((entry) => entry.id === card?.dataset.galleryCard);
           if (item) {
             item.favorite = !item.favorite;
+            localStorage.setItem("fameflow-app-favorites", JSON.stringify(
+              galleryItems.filter((entry) => entry.favorite).map((entry) => entry.id)
+            ));
             activeGalleryMenu = "";
             renderGallery();
             showToast(item.favorite ? "Added to favorites." : "Removed from favorites.");
