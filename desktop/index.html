@@ -554,6 +554,53 @@
         min-width: 0;
       }
 
+      .generation-filter-controls {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: minmax(260px, 1fr) minmax(150px, auto) minmax(140px, auto);
+        align-items: start;
+        gap: 8px;
+      }
+
+      .generation-filter-controls .segmented {
+        min-width: 0;
+      }
+
+      .segmented.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .sort-toggle,
+      .generation-mode-filter .select-field {
+        min-height: 52px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 4px 10px rgba(31, 28, 45, 0.06);
+      }
+
+      .sort-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .sort-toggle svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .generation-mode-filter .select-menu {
+        top: calc(100% + 8px);
+        bottom: auto;
+      }
+
       .mode-control-stack {
         display: grid;
         gap: 7px;
@@ -1665,15 +1712,8 @@
         line-height: 18px;
       }
 
-      .character-only {
-        display: none;
-      }
-
+      .character-only,
       body[data-mode="character"] .celebrity-only {
-        display: none;
-      }
-
-      body[data-mode="character"] .character-only {
         display: grid;
       }
 
@@ -1928,25 +1968,32 @@
       }
 
       .copilot-layout {
+        height: calc(100vh - 148px);
+        height: calc(100dvh - 148px);
+        min-height: 560px;
         display: grid;
         grid-template-columns: minmax(0, 1fr) 380px;
         gap: 24px;
       }
 
       .prompt-chat {
-        min-height: 560px;
+        min-height: 0;
+        height: 100%;
         display: grid;
-        grid-template-rows: 1fr auto;
+        grid-template-rows: minmax(0, 1fr) auto;
+        overflow: hidden;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
       }
 
       .message-stack {
+        min-height: 0;
         display: grid;
         align-content: start;
         gap: 14px;
         padding: 20px;
+        overflow-y: auto;
       }
 
       .message {
@@ -1969,6 +2016,17 @@
         gap: 10px;
         padding: 16px;
         border-top: 1px solid var(--line);
+      }
+
+      .copilot-layout > .rail {
+        min-height: 0;
+        height: 100%;
+      }
+
+      .copilot-layout > .rail .rail-panel {
+        min-height: 0;
+        height: 100%;
+        overflow-y: auto;
       }
 
       .chat-input input {
@@ -2263,7 +2321,20 @@
         }
 
         .copilot-layout {
+          height: auto;
+          min-height: 0;
           grid-template-columns: minmax(0, 1fr);
+        }
+
+        .prompt-chat {
+          min-height: 560px;
+          height: calc(100vh - 132px);
+          height: calc(100dvh - 132px);
+        }
+
+        .copilot-layout > .rail,
+        .copilot-layout > .rail .rail-panel {
+          height: auto;
         }
 
         .topbar {
@@ -2303,6 +2374,16 @@
 
         .generation-gallery-grid {
           grid-template-columns: repeat(2, minmax(150px, 1fr));
+        }
+      }
+
+      @media (max-width: 1050px) and (min-width: 901px) {
+        .generation-filter-controls {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .generation-filter-controls .segmented {
+          grid-column: 1 / -1;
         }
       }
 
@@ -2442,12 +2523,30 @@
                 <div class="control-strip generation-filter-strip">
                   <label class="search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
-                    <input id="generation-search" type="search" placeholder="Search works" />
+                    <input id="generation-search" type="search" placeholder="Search prompt" />
                   </label>
-                  <div class="segmented three" role="tablist" aria-label="Generated works filter">
-                    <button class="segment active" type="button" data-work-filter="all">All</button>
-                    <button class="segment" type="button" data-work-filter="image">Images</button>
-                    <button class="segment" type="button" data-work-filter="video">Video</button>
+                  <div class="generation-filter-controls">
+                    <div class="segmented four" role="tablist" aria-label="Generated works media filter">
+                      <button class="segment active" type="button" data-work-filter="all">All</button>
+                      <button class="segment" type="button" data-work-filter="image">Images</button>
+                      <button class="segment" type="button" data-work-filter="video">Video</button>
+                      <button class="segment" type="button" data-work-filter="audio">Audio</button>
+                    </div>
+                    <button class="sort-toggle" id="work-sort-toggle" type="button" data-sort="newest" aria-label="Sort newest to oldest">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5v14m0 0-3-3m3 3 3-3M16 19V5m0 0-3 3m3-3 3 3"/></svg>
+                      <span>Newest → oldest</span>
+                    </button>
+                    <div class="select-control generation-mode-filter" data-select="works-mode">
+                      <button class="select-field" type="button" aria-haspopup="menu" aria-expanded="false">
+                        <strong>All creators</strong>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+                      </button>
+                      <div class="select-menu" role="menu" hidden>
+                        <button class="select-option selected" type="button" role="menuitem" data-value="All creators" data-mode-filter="all">All creators</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Celebrity" data-mode-filter="celebrity">Celebrity</button>
+                        <button class="select-option" type="button" role="menuitem" data-value="Character" data-mode-filter="character">Character</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -2596,6 +2695,10 @@
                       <div class="generation-work-preview" data-format="4:5" style="--work-image: linear-gradient(145deg, #cee7ff, #55579f);"></div>
                       <div class="generation-work-copy"><strong>Night city editorial</strong><span>Celebrity · Image</span></div>
                     </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="0:24" style="--work-image: repeating-linear-gradient(90deg, #dbd4fa 0 8px, #6d55e8 8px 12px, #f5f3fd 12px 20px);"></div>
+                      <div class="generation-work-copy"><strong>Premiere voiceover</strong><span>Celebrity · Audio</span></div>
+                    </article>
                   </div>
 
                   <div class="generation-gallery-grid character-only">
@@ -2646,6 +2749,10 @@
                     <article class="generation-work">
                       <div class="generation-work-preview" data-format="4:5" style="--work-image: linear-gradient(145deg, #e0dcff, #60538c);"></div>
                       <div class="generation-work-copy"><strong>Future fashion look</strong><span>Character · Image</span></div>
+                    </article>
+                    <article class="generation-work">
+                      <div class="generation-work-preview" data-format="0:18" style="--work-image: repeating-linear-gradient(90deg, #c6fce4 0 7px, #1d7f5d 7px 11px, #f3fbf7 11px 19px);"></div>
+                      <div class="generation-work-copy"><strong>Mina voice signature</strong><span>Character · Audio</span></div>
                     </article>
                   </div>
                 </section>
@@ -3070,6 +3177,8 @@
       const characterSegmentAvatar = document.querySelector("#character-segment-avatar");
       const generationSearch = document.querySelector("#generation-search");
       const workFilterButtons = document.querySelectorAll("[data-work-filter]");
+      const workSortToggle = document.querySelector("#work-sort-toggle");
+      const workModeFilterOptions = document.querySelectorAll("[data-mode-filter]");
       const favoritesGrid = document.querySelector("#favorites-grid");
       const favoritesEmpty = document.querySelector("#favorites-empty");
       const favoritesCount = document.querySelector("#favorites-count");
@@ -3081,6 +3190,8 @@
         prompt: "",
       };
       let activeWorkFilter = "all";
+      let activeWorkMode = "all";
+      let workSortDirection = "newest";
       const selectedSubjects = {
         celebrity: "",
         character: "",
@@ -3161,14 +3272,33 @@
             : "Generate";
       };
 
+      document.querySelectorAll(".generation-gallery-grid").forEach((grid) => {
+        [...grid.children].forEach((card, index) => {
+          if (card.classList.contains("generation-work")) card.dataset.workOrder = String(index);
+        });
+      });
+
+      const sortGenerationWorks = () => {
+        document.querySelectorAll(".generation-gallery-grid").forEach((grid) => {
+          const cards = [...grid.children].filter((card) => card.classList.contains("generation-work"));
+          cards.sort((first, second) => {
+            const difference = Number(first.dataset.workOrder) - Number(second.dataset.workOrder);
+            return workSortDirection === "newest" ? difference : -difference;
+          });
+          cards.forEach((card) => grid.append(card));
+        });
+      };
+
       const applyGenerationFilters = () => {
+        sortGenerationWorks();
         const query = generationSearch.value.trim().toLowerCase();
         document.querySelectorAll(".generation-work").forEach((card) => {
           const title = card.querySelector("strong")?.textContent.toLowerCase() || "";
           const meta = card.querySelector(".generation-work-copy span")?.textContent.toLowerCase() || "";
           const matchesType = activeWorkFilter === "all" || meta.includes(activeWorkFilter);
+          const matchesMode = activeWorkMode === "all" || meta.includes(activeWorkMode);
           const matchesQuery = !query || `${title} ${meta}`.includes(query);
-          card.hidden = !(matchesType && matchesQuery);
+          card.hidden = !(matchesType && matchesMode && matchesQuery);
         });
       };
 
@@ -3177,6 +3307,22 @@
       workFilterButtons.forEach((button) => {
         button.addEventListener("click", () => {
           activeWorkFilter = button.dataset.workFilter;
+          applyGenerationFilters();
+        });
+      });
+
+      workSortToggle.addEventListener("click", () => {
+        workSortDirection = workSortDirection === "newest" ? "oldest" : "newest";
+        const newestFirst = workSortDirection === "newest";
+        workSortToggle.dataset.sort = workSortDirection;
+        workSortToggle.setAttribute("aria-label", newestFirst ? "Sort newest to oldest" : "Sort oldest to newest");
+        workSortToggle.querySelector("span").textContent = newestFirst ? "Newest → oldest" : "Oldest → newest";
+        applyGenerationFilters();
+      });
+
+      workModeFilterOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+          activeWorkMode = option.dataset.modeFilter;
           applyGenerationFilters();
         });
       });
@@ -3656,7 +3802,12 @@
       document.querySelectorAll(".generation-work").forEach((card, index) => {
         const title = card.querySelector("strong")?.textContent || `work-${index + 1}`;
         const slug = title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
-        const favoriteId = `${index + 1}-${slug}`;
+        const favoriteId = slug || `work-${index + 1}`;
+        const legacyFavoriteId = [...favoriteIds].find((savedId) => savedId.endsWith(`-${slug}`));
+        if (legacyFavoriteId) {
+          favoriteIds.delete(legacyFavoriteId);
+          favoriteIds.add(favoriteId);
+        }
         card.dataset.favoriteId = favoriteId;
         card.insertAdjacentHTML("afterbegin", `
           <button class="favorite-button" type="button" aria-label="Add ${title} to favorites" aria-pressed="false">
@@ -3667,6 +3818,7 @@
       });
 
       favoriteIds = new Set([...favoriteIds].filter((favoriteId) => favoriteCatalog.has(favoriteId)));
+      localStorage.setItem("fameflow-desktop-favorites", JSON.stringify([...favoriteIds]));
 
       const syncFavoriteButtons = () => {
         document.querySelectorAll("[data-favorite-id]").forEach((card) => {
