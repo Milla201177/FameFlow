@@ -1548,6 +1548,8 @@
       }
 
       .scroll-hint {
+        appearance: none;
+        cursor: pointer;
         flex: 0 0 auto;
         display: inline-flex;
         align-items: center;
@@ -1560,6 +1562,14 @@
         font-size: 11px;
         line-height: 16px;
         font-weight: 600;
+        transition: border-color var(--motion), color var(--motion), transform var(--motion);
+      }
+
+      .scroll-hint:hover,
+      .scroll-hint:focus-visible {
+        border-color: color-mix(in srgb, var(--character) 56%, var(--divider));
+        color: var(--text);
+        transform: translateX(1px);
       }
 
       .scroll-hint svg {
@@ -1584,7 +1594,7 @@
 
       .copilot-help-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1fr);
         gap: var(--s2);
       }
 
@@ -4463,7 +4473,7 @@
         <section class="copilot-section copilot-intent-section" aria-label="How can Co-Pilot help">
           <h2>How can Co-Pilot help?</h2>
           <div class="copilot-help-grid" id="help-options">
-            <button class="copilot-card" type="button" data-help="how">
+            <button class="copilot-card active" type="button" data-help="how">
               <span class="copilot-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                   <circle cx="12" cy="12" r="8" />
@@ -4473,42 +4483,15 @@
               </span>
               <span>How it works</span>
             </button>
-            <button class="copilot-card active" type="button" data-help="mode">
-              <span class="copilot-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="7" />
-                  <path d="m15 9-2.2 4.8L8 16l2.2-4.8L15 9Z" />
-                </svg>
-              </span>
-              <span>Choose a mode</span>
-            </button>
-            <button class="copilot-card" type="button" data-help="prompt">
-              <span class="copilot-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M5 19 16 8l3 3L8 22H5v-3Z" />
-                  <path d="M14 5h.01M19 4h.01M20 9h.01M10 4h.01" />
-                </svg>
-              </span>
-              <span>Improve a prompt</span>
-            </button>
-            <button class="copilot-card" type="button" data-help="idea">
-              <span class="copilot-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M9 18h6M10 22h4" />
-                  <path d="M8 14a6 6 0 1 1 8 0c-1.1 1-1.4 1.8-1.4 3H9.4c0-1.2-.3-2-1.4-3Z" />
-                </svg>
-              </span>
-              <span>Create from an idea</span>
-            </button>
           </div>
         </section>
 
         <section class="copilot-section make-section" aria-label="What do you want to make">
           <div class="section-heading-row">
             <h2>What do you want to make?</h2>
-            <span class="scroll-hint" aria-hidden="true">Swipe
+            <button class="scroll-hint" id="make-swipe" type="button" aria-label="Show next three ideas">Swipe
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </span>
+            </button>
           </div>
           <div class="copilot-rail" id="make-options"></div>
           <div class="rail-dots" id="make-dots" data-accent="green" aria-hidden="true"></div>
@@ -5594,6 +5577,7 @@
       const navButtons = [...document.querySelectorAll("[data-nav-screen]")];
       const helpButtons = [...document.querySelectorAll("[data-help]")];
       const makeOptions = document.querySelector("#make-options");
+      const makeSwipe = document.querySelector("#make-swipe");
       const makeDots = document.querySelector("#make-dots");
       const copilotGuide = document.querySelector("#copilot-guide");
       const guideFocus = document.querySelector("#guide-focus");
@@ -5703,7 +5687,7 @@
       let activeProject = "TEST";
       let activeCashAmount = "$25";
       let activeScreen = "generate";
-      let activeHelp = "mode";
+      let activeHelp = "how";
       let activeMake = "";
       let submittedCopilotIdea = "";
       let selectedCampaignInfluencers = [];
@@ -6275,6 +6259,18 @@
         dots.forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === index));
       }
 
+      function swipeMakeOptions() {
+        const cards = [...makeOptions.children];
+        if (!cards.length) return;
+        const first = cards[0];
+        const step = first.getBoundingClientRect().width + parseFloat(getComputedStyle(makeOptions).columnGap || getComputedStyle(makeOptions).gap || 0);
+        const currentIndex = Math.max(0, Math.round(makeOptions.scrollLeft / step));
+        const nextIndex = currentIndex + 3 >= cards.length ? 0 : Math.min(cards.length - 1, currentIndex + 3);
+        makeOptions.scrollTo({ left: nextIndex * step, behavior: "smooth" });
+        [...makeDots.children].forEach((dot, index) => dot.classList.toggle("active", index === nextIndex));
+        window.setTimeout(() => updateRailDots(makeOptions, makeDots), 260);
+      }
+
       function getReadyGoalLabel(goal = activeMake) {
         if (!goal) return "Idea";
         const labels = {
@@ -6635,6 +6631,8 @@
       });
 
       makeOptions.addEventListener("scroll", () => updateRailDots(makeOptions, makeDots));
+
+      makeSwipe.addEventListener("click", swipeMakeOptions);
 
       makeOptions.addEventListener("click", (event) => {
         const card = event.target.closest("[data-make]");
