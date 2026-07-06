@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FameFlow Desktop</title>
+    <title>FameFlow</title>
     <style>
       :root {
         --bg: #f7f7fa;
@@ -161,34 +161,35 @@
       }
 
       .brand {
+        width: 100%;
         position: relative;
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 0 8px 4px;
+        border-radius: 14px;
+        background: transparent;
+        color: inherit;
+        text-decoration: none;
+        text-align: left;
+        cursor: pointer;
+        transition: background 160ms ease, transform 160ms ease;
       }
 
-      .brand::before {
-        content: "";
-        width: 64px;
-        height: 58px;
-        position: absolute;
-        left: -4px;
-        top: 50%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(232, 226, 255, 0.62) 0%, rgba(198, 252, 228, 0.24) 46%, transparent 72%);
-        filter: blur(7px);
-        transform: translateY(-50%);
-        pointer-events: none;
+      .brand:hover {
+        background: color-mix(in srgb, var(--mode-soft, var(--lavender)) 42%, transparent);
+      }
+
+      .brand:active {
+        transform: scale(0.985);
       }
 
       .brand img {
-        width: 40px;
-        height: 40px;
+        width: 34px;
+        height: 34px;
         position: relative;
         z-index: 1;
         object-fit: contain;
-        filter: drop-shadow(0 6px 12px rgba(109, 85, 232, 0.2));
       }
 
       .brand > div {
@@ -205,6 +206,8 @@
         display: block;
         font-size: 22px;
         line-height: 28px;
+        font-weight: 650;
+        letter-spacing: -0.04em;
       }
 
       .brand span {
@@ -1005,6 +1008,95 @@
         color: var(--mode-ink, #2d235f);
       }
 
+      .attachment-preview {
+        width: min(244px, calc(100vw - 24px));
+        position: fixed;
+        z-index: 80;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--surface) 94%, transparent);
+        box-shadow: 0 18px 44px rgba(31, 28, 45, 0.22);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        pointer-events: none;
+        animation: attachment-preview-in 140ms ease-out;
+      }
+
+      .attachment-preview[hidden] {
+        display: none;
+      }
+
+      .attachment-preview-visual {
+        height: 136px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          linear-gradient(145deg, color-mix(in srgb, var(--mode-soft, var(--lavender)) 82%, var(--surface)), var(--surface-soft));
+        background-position: center;
+        background-size: cover;
+      }
+
+      .attachment-preview-visual img,
+      .attachment-preview-visual video {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .attachment-preview-audio {
+        width: 68px;
+        height: 68px;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background: color-mix(in srgb, var(--mode-strong, var(--lavender-strong)) 16%, var(--surface));
+        color: var(--mode-strong, var(--lavender-strong));
+      }
+
+      .attachment-preview-audio svg {
+        width: 34px;
+        height: 34px;
+      }
+
+      .attachment-preview-copy {
+        display: grid;
+        gap: 2px;
+        padding: 10px 12px 11px;
+      }
+
+      .attachment-preview-copy strong,
+      .attachment-preview-copy span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .attachment-preview-copy strong {
+        color: var(--ink);
+        font-size: 12px;
+        line-height: 17px;
+      }
+
+      .attachment-preview-copy span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 15px;
+      }
+
+      @keyframes attachment-preview-in {
+        from { opacity: 0; transform: translateY(4px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .attachment-preview {
+          animation: none;
+        }
+      }
+
       .prompt-editor textarea {
         width: 100%;
         min-height: 100%;
@@ -1500,7 +1592,6 @@
       body[data-theme="dark"] .edge-toggle.active,
       body[data-theme="dark"] .nav-item:not(.active),
       body[data-theme="dark"] .project-card:not(.active),
-      body[data-theme="dark"] .account-trigger,
       body[data-theme="dark"] .search,
       body[data-theme="dark"] .sort-toggle,
       body[data-theme="dark"] .favorites-filter-toggle:not(.active),
@@ -1519,13 +1610,22 @@
       body[data-theme="dark"] .edge-toggle.active:hover,
       body[data-theme="dark"] .nav-item:not(.active):hover,
       body[data-theme="dark"] .project-card:not(.active):hover,
-      body[data-theme="dark"] .account-trigger:hover,
       body[data-theme="dark"] .sort-toggle:hover,
       body[data-theme="dark"] .favorites-filter-toggle:not(.active):hover,
       body[data-theme="dark"] .copilot-recommendation:not(.active):hover,
       body[data-theme="dark"] .select-field:hover {
         border-color: rgba(219, 212, 250, 0.62);
         background: color-mix(in srgb, var(--lavender) 12%, var(--surface-soft));
+      }
+
+      body[data-theme="dark"] .brand img {
+        filter: invert(1);
+      }
+
+      body[data-theme="dark"] .account-trigger {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
       }
 
       body[data-theme="dark"] .project-card svg,
@@ -1754,6 +1854,41 @@
         transform: scale(1.06);
       }
 
+      .hide-work-button {
+        width: 36px;
+        height: 36px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.62);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.88);
+        color: #34323b;
+        box-shadow: 0 6px 16px rgba(20, 18, 28, 0.16);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        transition: transform 160ms ease, background 160ms ease;
+      }
+
+      .hide-work-button:hover {
+        background: #ffffff;
+        transform: translateY(-1px);
+      }
+
+      .hide-work-button svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      body[data-theme="dark"] .hide-work-button {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(20, 20, 28, 0.88);
+        color: #ffffff;
+      }
+
       .favorite-button svg {
         width: 18px;
         height: 18px;
@@ -1822,6 +1957,173 @@
         color: var(--muted);
         font-size: 12px;
         line-height: 18px;
+      }
+
+      .generation-work.is-hiding {
+        pointer-events: none;
+        animation: roll-card-away 220ms cubic-bezier(.45, 0, .22, 1) forwards;
+        transform-origin: center bottom;
+      }
+
+      .generation-work.is-restoring {
+        animation: unroll-card 240ms cubic-bezier(.2, .8, .2, 1);
+        transform-origin: center bottom;
+      }
+
+      @keyframes roll-card-away {
+        0% { opacity: 1; transform: translateY(0) scaleY(1); }
+        72% { opacity: 0.74; transform: translateY(10px) scaleY(0.14); }
+        100% { opacity: 0; transform: translateY(18px) scaleY(0.04); }
+      }
+
+      @keyframes unroll-card {
+        0% { opacity: 0; transform: translateY(14px) scaleY(0.08); }
+        100% { opacity: 1; transform: translateY(0) scaleY(1); }
+      }
+
+      .hidden-roll-dock {
+        width: 214px;
+        max-height: 292px;
+        position: fixed;
+        right: 262px;
+        bottom: calc(var(--prompt-panel-height, 25vh) + 30px);
+        z-index: 18;
+        display: grid;
+        gap: 6px;
+        padding: 10px;
+        overflow: visible;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        box-shadow: 0 16px 40px rgba(31, 28, 45, 0.16);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+      }
+
+      .hidden-roll-dock[hidden] {
+        display: none;
+      }
+
+      .hidden-roll-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0 2px 2px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 700;
+      }
+
+      .hidden-roll-header strong {
+        min-width: 20px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--mode-soft, var(--lavender));
+        color: var(--mode-ink, #2d235f);
+        font-size: 10px;
+      }
+
+      .hidden-roll-list {
+        min-height: 0;
+        display: grid;
+        gap: 4px;
+        overflow-y: auto;
+        scrollbar-width: none;
+      }
+
+      .hidden-roll-list::-webkit-scrollbar {
+        display: none;
+      }
+
+      .hidden-roll {
+        --roll-image: linear-gradient(135deg, var(--lavender), var(--mint));
+        width: 100%;
+        height: 25px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 0 28px 0 10px;
+        overflow: visible;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        border-radius: 999px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.42), transparent 48%, rgba(8, 9, 12, 0.2)),
+          linear-gradient(90deg, rgba(12, 13, 18, 0.68), rgba(12, 13, 18, 0.26)),
+          var(--roll-image);
+        background-position: center;
+        background-size: cover;
+        color: #ffffff;
+        box-shadow: 0 3px 8px rgba(20, 18, 28, 0.14);
+        font-size: 10px;
+        line-height: 14px;
+        font-weight: 700;
+        text-align: left;
+        transition: transform 150ms ease, box-shadow 150ms ease;
+      }
+
+      .hidden-roll:hover,
+      .hidden-roll:focus-visible {
+        z-index: 2;
+        transform: translateX(-4px);
+        box-shadow: 0 6px 16px rgba(20, 18, 28, 0.2);
+      }
+
+      .hidden-roll::after {
+        content: "";
+        width: 210px;
+        aspect-ratio: 4 / 3;
+        position: absolute;
+        right: calc(100% + 12px);
+        bottom: -12px;
+        border: 6px solid var(--surface);
+        border-radius: 16px;
+        background:
+          linear-gradient(180deg, transparent 56%, rgba(10, 12, 16, 0.32)),
+          var(--roll-image);
+        background-position: center;
+        background-size: cover;
+        box-shadow: 0 18px 44px rgba(20, 18, 28, 0.24);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(6px) scale(0.96);
+        transform-origin: right bottom;
+        transition: opacity 150ms ease, transform 150ms ease;
+      }
+
+      .hidden-roll:hover::after,
+      .hidden-roll:focus-visible::after {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+
+      .hidden-roll span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .hidden-roll svg {
+        width: 13px;
+        height: 13px;
+        position: absolute;
+        right: 8px;
+      }
+
+      @media (max-width: 1180px) {
+        .hidden-roll-dock {
+          right: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .generation-work.is-hiding,
+        .generation-work.is-restoring {
+          animation: none;
+        }
       }
 
       .celebrity-only,
@@ -2173,17 +2475,8 @@
         min-height: 10px;
       }
 
-      .copilot-input-shell .prompt-width-resize-handle {
-        right: -4px;
-      }
-
       .copilot-input-shell.resizing .prompt-resize-handle::before {
         width: 72px;
-        background: var(--mode-strong, var(--lavender-strong));
-      }
-
-      .copilot-input-shell.resizing .prompt-width-resize-handle::before {
-        height: 64px;
         background: var(--mode-strong, var(--lavender-strong));
       }
 
@@ -2682,13 +2975,13 @@
     <div class="desktop-shell">
       <aside class="sidebar" aria-label="FameFlow navigation">
         <div>
-          <div class="brand">
-            <img src="../3Dlogo.png" alt="" />
+          <a class="brand" id="brand-home" href="#generate" aria-label="Open Generate">
+            <img src="../assets/fameflow-mark.svg" alt="" />
             <div>
               <strong>FameFlow</strong>
               <span>Creator workspace</span>
             </div>
-          </div>
+          </a>
 
           <nav class="nav-group" aria-label="Workspace">
             <div class="nav-label">Create</div>
@@ -2910,6 +3203,13 @@
                 </section>
 
                 <section class="generation-gallery" aria-label="Generated works">
+                  <aside class="hidden-roll-dock" id="hidden-roll-dock" aria-label="Hidden works" hidden>
+                    <div class="hidden-roll-header">
+                      <span>Hidden works</span>
+                      <strong id="hidden-roll-count">0</strong>
+                    </div>
+                    <div class="hidden-roll-list" id="hidden-roll-list"></div>
+                  </aside>
                   <div class="generation-gallery-grid celebrity-only">
                     <article class="generation-work">
                       <div class="generation-work-preview" data-format="9:16" style="--work-image: radial-gradient(circle at 50% 33%, #e8bfa9 0 11%, transparent 12%), radial-gradient(ellipse at 50% 84%, #26354d 0 35%, transparent 36%), linear-gradient(135deg, #dbe8f5, #7891ad);"></div>
@@ -3139,7 +3439,6 @@
                 <div class="chat-input">
                   <div class="copilot-input-shell" id="copilot-input-shell">
                     <div class="prompt-resize-handle" id="copilot-prompt-resize-handle" role="separator" aria-label="Resize Co-Pilot prompt height" aria-orientation="horizontal" tabindex="0"></div>
-                    <div class="prompt-width-resize-handle" id="copilot-prompt-width-resize-handle" role="separator" aria-label="Resize Co-Pilot prompt width" aria-orientation="vertical" tabindex="0"></div>
                     <textarea id="copilot-input" rows="2" placeholder="Describe your campaign or creative idea"></textarea>
                   </div>
                   <button class="primary-button" id="copilot-send" type="button">Send</button>
@@ -3297,6 +3596,13 @@
         </button>
       </aside>
     </div>
+    <div class="attachment-preview" id="attachment-preview" role="tooltip" hidden>
+      <div class="attachment-preview-visual" id="attachment-preview-visual"></div>
+      <div class="attachment-preview-copy">
+        <strong id="attachment-preview-name"></strong>
+        <span id="attachment-preview-meta"></span>
+      </div>
+    </div>
     <div class="subject-dialog-backdrop" id="subject-dialog" hidden>
       <section class="subject-dialog" role="dialog" aria-modal="true" aria-labelledby="subject-dialog-title">
         <div class="subject-dialog-header">
@@ -3381,7 +3687,7 @@
             <p class="asset-sheet-prompt" id="asset-sheet-prompt"></p>
             <div class="asset-action-stack">
               <button class="asset-action" type="button" id="asset-make-video">Make video</button>
-              <button class="asset-action" type="button" id="asset-use-reference">Use as reference in…</button>
+              <button class="asset-action" type="button" id="asset-use-reference">Use in Generate as reference</button>
               <button class="asset-action" type="button" id="asset-download">Download</button>
               <button class="asset-action" type="button" id="asset-recreate">Recreate</button>
             </div>
@@ -3412,7 +3718,6 @@
           if (view === "copilot") {
             window.requestAnimationFrame(() => {
               setCopilotPromptHeight(copilotInput.getBoundingClientRect().height);
-              setCopilotPromptWidth(copilotInputShell.getBoundingClientRect().width);
             });
           }
           updatePageHeading();
@@ -3469,7 +3774,6 @@
       const copilotInput = document.querySelector("#copilot-input");
       const copilotSend = document.querySelector("#copilot-send");
       const copilotResizeHandle = document.querySelector("#copilot-prompt-resize-handle");
-      const copilotWidthResizeHandle = document.querySelector("#copilot-prompt-width-resize-handle");
       const copilotModeRecommendation = document.querySelector("#copilot-mode-recommendation");
       const copilotFormatRecommendation = document.querySelector("#copilot-format-recommendation");
       const copilotModeValue = document.querySelector("#copilot-mode-value");
@@ -3479,6 +3783,9 @@
       const favoritesGrid = document.querySelector("#favorites-grid");
       const favoritesEmpty = document.querySelector("#favorites-empty");
       const favoritesCount = document.querySelector("#favorites-count");
+      const hiddenRollDock = document.querySelector("#hidden-roll-dock");
+      const hiddenRollList = document.querySelector("#hidden-roll-list");
+      const hiddenRollCount = document.querySelector("#hidden-roll-count");
       let activeProject = "FameFlow Studio";
       let activeCampaign = "Summer Launch";
       let activeView = "generate";
@@ -3486,11 +3793,14 @@
         title: "Asset",
         meta: "Image",
         prompt: "",
+        previewImage: "",
       };
       let activeWorkFilter = "all";
       let activeWorkCreator = "all";
       let workSortDirection = "newest";
       let showFavoriteWorksOnly = false;
+      let collapsedWorkIds = new Set();
+      let renderHiddenRolls = () => {};
       const selectedSubjects = {
         celebrity: "",
         character: "",
@@ -3592,6 +3902,16 @@
         character: ["Mina", "Mina", "Amara", "Nova", "Mina", "Nova", "Amara", "Amara", "Nova", "Amara", "Mina", "Nova", "Mina"],
       };
 
+      const galleryPhotoUrls = [
+        "../assets/gallery/city-keynote.webp",
+        "../assets/gallery/founder-district.webp",
+        "../assets/gallery/beauty-closeup.webp",
+        "../assets/gallery/outdoor-creator.webp",
+        "../assets/gallery/future-fashion.webp",
+        "../assets/gallery/coastal-golden-hour.webp",
+      ];
+      let galleryPhotoIndex = 0;
+
       document.querySelectorAll(".generation-gallery-grid").forEach((grid) => {
         const mode = grid.classList.contains("celebrity-only") ? "celebrity" : "character";
         [...grid.children].forEach((card, index) => {
@@ -3599,6 +3919,13 @@
           card.dataset.workOrder = String(index);
           card.dataset.workMode = mode;
           card.dataset.creator = workCreators[mode][index] || subjects[mode][0].name;
+          const meta = card.querySelector(".generation-work-copy span")?.textContent || "";
+          const preview = card.querySelector(".generation-work-preview");
+          if (preview && !meta.includes("Audio")) {
+            preview.style.setProperty("--work-image", `url("${galleryPhotoUrls[galleryPhotoIndex % galleryPhotoUrls.length]}")`);
+            preview.style.setProperty("background-position", `${38 + ((galleryPhotoIndex * 13) % 34)}% center`);
+            galleryPhotoIndex += 1;
+          }
         });
       });
 
@@ -3624,8 +3951,10 @@
           const matchesCreator = activeWorkCreator === "all" || card.dataset.creator === activeWorkCreator;
           const matchesFavorites = !showFavoriteWorksOnly || favoriteIds.has(card.dataset.favoriteId);
           const matchesQuery = !query || `${title} ${meta} ${card.dataset.creator}`.toLowerCase().includes(query);
-          card.hidden = !(matchesType && matchesMode && matchesCreator && matchesFavorites && matchesQuery);
+          const isCollapsed = collapsedWorkIds.has(card.dataset.favoriteId);
+          card.hidden = isCollapsed || !(matchesType && matchesMode && matchesCreator && matchesFavorites && matchesQuery);
         });
+        renderHiddenRolls();
       };
 
       generationSearch.addEventListener("input", applyGenerationFilters);
@@ -3735,9 +4064,15 @@
       const promptStatus = document.querySelector("#prompt-status");
       const attachButton = document.querySelector("#attach-button");
       const attachmentInput = document.querySelector("#attachment-input");
+      const attachmentPreview = document.querySelector("#attachment-preview");
+      const attachmentPreviewVisual = document.querySelector("#attachment-preview-visual");
+      const attachmentPreviewName = document.querySelector("#attachment-preview-name");
+      const attachmentPreviewMeta = document.querySelector("#attachment-preview-meta");
       const enhanceButton = document.querySelector("#enhance-button");
       const voiceButton = document.querySelector("#voice-button");
       let recognition;
+      let activeAttachment = null;
+      let attachmentObjectUrl = "";
       let promptBeforeEnhance = "";
       let enhancedPromptValue = "";
       let resizeStartX = 0;
@@ -3864,7 +4199,92 @@
         setPromptWidth(promptPanel.getBoundingClientRect().width);
       });
 
-      attachButton.addEventListener("click", () => attachmentInput.click());
+      const formatAttachmentSize = (bytes) => {
+        if (!Number.isFinite(bytes)) return "";
+        if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+      };
+
+      const renderAttachmentPreview = () => {
+        attachmentPreviewVisual.replaceChildren();
+        if (!activeAttachment) return;
+
+        if (activeAttachment.url && activeAttachment.type.startsWith("image/")) {
+          const image = document.createElement("img");
+          image.src = activeAttachment.url;
+          image.alt = "";
+          attachmentPreviewVisual.append(image);
+        } else if (activeAttachment.url && activeAttachment.type.startsWith("video/")) {
+          const video = document.createElement("video");
+          video.src = activeAttachment.url;
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          attachmentPreviewVisual.append(video);
+        } else if (activeAttachment.background) {
+          attachmentPreviewVisual.style.backgroundImage = activeAttachment.background;
+        } else {
+          const audioVisual = document.createElement("span");
+          audioVisual.className = "attachment-preview-audio";
+          audioVisual.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>`;
+          attachmentPreviewVisual.append(audioVisual);
+        }
+
+        if (!activeAttachment.background) attachmentPreviewVisual.style.removeProperty("background-image");
+        attachmentPreviewName.textContent = activeAttachment.name;
+        attachmentPreviewMeta.textContent = [activeAttachment.label, formatAttachmentSize(activeAttachment.size)]
+          .filter(Boolean)
+          .join(" · ");
+      };
+
+      const setPromptAttachment = (attachment) => {
+        if (attachmentObjectUrl && attachmentObjectUrl !== attachment?.url) {
+          URL.revokeObjectURL(attachmentObjectUrl);
+          attachmentObjectUrl = "";
+        }
+        activeAttachment = attachment;
+        if (attachment?.url?.startsWith("blob:")) attachmentObjectUrl = attachment.url;
+        attachButton.classList.toggle("active", Boolean(attachment));
+        attachButton.setAttribute("aria-label", attachment ? `Attached: ${attachment.name}` : "Attach file");
+        attachButton.toggleAttribute("aria-describedby", Boolean(attachment));
+        if (attachment) attachButton.setAttribute("aria-describedby", "attachment-preview");
+        attachmentPreview.hidden = true;
+        renderAttachmentPreview();
+      };
+
+      const positionAttachmentPreview = () => {
+        const buttonRect = attachButton.getBoundingClientRect();
+        const previewRect = attachmentPreview.getBoundingClientRect();
+        const left = Math.min(
+          window.innerWidth - previewRect.width - 12,
+          Math.max(12, buttonRect.left - 4)
+        );
+        const above = buttonRect.top - previewRect.height - 10;
+        const top = above >= 12 ? above : Math.min(window.innerHeight - previewRect.height - 12, buttonRect.bottom + 10);
+        attachmentPreview.style.left = `${left}px`;
+        attachmentPreview.style.top = `${top}px`;
+      };
+
+      const showAttachmentPreview = () => {
+        if (!activeAttachment) return;
+        attachmentPreview.hidden = false;
+        positionAttachmentPreview();
+        attachmentPreview.querySelector("video")?.play().catch(() => {});
+      };
+
+      const hideAttachmentPreview = () => {
+        attachmentPreview.hidden = true;
+        attachmentPreview.querySelector("video")?.pause();
+      };
+
+      attachButton.addEventListener("pointerenter", showAttachmentPreview);
+      attachButton.addEventListener("pointerleave", hideAttachmentPreview);
+      attachButton.addEventListener("focus", showAttachmentPreview);
+      attachButton.addEventListener("blur", hideAttachmentPreview);
+      attachButton.addEventListener("click", () => {
+        hideAttachmentPreview();
+        attachmentInput.click();
+      });
 
       attachmentInput.addEventListener("change", () => {
         const file = attachmentInput.files?.[0];
@@ -3872,10 +4292,20 @@
         const maxSize = 25 * 1024 * 1024;
         if (file.size > maxSize) {
           attachmentInput.value = "";
+          setPromptAttachment(null);
           setPromptStatus("File must be smaller than 25 MB", "error");
           return;
         }
-        attachButton.classList.add("active");
+        const type = file.type || "application/octet-stream";
+        const url = type.startsWith("image/") || type.startsWith("video/") ? URL.createObjectURL(file) : "";
+        setPromptAttachment({
+          kind: "file",
+          name: file.name,
+          type,
+          label: type.split("/")[0].replace(/^./, (character) => character.toUpperCase()),
+          size: file.size,
+          url,
+        });
         setPromptStatus(`Attached: ${file.name}`, "success");
       });
 
@@ -3993,8 +4423,6 @@
       let copilotFormatIndex = 0;
       let copilotResizeStartY = 0;
       let copilotResizeStartHeight = 0;
-      let copilotResizeStartX = 0;
-      let copilotResizeStartWidth = 0;
 
       const renderCopilotSetup = () => {
         copilotModeValue.textContent = copilotRecommendedMode;
@@ -4018,35 +4446,20 @@
         copilotResizeHandle.setAttribute("aria-valuemax", String(maxHeight));
       };
 
-      const setCopilotPromptWidth = (width) => {
-        const chatBounds = copilotInputShell.parentElement.getBoundingClientRect();
-        if (!chatBounds.width) return;
-        const sendWidth = copilotSend.getBoundingClientRect().width;
-        const minWidth = Math.min(220, Math.max(160, chatBounds.width - sendWidth - 42));
-        const maxWidth = Math.max(minWidth, chatBounds.width - sendWidth - 42);
-        const nextWidth = Math.max(minWidth, Math.min(maxWidth, width));
-        copilotInputShell.style.width = `${nextWidth}px`;
-        copilotWidthResizeHandle.setAttribute("aria-valuenow", String(Math.round(nextWidth)));
-        copilotWidthResizeHandle.setAttribute("aria-valuemin", String(Math.round(minWidth)));
-        copilotWidthResizeHandle.setAttribute("aria-valuemax", String(Math.round(maxWidth)));
-      };
-
       const finishCopilotResize = (handle, event) => {
         copilotInputShell.classList.remove("resizing");
-        delete copilotInputShell.dataset.resizeAxis;
         if (event && handle.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
       };
 
       copilotResizeHandle.addEventListener("pointerdown", (event) => {
         copilotInputShell.classList.add("resizing");
-        copilotInputShell.dataset.resizeAxis = "height";
         copilotResizeStartY = event.clientY;
         copilotResizeStartHeight = copilotInput.getBoundingClientRect().height;
         copilotResizeHandle.setPointerCapture(event.pointerId);
         event.preventDefault();
       });
       copilotResizeHandle.addEventListener("pointermove", (event) => {
-        if (copilotInputShell.dataset.resizeAxis !== "height") return;
+        if (!copilotInputShell.classList.contains("resizing")) return;
         setCopilotPromptHeight(copilotResizeStartHeight + copilotResizeStartY - event.clientY);
       });
       copilotResizeHandle.addEventListener("pointerup", (event) => finishCopilotResize(copilotResizeHandle, event));
@@ -4058,32 +4471,9 @@
         event.preventDefault();
       });
 
-      copilotWidthResizeHandle.addEventListener("pointerdown", (event) => {
-        copilotInputShell.classList.add("resizing");
-        copilotInputShell.dataset.resizeAxis = "width";
-        copilotResizeStartX = event.clientX;
-        copilotResizeStartWidth = copilotInputShell.getBoundingClientRect().width;
-        copilotInputShell.style.width = `${copilotResizeStartWidth}px`;
-        copilotWidthResizeHandle.setPointerCapture(event.pointerId);
-        event.preventDefault();
-      });
-      copilotWidthResizeHandle.addEventListener("pointermove", (event) => {
-        if (copilotInputShell.dataset.resizeAxis !== "width") return;
-        setCopilotPromptWidth(copilotResizeStartWidth + event.clientX - copilotResizeStartX);
-      });
-      copilotWidthResizeHandle.addEventListener("pointerup", (event) => finishCopilotResize(copilotWidthResizeHandle, event));
-      copilotWidthResizeHandle.addEventListener("pointercancel", () => finishCopilotResize(copilotWidthResizeHandle));
-      copilotWidthResizeHandle.addEventListener("keydown", (event) => {
-        if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-        const direction = event.key === "ArrowRight" ? 1 : -1;
-        setCopilotPromptWidth(copilotInputShell.getBoundingClientRect().width + direction * 32);
-        event.preventDefault();
-      });
-
       window.addEventListener("resize", () => {
         if (!copilotInputShell.getClientRects().length) return;
         setCopilotPromptHeight(copilotInput.getBoundingClientRect().height);
-        setCopilotPromptWidth(copilotInputShell.getBoundingClientRect().width);
       });
 
       const updateCopilotSendState = () => {
@@ -4176,8 +4566,6 @@
       renderCopilotSetup();
       updateCopilotSendState();
 
-      const projectSidebar = document.querySelector(".projects-sidebar");
-
       document.querySelectorAll("[data-project]").forEach((card) => {
         card.addEventListener("click", () => {
           if (card.classList.contains("active")) return;
@@ -4185,8 +4573,6 @@
             item.classList.toggle("active", item === card);
             item.querySelector(".project-card-copy span").textContent = item === card ? "Current project" : item.dataset.projectDetail;
           });
-          const firstProjectCard = projectSidebar.querySelector(".project-card");
-          if (firstProjectCard && firstProjectCard !== card) projectSidebar.insertBefore(card, firstProjectCard);
           activeProject = card.dataset.project;
           updatePageHeading();
           document.title = `FameFlow · ${card.dataset.project}`;
@@ -4209,6 +4595,12 @@
       const openView = (view) => {
         document.querySelector(`[data-view="${view}"]`)?.click();
       };
+
+      document.querySelector("#brand-home").addEventListener("click", (event) => {
+        event.preventDefault();
+        openView("generate");
+        promptInput.focus();
+      });
 
       const setSettingsView = (view) => {
         Object.entries(settingsViews).forEach(([key, element]) => {
@@ -4376,7 +4768,8 @@
         const meta = card.querySelector("span")?.textContent || "Image";
         const preview = card.querySelector(".generation-work-preview, .asset-preview");
         const prompt = `Cinematic ${title.toLowerCase()}, polished styling, clean composition, and campaign-ready output for ${activeProject}.`;
-        currentAsset = { title, meta, prompt };
+        const previewImage = getComputedStyle(preview).getPropertyValue("background-image");
+        currentAsset = { title, meta, prompt, previewImage };
         assetSheetTitle.textContent = title;
         assetSheetMeta.textContent = meta;
         assetSheetPrompt.textContent = `Prompt: ${prompt}`;
@@ -4394,6 +4787,13 @@
         favoriteIds = new Set();
       }
 
+      try {
+        const savedCollapsedIds = JSON.parse(localStorage.getItem("fameflow-desktop-collapsed") || "[]");
+        if (Array.isArray(savedCollapsedIds)) collapsedWorkIds = new Set(savedCollapsedIds);
+      } catch {
+        collapsedWorkIds = new Set();
+      }
+
       document.querySelectorAll(".generation-work").forEach((card, index) => {
         const title = card.querySelector("strong")?.textContent || `work-${index + 1}`;
         const slug = title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
@@ -4408,12 +4808,73 @@
           <button class="favorite-button" type="button" aria-label="Add ${title} to favorites" aria-pressed="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 5.7c-2-2-5.1-1.7-6.8.4L12 8.5l-2-2.4C8.3 4 5.2 3.7 3.2 5.7c-2.2 2.2-2.1 5.8.2 7.9L12 21l8.6-7.4c2.3-2.1 2.4-5.7.2-7.9Z"/></svg>
           </button>
+          <button class="hide-work-button" type="button" aria-label="Hide ${title}" title="Hide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><path d="m4 4 16 16"/></svg>
+          </button>
         `);
         favoriteCatalog.set(favoriteId, card);
       });
 
       favoriteIds = new Set([...favoriteIds].filter((favoriteId) => favoriteCatalog.has(favoriteId)));
+      collapsedWorkIds = new Set([...collapsedWorkIds].filter((favoriteId) => favoriteCatalog.has(favoriteId)));
       localStorage.setItem("fameflow-desktop-favorites", JSON.stringify([...favoriteIds]));
+      localStorage.setItem("fameflow-desktop-collapsed", JSON.stringify([...collapsedWorkIds]));
+
+      renderHiddenRolls = () => {
+        hiddenRollList.replaceChildren();
+        const mode = document.body.dataset.mode;
+        const collapsedCards = [...collapsedWorkIds]
+          .map((favoriteId) => favoriteCatalog.get(favoriteId))
+          .filter((card) => card?.dataset.workMode === mode);
+
+        collapsedCards.forEach((card) => {
+          const favoriteId = card.dataset.favoriteId;
+          const title = card.querySelector("strong")?.textContent || "Hidden work";
+          const preview = card.querySelector(".generation-work-preview");
+          const roll = document.createElement("button");
+          const label = document.createElement("span");
+          roll.className = "hidden-roll";
+          roll.type = "button";
+          roll.dataset.restoreWork = favoriteId;
+          roll.setAttribute("aria-label", `Open ${title}`);
+          roll.style.setProperty("--roll-image", getComputedStyle(preview).getPropertyValue("background-image"));
+          label.textContent = title;
+          roll.append(label);
+          roll.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`);
+          hiddenRollList.append(roll);
+        });
+
+        hiddenRollCount.textContent = String(collapsedCards.length);
+        hiddenRollDock.hidden = collapsedCards.length === 0;
+      };
+
+      const persistCollapsedWorks = () => {
+        localStorage.setItem("fameflow-desktop-collapsed", JSON.stringify([...collapsedWorkIds]));
+      };
+
+      const collapseWork = (card) => {
+        const favoriteId = card?.dataset.favoriteId;
+        if (!favoriteId || collapsedWorkIds.has(favoriteId)) return;
+        collapsedWorkIds.add(favoriteId);
+        persistCollapsedWorks();
+        card.classList.add("is-hiding");
+        window.setTimeout(renderHiddenRolls, 140);
+        window.setTimeout(() => {
+          card.classList.remove("is-hiding");
+          applyGenerationFilters();
+        }, 220);
+      };
+
+      const restoreWork = (favoriteId) => {
+        const card = favoriteCatalog.get(favoriteId);
+        if (!card) return;
+        collapsedWorkIds.delete(favoriteId);
+        persistCollapsedWorks();
+        applyGenerationFilters();
+        card.classList.add("is-restoring");
+        window.setTimeout(() => card.classList.remove("is-restoring"), 240);
+        openAssetSheet(card);
+      };
 
       const syncFavoriteButtons = () => {
         document.querySelectorAll("[data-favorite-id]").forEach((card) => {
@@ -4433,6 +4894,7 @@
           if (!favoriteIds.has(favoriteId)) return;
           const clone = sourceCard.cloneNode(true);
           clone.hidden = false;
+          clone.querySelector(".hide-work-button")?.remove();
           favoritesGrid.append(clone);
         });
         const hasFavorites = favoriteIds.size > 0;
@@ -4456,6 +4918,20 @@
       };
 
       document.addEventListener("click", (event) => {
+        const restoreButton = event.target.closest("[data-restore-work]");
+        if (restoreButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          restoreWork(restoreButton.dataset.restoreWork);
+          return;
+        }
+        const hideButton = event.target.closest(".hide-work-button");
+        if (hideButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          collapseWork(hideButton.closest(".generation-work"));
+          return;
+        }
         const favoriteButton = event.target.closest(".favorite-button");
         if (favoriteButton) {
           event.preventDefault();
@@ -4475,8 +4951,13 @@
         resetEnhancePromptState();
         updateEnhancePromptAvailability();
         updateGenerateState();
-        attachButton.classList.toggle("active", asReference);
-        attachButton.setAttribute("aria-label", asReference ? `Reference: ${currentAsset.title}` : "Attach file");
+        setPromptAttachment(asReference ? {
+          kind: "reference",
+          name: currentAsset.title,
+          type: "reference",
+          label: currentAsset.meta,
+          background: currentAsset.previewImage,
+        } : null);
         promptInput.focus();
         setPromptStatus(
           asReference ? `${currentAsset.title} added as reference` : `${currentAsset.title} opened in Generate`,

@@ -59,27 +59,12 @@
         gap: 12px;
       }
 
-      .brand::before {
-        content: "";
-        width: 58px;
-        height: 54px;
-        position: absolute;
-        left: -10px;
-        top: 50%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(232, 226, 255, 0.66) 0%, rgba(198, 252, 228, 0.25) 46%, transparent 72%);
-        filter: blur(7px);
-        transform: translateY(-50%);
-        pointer-events: none;
-      }
-
       .mark {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         position: relative;
         z-index: 1;
         object-fit: contain;
-        filter: drop-shadow(0 5px 10px rgba(109, 85, 232, 0.18));
       }
 
       .brand strong {
@@ -87,7 +72,8 @@
         z-index: 1;
         font-size: 26px;
         line-height: 32px;
-        font-weight: 800;
+        font-weight: 650;
+        letter-spacing: -0.04em;
       }
 
       .intro {
@@ -200,7 +186,7 @@
   <body>
     <main class="shell">
       <div class="brand" aria-label="FameFlow">
-        <img class="mark" src="3Dlogo.png" alt="" />
+        <img class="mark" src="assets/fameflow-mark.svg" alt="" />
         <strong>FameFlow</strong>
       </div>
 

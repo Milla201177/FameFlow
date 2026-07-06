@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FameFlow App Prototype</title>
+    <title>FameFlow</title>
     <style>
       :root {
         --brand: #dbd4fa;
@@ -211,6 +211,35 @@
         opacity: 1;
       }
 
+      .toast {
+        max-width: calc(100% - (var(--screen-padding) * 2));
+        position: absolute;
+        left: 50%;
+        top: calc(var(--header-height) + var(--s2));
+        z-index: 72;
+        padding: 10px 14px;
+        border: 1px solid var(--divider);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--surface) 94%, transparent);
+        color: var(--text);
+        box-shadow: 0 var(--s2) var(--s4) rgba(28, 24, 42, 0.18);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        font-size: var(--type-caption-size);
+        line-height: var(--type-caption-line);
+        font-weight: 600;
+        text-align: center;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -6px);
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+
+      .toast.visible {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
       .top-loader::before {
         content: "";
         position: absolute;
@@ -265,27 +294,12 @@
         border-radius: 999px;
       }
 
-      .brand-lockup::before {
-        content: "";
-        width: 52px;
-        height: 48px;
-        position: absolute;
-        left: -10px;
-        top: 50%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(232, 226, 255, 0.62) 0%, rgba(198, 252, 228, 0.24) 46%, transparent 72%);
-        filter: blur(6px);
-        transform: translateY(-50%);
-        pointer-events: none;
-      }
-
       .brand-logo {
-        width: var(--s5);
-        height: var(--s5);
+        width: 30px;
+        height: 30px;
         position: relative;
         z-index: 1;
         object-fit: contain;
-        filter: drop-shadow(0 5px 10px rgba(109, 85, 232, 0.18));
       }
 
       .brand-name {
@@ -293,7 +307,13 @@
         z-index: 1;
         font-size: var(--type-h2-size);
         line-height: var(--type-h2-line);
-        font-weight: var(--type-h2-weight);
+        font-weight: 650;
+        letter-spacing: -0.04em;
+      }
+
+      body[data-theme="dark"] .brand-logo,
+      body[data-theme="dark"] .offline-logo {
+        filter: invert(1);
       }
 
       .header-actions {
@@ -1520,6 +1540,33 @@
         font-weight: var(--type-h2-weight);
       }
 
+      .section-heading-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--s2);
+      }
+
+      .scroll-hint {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--s1);
+        padding: 3px 8px;
+        border: 1px solid var(--divider);
+        border-radius: 999px;
+        background: var(--mode-tint-quiet);
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 600;
+      }
+
+      .scroll-hint svg {
+        width: 13px;
+        height: 13px;
+      }
+
       .copilot-rail {
         display: grid;
         grid-auto-flow: column;
@@ -1533,6 +1580,43 @@
 
       .copilot-rail::-webkit-scrollbar {
         display: none;
+      }
+
+      .copilot-help-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--s2);
+      }
+
+      .copilot-help-grid .copilot-card {
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 7px;
+        padding: 0 10px;
+        border-radius: 14px;
+        box-shadow: none;
+        text-align: left;
+      }
+
+      .copilot-help-grid .copilot-icon {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+      }
+
+      .copilot-help-grid .copilot-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .copilot-help-grid .copilot-card > span:last-child {
+        min-height: 0;
+        display: block;
+        font-size: 12px;
+        line-height: 15px;
+        font-weight: 600;
       }
 
       .copilot-card,
@@ -1599,10 +1683,13 @@
       .copilot-icon svg {
         width: var(--s4);
         height: var(--s4);
+        display: block;
+        stroke-linecap: round;
+        stroke-linejoin: round;
       }
 
-      .copilot-card span,
-      .make-card span {
+      .copilot-card > span:last-child,
+      .make-card > span:last-child {
         min-height: var(--s6);
         display: grid;
         align-items: center;
@@ -2621,6 +2708,60 @@
         height: var(--s4);
       }
 
+      .enhance-help {
+        width: 18px;
+        height: 18px;
+        position: relative;
+        display: inline-grid;
+        flex: 0 0 18px;
+        place-items: center;
+        border: 1px solid currentColor;
+        border-radius: 50%;
+        font-size: 11px;
+        line-height: 1;
+        font-weight: 800;
+        opacity: 0.76;
+      }
+
+      .enhance-tooltip {
+        width: 230px;
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% + 10px);
+        z-index: 40;
+        padding: 10px 12px;
+        border: 1px solid var(--divider);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 var(--s2) var(--s4) rgba(28, 24, 42, 0.18);
+        font-size: 12px;
+        line-height: 17px;
+        font-weight: 500;
+        text-align: left;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, 4px);
+        transition: opacity 140ms ease, transform 140ms ease;
+      }
+
+      .enhance-help:hover .enhance-tooltip,
+      .enhance-help:focus .enhance-tooltip,
+      .enhance-help:focus-visible .enhance-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .enhance-prompt:disabled .enhance-help {
+        pointer-events: auto;
+      }
+
+      body[data-theme="dark"] .enhance-tooltip {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: #22222d;
+        box-shadow: 0 var(--s2) var(--s4) rgba(0, 0, 0, 0.34);
+      }
+
       .prompt-box {
         width: 100%;
         height: 100%;
@@ -3500,21 +3641,37 @@
       }
 
       .account-heading {
-        display: grid;
-        gap: var(--s1);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--s3);
+        padding-bottom: var(--s1);
+        border-bottom: 1px solid var(--divider);
       }
 
       .account-heading .menu-section-label {
         margin-bottom: 0;
       }
 
+      .account-heading .account-name-row {
+        min-width: 0;
+        margin-left: auto;
+      }
+
+      .account-heading .menu-inline-icon {
+        display: none;
+      }
+
       .account-name {
         margin: 0;
         color: var(--text);
-        font-size: var(--type-h2-size);
-        line-height: var(--type-h2-line);
+        overflow: hidden;
+        font-size: var(--type-caption-size);
+        line-height: var(--type-caption-line);
         font-weight: var(--type-h2-weight);
-        text-align: left;
+        text-align: right;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .cash-button {
@@ -3659,85 +3816,9 @@
       }
 
       .offline-logo {
-        position: relative;
-        width: 136px;
-        height: 112px;
-        perspective: 520px;
-        transform-style: preserve-3d;
-      }
-
-      .offline-cube {
-        --cube-size: 46px;
-        --cube-half: calc(var(--cube-size) / 2);
-        --cube-front: linear-gradient(145deg, #4e4f5b 0%, #2c2d36 55%, #12131a 100%);
-        --cube-right: #171820;
-        --cube-left: #22232c;
-        --cube-top: #777885;
-        --cube-edge: rgba(255, 255, 255, 0.18);
-        position: absolute;
-        width: var(--cube-size);
-        height: var(--cube-size);
-        transform-style: preserve-3d;
-        transform-origin: center center;
-        animation: cube-roll 3.2s cubic-bezier(0.55, 0, 0.25, 1) infinite;
-      }
-
-      .offline-cube:first-child {
-        left: 2px;
-        bottom: 10px;
-      }
-
-      .offline-cube:last-child {
-        right: 2px;
-        top: 8px;
-        --cube-front: linear-gradient(145deg, #585966 0%, #363740 58%, #181920 100%);
-        --cube-right: #191a22;
-        --cube-left: #15161d;
-        --cube-top: #858692;
-        animation-name: cube-roll-alt;
-        animation-delay: 0.18s;
-      }
-
-      .offline-cube-face {
-        position: absolute;
-        inset: 0;
-        display: block;
-        border: 1px solid var(--cube-edge);
-        border-radius: var(--s2);
-        background: var(--cube-front);
-        box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.18),
-          inset 0 -10px 18px rgba(0, 0, 0, 0.18);
-        backface-visibility: visible;
-      }
-
-      .offline-cube-face:nth-child(1) {
-        transform: translateZ(var(--cube-half));
-      }
-
-      .offline-cube-face:nth-child(2) {
-        background: #0c0d12;
-        transform: rotateY(180deg) translateZ(var(--cube-half));
-      }
-
-      .offline-cube-face:nth-child(3) {
-        background: var(--cube-right);
-        transform: rotateY(90deg) translateZ(var(--cube-half));
-      }
-
-      .offline-cube-face:nth-child(4) {
-        background: var(--cube-left);
-        transform: rotateY(-90deg) translateZ(var(--cube-half));
-      }
-
-      .offline-cube-face:nth-child(5) {
-        background: var(--cube-top);
-        transform: rotateX(90deg) translateZ(var(--cube-half));
-      }
-
-      .offline-cube-face:nth-child(6) {
-        background: #111219;
-        transform: rotateX(-90deg) translateZ(var(--cube-half));
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
       }
 
       .offline-card h1 {
@@ -3761,42 +3842,6 @@
         gap: var(--s2);
         width: 100%;
         max-width: 260px;
-      }
-
-      @keyframes cube-roll {
-        0%, 100% {
-          transform: translate3d(0, 0, 0) rotateX(-24deg) rotateY(28deg) rotateZ(-4deg);
-        }
-
-        25% {
-          transform: translate3d(12px, -8px, 0) rotateX(66deg) rotateY(28deg) rotateZ(-4deg);
-        }
-
-        50% {
-          transform: translate3d(24px, 0, 0) rotateX(66deg) rotateY(118deg) rotateZ(-4deg);
-        }
-
-        75% {
-          transform: translate3d(12px, 8px, 0) rotateX(-24deg) rotateY(118deg) rotateZ(86deg);
-        }
-      }
-
-      @keyframes cube-roll-alt {
-        0%, 100% {
-          transform: translate3d(0, 0, 0) rotateX(-22deg) rotateY(-28deg) rotateZ(6deg);
-        }
-
-        25% {
-          transform: translate3d(-12px, 8px, 0) rotateX(-112deg) rotateY(-28deg) rotateZ(6deg);
-        }
-
-        50% {
-          transform: translate3d(-24px, 0, 0) rotateX(-112deg) rotateY(-118deg) rotateZ(6deg);
-        }
-
-        75% {
-          transform: translate3d(-12px, -8px, 0) rotateX(-22deg) rotateY(-118deg) rotateZ(-84deg);
-        }
       }
 
       .project-option.active {
@@ -3954,9 +3999,8 @@
       .gallery-mode,
       .quick-options,
       .segmented {
-        box-shadow:
-          inset 0 0 0 1px var(--divider),
-          0 var(--s1) var(--s2) rgba(31, 28, 45, 0.08);
+        align-items: center;
+        box-shadow: inset 0 0 0 1px var(--divider);
       }
 
       .gallery-mode button.active,
@@ -3969,12 +4013,48 @@
         background-color: var(--mode-tint);
         background-image: none;
         color: var(--mode-ink);
+        box-shadow: none;
+      }
+
+      .segment,
+      .gallery-mode button {
+        align-self: center;
+      }
+
+      .mode-switch .segment.active {
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      .copilot-card.active,
+      .make-card.active {
+        border-color: color-mix(in srgb, var(--mode) 54%, var(--divider));
+        background: var(--mode-tint);
+        box-shadow: none;
+      }
+
+      .copilot-help-grid .copilot-card.active {
+        border-color: color-mix(in srgb, var(--brand) 56%, var(--divider));
+        background: var(--mode-tint);
+      }
+
+      .menu-card,
+      .menu-item,
+      .account-link {
+        border-color: var(--divider);
+        box-shadow: none;
       }
 
       .gallery-filter-trigger,
       .required-choice-card {
         border-color: var(--divider);
         background: var(--mode-tint-quiet);
+      }
+
+      .select-option.active {
+        background: var(--mode-tint);
+        color: var(--mode-ink);
+        box-shadow: none;
       }
 
       .gallery-dropdown,
@@ -4007,10 +4087,25 @@
         color: #ffffff;
       }
 
+      .bottom-bar {
+        padding-top: var(--s3);
+      }
+
+      .generate-button {
+        margin-bottom: var(--s3);
+        box-shadow: 0 var(--s1) var(--s3) color-mix(in srgb, var(--mode-accent) 24%, transparent);
+      }
+
+      .bottom-nav {
+        padding-top: var(--s2);
+        border-top: 1px solid var(--divider);
+      }
+
       body[data-theme="dark"] .gallery-mode button.active,
       body[data-theme="dark"] .gallery-option.active,
       body[data-theme="dark"] .quick-chip.active,
       body[data-theme="dark"] .segment.active,
+      body[data-theme="dark"] .select-option.active,
       body[data-theme="dark"] .cash-choice.active,
       body[data-theme="dark"] .media-tab.active,
       body[data-theme="dark"] .guide-action,
@@ -4178,16 +4273,17 @@
         }
 
         .bottom-bar {
-          padding: var(--s1) var(--screen-padding);
+          padding: 10px var(--screen-padding) var(--s1);
         }
 
         .generate-button {
           min-height: 40px;
-          margin-bottom: var(--s1);
+          margin-bottom: 10px;
         }
 
         .bottom-nav {
           min-height: 56px;
+          padding-top: 6px;
         }
 
         .nav-item {
@@ -4219,11 +4315,12 @@
     </style>
   </head>
   <body data-theme="light" data-mode="celebrity">
-    <main class="phone" aria-label="FameFlow app prototype">
+    <main class="phone" aria-label="FameFlow app">
       <div class="top-loader" id="top-loader" aria-hidden="true"></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
       <header class="app-header">
         <div class="brand-lockup">
-          <img class="brand-logo" src="3Dlogo.png" alt="" />
+          <img class="brand-logo" src="assets/fameflow-mark.svg" alt="" />
           <div class="brand-name">FameFlow</div>
         </div>
         <div class="header-actions">
@@ -4326,6 +4423,9 @@
               <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
             </svg>
             <span>Enhance prompt</span>
+            <span class="enhance-help" aria-describedby="enhance-tooltip" tabindex="0">?
+              <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, composition, styling, and production details. You can undo it.</span>
+            </span>
           </button>
           <div class="generate-settings-row" aria-label="Generation settings">
             <div class="custom-select" data-select="model">
@@ -4360,9 +4460,9 @@
       </section>
 
       <section class="copilot-content" id="copilot-screen" hidden>
-        <section class="copilot-section" aria-label="How can Co-Pilot help">
+        <section class="copilot-section copilot-intent-section" aria-label="How can Co-Pilot help">
           <h2>How can Co-Pilot help?</h2>
-          <div class="copilot-rail" id="help-options">
+          <div class="copilot-help-grid" id="help-options">
             <button class="copilot-card" type="button" data-help="how">
               <span class="copilot-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -4380,7 +4480,7 @@
                   <path d="m15 9-2.2 4.8L8 16l2.2-4.8L15 9Z" />
                 </svg>
               </span>
-              <span>Choose mode</span>
+              <span>Choose a mode</span>
             </button>
             <button class="copilot-card" type="button" data-help="prompt">
               <span class="copilot-icon">
@@ -4389,7 +4489,7 @@
                   <path d="M14 5h.01M19 4h.01M20 9h.01M10 4h.01" />
                 </svg>
               </span>
-              <span>Improve prompt</span>
+              <span>Improve a prompt</span>
             </button>
             <button class="copilot-card" type="button" data-help="idea">
               <span class="copilot-icon">
@@ -4398,19 +4498,18 @@
                   <path d="M8 14a6 6 0 1 1 8 0c-1.1 1-1.4 1.8-1.4 3H9.4c0-1.2-.3-2-1.4-3Z" />
                 </svg>
               </span>
-              <span>Create from idea</span>
+              <span>Create from an idea</span>
             </button>
-          </div>
-          <div class="rail-dots" id="help-dots" aria-hidden="true">
-            <span class="rail-dot"></span>
-            <span class="rail-dot active"></span>
-            <span class="rail-dot"></span>
-            <span class="rail-dot"></span>
           </div>
         </section>
 
-        <section class="copilot-section" aria-label="What do you want to make">
-          <h2>What do you want to make?</h2>
+        <section class="copilot-section make-section" aria-label="What do you want to make">
+          <div class="section-heading-row">
+            <h2>What do you want to make?</h2>
+            <span class="scroll-hint" aria-hidden="true">Swipe
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
           <div class="copilot-rail" id="make-options"></div>
           <div class="rail-dots" id="make-dots" data-accent="green" aria-hidden="true"></div>
         </section>
@@ -4424,7 +4523,7 @@
             <div class="guide-step">
               <span class="guide-step-number">1</span>
               <div>
-                <strong>Choose or write</strong>
+                <strong>Choose a goal or write</strong>
                 <p>Pick a goal, choose Not sure, or type your own idea.</p>
               </div>
             </div>
@@ -4438,8 +4537,8 @@
             <div class="guide-step">
               <span class="guide-step-number">3</span>
               <div>
-                <strong>Open Generator</strong>
-                <p>Your mode, prompt, and settings are prepared for generation.</p>
+                <strong>Open Generate</strong>
+                <p>Your mode, prompt, and settings are ready in Generate.</p>
               </div>
             </div>
           </div>
@@ -4505,7 +4604,7 @@
           <button class="required-choice-card" id="ready-subject-card" type="button" hidden>
             <span>
               <strong>Choose celebrity</strong>
-              <span>Required for Real person generation</span>
+              <span>Required to generate a real person</span>
             </span>
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="m9 6 6 6-6 6" />
@@ -4719,7 +4818,7 @@
             <span>Campaign brief</span>
             <textarea id="campaign-brief" rows="4">Promote our new summer collection with fresh and vibrant visuals.</textarea>
           </label>
-          <button class="primary-action" id="campaign-next-influencer" type="button">Next: Choose influencer</button>
+          <button class="primary-action" id="campaign-next-influencer" type="button">Next: Choose an influencer</button>
         </section>
 
         <section class="form-stack" id="campaign-influencer-view" hidden>
@@ -4731,7 +4830,7 @@
             </button>
             <div class="workspace-headline">
               <h1 class="workspace-title">Choose influencer</h1>
-              <p class="workspace-subtitle">Step 2: Select influencer</p>
+              <p class="workspace-subtitle">Step 2: Select an influencer</p>
             </div>
           </div>
           <div class="stepper" aria-label="Campaign steps">
@@ -5278,7 +5377,7 @@
         <aside class="menu-panel" aria-label="Menu">
           <div class="menu-header">
             <div class="brand-lockup">
-              <img class="brand-logo" src="3Dlogo.png" alt="" />
+              <img class="brand-logo" src="assets/fameflow-mark.svg" alt="" />
               <div class="brand-name">FameFlow</div>
             </div>
             <button class="round-button" id="close-menu" type="button" aria-label="Close menu">
@@ -5452,24 +5551,7 @@
 
       <section class="offline-screen" id="offline-screen" aria-label="No internet connection" hidden>
         <div class="offline-card">
-          <div class="offline-logo" aria-hidden="true">
-            <span class="offline-cube">
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-            </span>
-            <span class="offline-cube">
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-              <span class="offline-cube-face"></span>
-            </span>
-          </div>
+          <img class="offline-logo" src="assets/fameflow-mark.svg" alt="" aria-hidden="true" />
           <h1>No connection</h1>
           <p>Check your internet connection and try again.</p>
           <div class="offline-actions">
@@ -5498,6 +5580,8 @@
     <script>
       const body = document.body;
       const topLoader = document.querySelector("#top-loader");
+      const toast = document.querySelector("#toast");
+      const themeToggle = document.querySelector("#theme-toggle");
       const generateButton = document.querySelector("#generate");
       const generateLabel = document.querySelector("#generate-label");
       const generateScreen = document.querySelector(".content");
@@ -5509,9 +5593,7 @@
       const copilotComposer = document.querySelector("#copilot-composer");
       const navButtons = [...document.querySelectorAll("[data-nav-screen]")];
       const helpButtons = [...document.querySelectorAll("[data-help]")];
-      const helpRail = document.querySelector("#help-options");
       const makeOptions = document.querySelector("#make-options");
-      const helpDots = document.querySelector("#help-dots");
       const makeDots = document.querySelector("#make-dots");
       const copilotGuide = document.querySelector("#copilot-guide");
       const guideFocus = document.querySelector("#guide-focus");
@@ -5544,7 +5626,7 @@
         celebrity: {
           label: "Selected celebrity",
           sheetTitle: "Selected celebrity",
-          placeholder: "Enter a text prompt or reference image",
+          placeholder: "Enter a prompt or add a reference image",
           subjects: [
             ["Alex", "linear-gradient(135deg, #c9d0d6, #3b2b2d)"],
             ["Alan", "linear-gradient(135deg, #e9e1d7, #6b4b3c)"],
@@ -5814,7 +5896,15 @@
         `).join("");
       }
 
-      function showToast() {}
+      let toastTimer;
+
+      function showToast(message) {
+        if (!message) return;
+        window.clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add("visible");
+        toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 2400);
+      }
 
       function setEnhancePromptState(state) {
         const isRevert = state === "revert";
@@ -5827,11 +5917,17 @@
             <path d="M12 5l-7 7 7 7" />
           </svg>
           <span>Undo enhance</span>
+          <span class="enhance-help" aria-describedby="enhance-tooltip" tabindex="0">?
+            <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, composition, styling, and production details. You can undo it.</span>
+          </span>
         ` : `
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" />
           </svg>
           <span>Enhance prompt</span>
+          <span class="enhance-help" aria-describedby="enhance-tooltip" tabindex="0">?
+            <span class="enhance-tooltip" id="enhance-tooltip" role="tooltip">Enhance adds clearer lighting, composition, styling, and production details. You can undo it.</span>
+          </span>
         `;
       }
 
@@ -5848,8 +5944,15 @@
         updateEnhancePromptAvailability();
       }
 
+      function setTheme(theme) {
+        const nextTheme = theme === "dark" ? "dark" : "light";
+        body.dataset.theme = nextTheme;
+        localStorage.setItem("fameflow.theme", nextTheme);
+        themeToggle.setAttribute("aria-label", nextTheme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+      }
+
       function toggleTheme() {
-        body.dataset.theme = body.dataset.theme === "light" ? "dark" : "light";
+        setTheme(body.dataset.theme === "light" ? "dark" : "light");
       }
 
       function setScreen(screen) {
@@ -6404,7 +6507,7 @@
         if (window.location.hash === "#offline") showOfflineScreen();
       }
 
-      document.querySelector("#theme-toggle").addEventListener("click", toggleTheme);
+      themeToggle.addEventListener("click", toggleTheme);
 
       navButtons.forEach((button) => {
         button.addEventListener("click", () => setScreen(button.dataset.navScreen));
@@ -6515,9 +6618,6 @@
         button.addEventListener("click", () => {
           activeHelp = button.dataset.help;
           helpButtons.forEach((item) => item.classList.toggle("active", item === button));
-          [...document.querySelectorAll("#help-dots .rail-dot")].forEach((dot, index) => {
-            dot.classList.toggle("active", index === helpButtons.indexOf(button));
-          });
           renderMakeOptions();
           updateRailDots(makeOptions, makeDots);
           if (activeMake || submittedCopilotIdea) {
@@ -6534,7 +6634,6 @@
         });
       });
 
-      helpRail.addEventListener("scroll", () => updateRailDots(helpRail, helpDots));
       makeOptions.addEventListener("scroll", () => updateRailDots(makeOptions, makeDots));
 
       makeOptions.addEventListener("click", (event) => {
@@ -6683,7 +6782,8 @@
         updateEnhancePromptAvailability();
         updateGenerateState();
       });
-      enhancePromptButton.addEventListener("click", () => {
+      enhancePromptButton.addEventListener("click", (event) => {
+        if (event.target.closest(".enhance-help")) return;
         const currentPrompt = prompt.value.trim();
         if (enhancePromptButton.dataset.state === "revert") {
           prompt.value = promptBeforeEnhance;
@@ -6962,6 +7062,7 @@
 
       renderMakeOptions();
       renderGallery();
+      setTheme(localStorage.getItem("fameflow.theme") || "light");
       setMode(localStorage.getItem("fameflow.activeMode") || "celebrity");
       setScreen(localStorage.getItem("fameflow.activeScreen") || "copilot");
       syncOfflineDemoHash();
