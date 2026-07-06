@@ -291,7 +291,21 @@
         display: flex;
         align-items: center;
         gap: var(--s2);
+        padding: 0;
+        border: 0;
         border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+      }
+
+      button.brand-lockup {
+        cursor: pointer;
+        transition: transform var(--motion);
+      }
+
+      button.brand-lockup:active {
+        transform: scale(0.98);
       }
 
       .brand-logo {
@@ -4329,10 +4343,10 @@
       <div class="top-loader" id="top-loader" aria-hidden="true"></div>
       <div class="toast" id="toast" role="status" aria-live="polite"></div>
       <header class="app-header">
-        <div class="brand-lockup">
+        <button class="brand-lockup" type="button" data-open-generate aria-label="Open Generate">
           <img class="brand-logo" src="assets/fameflow-mark.svg" alt="" />
           <div class="brand-name">FameFlow</div>
-        </div>
+        </button>
         <div class="header-actions">
           <button class="round-button" id="theme-toggle" type="button" aria-label="Switch theme">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4471,7 +4485,6 @@
 
       <section class="copilot-content" id="copilot-screen" hidden>
         <section class="copilot-section copilot-intent-section" aria-label="How can Co-Pilot help">
-          <h2>How can Co-Pilot help?</h2>
           <div class="copilot-help-grid" id="help-options">
             <button class="copilot-card active" type="button" data-help="how">
               <span class="copilot-icon">
@@ -5359,10 +5372,10 @@
       <div class="menu-backdrop" id="menu-sheet">
         <aside class="menu-panel" aria-label="Menu">
           <div class="menu-header">
-            <div class="brand-lockup">
+            <button class="brand-lockup" type="button" data-open-generate aria-label="Open Generate">
               <img class="brand-logo" src="assets/fameflow-mark.svg" alt="" />
               <div class="brand-name">FameFlow</div>
-            </div>
+            </button>
             <button class="round-button" id="close-menu" type="button" aria-label="Close menu">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 6l12 12M18 6 6 18" />
@@ -5575,6 +5588,7 @@
       const settingsScreen = document.querySelector("#settings-screen");
       const copilotComposer = document.querySelector("#copilot-composer");
       const navButtons = [...document.querySelectorAll("[data-nav-screen]")];
+      const logoButtons = [...document.querySelectorAll("[data-open-generate]")];
       const helpButtons = [...document.querySelectorAll("[data-help]")];
       const makeOptions = document.querySelector("#make-options");
       const makeSwipe = document.querySelector("#make-swipe");
@@ -5957,6 +5971,11 @@
         settingsScreen.hidden = activeScreen !== "settings";
         generateButton.hidden = activeScreen !== "generate";
         copilotComposer.hidden = true;
+        if (activeScreen === "copilot" && activeHelp === "how" && !activeMake && !submittedCopilotIdea) {
+          copilotQuestions.hidden = true;
+          copilotReady.hidden = true;
+          showCopilotGuide();
+        }
         navButtons.forEach((button) => {
           button.classList.toggle("active", button.dataset.navScreen === screen);
         });
@@ -6255,7 +6274,9 @@
         if (!cards.length || !dots.length) return;
         const first = cards[0];
         const step = first.getBoundingClientRect().width + parseFloat(getComputedStyle(rail).columnGap || getComputedStyle(rail).gap || 0);
-        const index = Math.max(0, Math.min(dots.length - 1, Math.round(rail.scrollLeft / step)));
+        const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+        const atEnd = maxScroll - rail.scrollLeft <= 2;
+        const index = atEnd ? dots.length - 1 : Math.max(0, Math.min(dots.length - 1, Math.round(rail.scrollLeft / step)));
         dots.forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === index));
       }
 
@@ -6507,6 +6528,13 @@
 
       navButtons.forEach((button) => {
         button.addEventListener("click", () => setScreen(button.dataset.navScreen));
+      });
+
+      logoButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          setScreen("generate");
+          menuSheet.classList.remove("open");
+        });
       });
 
       galleryViewButtons.forEach((button) => {
