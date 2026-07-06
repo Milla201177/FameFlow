@@ -1818,11 +1818,13 @@
       .generation-gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(170px, 1fr));
+        align-items: start;
         gap: 16px;
       }
 
       .generation-work {
         position: relative;
+        height: max-content;
         overflow: hidden;
         border: 1px solid var(--line);
         border-radius: var(--radius);
@@ -1945,7 +1947,7 @@
       .generation-work-copy {
         display: grid;
         gap: 3px;
-        padding: 12px;
+        padding: 10px 12px 12px;
       }
 
       .generation-work-copy strong {
@@ -1961,43 +1963,74 @@
 
       .generation-work.is-hiding {
         pointer-events: none;
-        animation: roll-card-away 220ms cubic-bezier(.45, 0, .22, 1) forwards;
-        transform-origin: center bottom;
+        animation: roll-card-away 300ms cubic-bezier(.45, 0, .22, 1) forwards;
+        transform-origin: center top;
       }
 
       .generation-work.is-restoring {
-        animation: unroll-card 240ms cubic-bezier(.2, .8, .2, 1);
-        transform-origin: center bottom;
+        animation: unroll-card 260ms cubic-bezier(.2, .8, .2, 1);
+        transform-origin: center top;
       }
 
       @keyframes roll-card-away {
-        0% { opacity: 1; transform: translateY(0) scaleY(1); }
-        72% { opacity: 0.74; transform: translateY(10px) scaleY(0.14); }
-        100% { opacity: 0; transform: translateY(18px) scaleY(0.04); }
+        0% {
+          opacity: 1;
+          clip-path: inset(0 0 0 0 round var(--radius));
+          transform: translateY(0) scaleY(1) rotateX(0deg);
+        }
+        58% {
+          opacity: 0.78;
+          clip-path: inset(0 0 58% 0 round 22px);
+          transform: translateY(-12px) scaleY(0.42) rotateX(34deg);
+        }
+        100% {
+          opacity: 0;
+          clip-path: inset(0 0 92% 0 round 999px);
+          transform: translateY(-28px) scaleY(0.1) rotateX(78deg);
+        }
       }
 
       @keyframes unroll-card {
-        0% { opacity: 0; transform: translateY(14px) scaleY(0.08); }
-        100% { opacity: 1; transform: translateY(0) scaleY(1); }
+        0% {
+          opacity: 0;
+          clip-path: inset(0 0 92% 0 round 999px);
+          transform: translateY(-22px) scaleY(0.12) rotateX(64deg);
+        }
+        100% {
+          opacity: 1;
+          clip-path: inset(0 0 0 0 round var(--radius));
+          transform: translateY(0) scaleY(1) rotateX(0deg);
+        }
       }
 
       .hidden-roll-dock {
-        width: 214px;
-        max-height: 292px;
-        position: fixed;
-        right: 262px;
-        bottom: calc(var(--prompt-panel-height, 25vh) + 30px);
-        z-index: 18;
+        width: 100%;
+        max-height: 276px;
+        position: relative;
         display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
         gap: 6px;
         padding: 10px;
-        overflow: visible;
+        overflow: hidden;
         border: 1px solid var(--line);
         border-radius: 18px;
         background: color-mix(in srgb, var(--surface) 92%, transparent);
         box-shadow: 0 16px 40px rgba(31, 28, 45, 0.16);
         -webkit-backdrop-filter: blur(14px);
         backdrop-filter: blur(14px);
+      }
+
+      .projects-sidebar .hidden-roll-dock {
+        margin-top: auto;
+      }
+
+      .desktop-shell > .hidden-roll-dock {
+        width: min(232px, calc(100vw - 36px));
+        max-height: min(292px, calc(100dvh - var(--prompt-panel-height, 25vh) - 64px));
+        position: fixed;
+        right: 20px;
+        bottom: calc(var(--prompt-panel-height, 25vh) + 28px);
+        z-index: 18;
       }
 
       .hidden-roll-dock[hidden] {
@@ -2042,12 +2075,12 @@
       .hidden-roll {
         --roll-image: linear-gradient(135deg, var(--lavender), var(--mint));
         width: 100%;
-        height: 25px;
+        height: 24px;
         position: relative;
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         padding: 0 28px 0 10px;
-        overflow: visible;
+        overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.34);
         border-radius: 999px;
         background:
@@ -2062,48 +2095,48 @@
         line-height: 14px;
         font-weight: 700;
         text-align: left;
-        transition: transform 150ms ease, box-shadow 150ms ease;
+        transition: height 180ms ease, border-radius 180ms ease, transform 150ms ease, box-shadow 150ms ease;
       }
 
       .hidden-roll:hover,
       .hidden-roll:focus-visible {
         z-index: 2;
-        transform: translateX(-4px);
+        height: 82px;
+        border-radius: 16px;
+        transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(20, 18, 28, 0.2);
       }
 
       .hidden-roll::after {
         content: "";
-        width: 210px;
-        aspect-ratio: 4 / 3;
         position: absolute;
-        right: calc(100% + 12px);
-        bottom: -12px;
-        border: 6px solid var(--surface);
-        border-radius: 16px;
+        inset: 0;
+        border-radius: inherit;
         background:
-          linear-gradient(180deg, transparent 56%, rgba(10, 12, 16, 0.32)),
+          linear-gradient(180deg, rgba(10, 12, 16, 0.02) 0 42%, rgba(10, 12, 16, 0.58)),
           var(--roll-image);
         background-position: center;
         background-size: cover;
-        box-shadow: 0 18px 44px rgba(20, 18, 28, 0.24);
         opacity: 0;
         pointer-events: none;
-        transform: translateX(6px) scale(0.96);
-        transform-origin: right bottom;
-        transition: opacity 150ms ease, transform 150ms ease;
+        transform: scale(1.04);
+        transition: opacity 160ms ease, transform 180ms ease;
       }
 
       .hidden-roll:hover::after,
       .hidden-roll:focus-visible::after {
         opacity: 1;
-        transform: translateX(0) scale(1);
+        transform: scale(1);
       }
 
       .hidden-roll span {
+        position: relative;
+        z-index: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        padding-bottom: 5px;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.42);
       }
 
       .hidden-roll svg {
@@ -2111,6 +2144,8 @@
         height: 13px;
         position: absolute;
         right: 8px;
+        bottom: 5px;
+        z-index: 1;
       }
 
       @media (max-width: 1180px) {
@@ -3786,6 +3821,8 @@
       const hiddenRollDock = document.querySelector("#hidden-roll-dock");
       const hiddenRollList = document.querySelector("#hidden-roll-list");
       const hiddenRollCount = document.querySelector("#hidden-roll-count");
+      const desktopShell = document.querySelector(".desktop-shell");
+      const projectsSidebar = document.querySelector(".projects-sidebar");
       let activeProject = "FameFlow Studio";
       let activeCampaign = "Summer Launch";
       let activeView = "generate";
@@ -3804,6 +3841,15 @@
       const selectedSubjects = {
         celebrity: "",
         character: "",
+      };
+
+      const syncHiddenRollDockHost = () => {
+        if (!hiddenRollDock) return;
+        const projectsOpen = document.body.dataset.rightCollapsed !== "true";
+        const target = projectsOpen ? projectsSidebar : desktopShell;
+        if (target && hiddenRollDock.parentElement !== target) {
+          target.append(hiddenRollDock);
+        }
       };
 
       const updatePageHeading = () => {
@@ -3839,6 +3885,7 @@
         document.body.dataset[side === "left" ? "leftCollapsed" : "rightCollapsed"] = open ? "false" : "true";
         localStorage.setItem(`fameflow-desktop-${side}-sidebar`, open ? "open" : "closed");
         updateSidebarToggles();
+        syncHiddenRollDockHost();
       };
 
       const updateModeSelectionUI = () => {
@@ -4821,6 +4868,7 @@
       localStorage.setItem("fameflow-desktop-collapsed", JSON.stringify([...collapsedWorkIds]));
 
       renderHiddenRolls = () => {
+        syncHiddenRollDockHost();
         hiddenRollList.replaceChildren();
         const mode = document.body.dataset.mode;
         const collapsedCards = [...collapsedWorkIds]
@@ -4858,11 +4906,11 @@
         collapsedWorkIds.add(favoriteId);
         persistCollapsedWorks();
         card.classList.add("is-hiding");
-        window.setTimeout(renderHiddenRolls, 140);
+        window.setTimeout(renderHiddenRolls, 190);
         window.setTimeout(() => {
           card.classList.remove("is-hiding");
           applyGenerationFilters();
-        }, 220);
+        }, 300);
       };
 
       const restoreWork = (favoriteId) => {
@@ -5024,6 +5072,7 @@
       setTheme(localStorage.getItem("fameflow-desktop-theme") || "light");
       document.body.dataset.leftCollapsed = localStorage.getItem("fameflow-desktop-left-sidebar") === "closed" ? "true" : "false";
       document.body.dataset.rightCollapsed = localStorage.getItem("fameflow-desktop-right-sidebar") === "closed" ? "true" : "false";
+      syncHiddenRollDockHost();
       setSettingsView("home");
       updateSidebarToggles();
       updatePageHeading();
