@@ -2113,10 +2113,6 @@
         backdrop-filter: blur(14px);
       }
 
-      .projects-sidebar .hidden-roll-dock {
-        margin-top: auto;
-      }
-
       .desktop-shell > .hidden-roll-dock {
         width: min(232px, calc(100vw - 36px));
         max-height: min(292px, calc(100dvh - var(--prompt-panel-height, 25vh) - 64px));
@@ -3816,6 +3812,7 @@
             <div class="asset-action-stack">
               <button class="asset-action" type="button" id="asset-make-video">Make video</button>
               <button class="asset-action" type="button" id="asset-use-reference">Use in Generate as reference</button>
+              <button class="asset-action" type="button" id="asset-return-gallery" hidden>Return to gallery</button>
               <button class="asset-action" type="button" id="asset-download">Download</button>
               <button class="asset-action" type="button" id="asset-recreate">Recreate</button>
             </div>
@@ -3883,6 +3880,7 @@
       const assetSheetPreview = document.querySelector("#asset-sheet-preview");
       const assetMakeVideo = document.querySelector("#asset-make-video");
       const assetUseReference = document.querySelector("#asset-use-reference");
+      const assetReturnGallery = document.querySelector("#asset-return-gallery");
       const assetDownload = document.querySelector("#asset-download");
       const assetRecreate = document.querySelector("#asset-recreate");
       const celebritySegment = document.querySelector(".segment[data-mode='celebrity']");
@@ -3915,7 +3913,6 @@
       const hiddenRollList = document.querySelector("#hidden-roll-list");
       const hiddenRollCount = document.querySelector("#hidden-roll-count");
       const desktopShell = document.querySelector(".desktop-shell");
-      const projectsSidebar = document.querySelector(".projects-sidebar");
       let activeProject = "FameFlow Studio";
       let activeCampaign = "Summer Launch";
       let activeView = "generate";
@@ -3924,6 +3921,7 @@
         meta: "Image",
         prompt: "",
         previewImage: "",
+        hiddenFavoriteId: null,
       };
       let activeWorkFilter = "all";
       let activeWorkCreator = "all";
@@ -3938,8 +3936,7 @@
 
       const syncHiddenRollDockHost = () => {
         if (!hiddenRollDock) return;
-        const projectsOpen = document.body.dataset.rightCollapsed !== "true";
-        const target = projectsOpen ? projectsSidebar : desktopShell;
+        const target = desktopShell;
         if (target && hiddenRollDock.parentElement !== target) {
           target.append(hiddenRollDock);
         }
@@ -4903,17 +4900,24 @@
         setPromptStatus(`${projectName} created`, "success");
       });
 
-      const openAssetSheet = (card) => {
+      const openAssetSheet = (card, { fromHidden = false } = {}) => {
         const title = card.querySelector("strong")?.textContent || "Asset";
         const meta = card.querySelector("span")?.textContent || "Image";
         const preview = card.querySelector(".generation-work-preview, .asset-preview");
         const prompt = `Cinematic ${title.toLowerCase()}, polished styling, clean composition, and campaign-ready output for ${activeProject}.`;
         const previewImage = getComputedStyle(preview).getPropertyValue("background-image");
-        currentAsset = { title, meta, prompt, previewImage };
+        currentAsset = {
+          title,
+          meta,
+          prompt,
+          previewImage,
+          hiddenFavoriteId: fromHidden ? card.dataset.favoriteId : null,
+        };
         assetSheetTitle.textContent = title;
         assetSheetMeta.textContent = meta;
         assetSheetPrompt.textContent = `Prompt: ${prompt}`;
         assetSheetPreview.style.setProperty("--asset-image", getComputedStyle(preview).getPropertyValue("background-image"));
+        assetReturnGallery.hidden = !currentAsset.hiddenFavoriteId;
         assetSheet.hidden = false;
       };
 
@@ -5006,15 +5010,25 @@
         }, 560);
       };
 
-      const restoreWork = (favoriteId) => {
+      const openHiddenWork = (favoriteId) => {
         const card = favoriteCatalog.get(favoriteId);
         if (!card) return;
+        openAssetSheet(card, { fromHidden: true });
+      };
+
+      const returnHiddenWorkToGallery = () => {
+        const favoriteId = currentAsset.hiddenFavoriteId;
+        const card = favoriteCatalog.get(favoriteId);
+        if (!favoriteId || !card) return;
         collapsedWorkIds.delete(favoriteId);
         persistCollapsedWorks();
+        renderHiddenRolls();
         applyGenerationFilters();
         card.classList.add("is-restoring");
         window.setTimeout(() => card.classList.remove("is-restoring"), 240);
-        openAssetSheet(card);
+        assetSheet.hidden = true;
+        currentAsset.hiddenFavoriteId = null;
+        setPromptStatus(`${card.querySelector("strong")?.textContent || "Work"} returned to gallery`, "success");
       };
 
       const syncFavoriteButtons = () => {
@@ -5063,7 +5077,7 @@
         if (restoreButton) {
           event.preventDefault();
           event.stopPropagation();
-          restoreWork(restoreButton.dataset.restoreWork);
+          openHiddenWork(restoreButton.dataset.restoreWork);
           return;
         }
         const hideButton = event.target.closest(".hide-work-button");
@@ -5113,6 +5127,8 @@
       assetUseReference.addEventListener("click", () => {
         reuseAssetInGenerate({ asReference: true });
       });
+
+      assetReturnGallery.addEventListener("click", returnHiddenWorkToGallery);
 
       assetRecreate.addEventListener("click", () => {
         const media = currentAsset.meta.includes("Video")
