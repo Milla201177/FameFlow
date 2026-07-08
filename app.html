@@ -1811,10 +1811,32 @@
       }
 
       .guide-panel {
+        position: relative;
+        padding-right: calc(var(--s3) + var(--s5));
         border-color: color-mix(in srgb, var(--brand) 78%, transparent);
         background:
           linear-gradient(180deg, color-mix(in srgb, var(--brand) 22%, transparent), color-mix(in srgb, var(--character) 16%, transparent)),
           var(--surface);
+      }
+
+      .guide-dismiss {
+        position: absolute;
+        top: var(--s2);
+        right: var(--s2);
+        width: var(--s5);
+        height: var(--s5);
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--surface) 82%, transparent);
+        color: var(--muted);
+        box-shadow: 0 2px 8px rgba(28, 24, 42, 0.1);
+      }
+
+      .guide-dismiss:hover,
+      .guide-dismiss:focus-visible {
+        color: var(--text);
+        background: var(--surface);
       }
 
       .guide-panel p {
@@ -4506,6 +4528,11 @@
         </section>
 
         <section class="guide-panel" id="copilot-guide" aria-label="How Co-Pilot works" hidden>
+          <button class="guide-dismiss" id="guide-dismiss" type="button" aria-label="Hide How Co-Pilot works">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
           <div>
             <h2>How Co-Pilot works</h2>
             <p id="guide-focus">Choose a goal or write an idea. Co-Pilot will turn it into the right generator setup.</p>
@@ -5590,6 +5617,7 @@
       const makeDots = document.querySelector("#make-dots");
       const copilotGuide = document.querySelector("#copilot-guide");
       const guideFocus = document.querySelector("#guide-focus");
+      const guideDismiss = document.querySelector("#guide-dismiss");
       const guideStart = document.querySelector("#guide-start");
       const copilotQuestions = document.querySelector("#copilot-questions");
       const copilotReady = document.querySelector("#copilot-ready");
@@ -5698,6 +5726,7 @@
       let activeScreen = "generate";
       let activeHelp = "how";
       let activeMake = "";
+      let copilotGuideDismissed = localStorage.getItem("fameflow.copilotGuideDismissed") === "true";
       let submittedCopilotIdea = "";
       let selectedCampaignInfluencers = [];
       let selectedCatalogInfluencer = "";
@@ -6349,6 +6378,10 @@
       }
 
       function showCopilotGuide(goal = activeMake) {
+        if (copilotGuideDismissed) {
+          hideCopilotGuide();
+          return;
+        }
         const selectedGoal = goal || activeMake;
         const goalText = selectedGoal === "Not sure"
           ? "If you are not sure, Co-Pilot starts with simple choices and recommends the best generator path."
@@ -6359,6 +6392,12 @@
 
       function hideCopilotGuide() {
         copilotGuide.hidden = true;
+      }
+
+      function dismissCopilotGuide() {
+        copilotGuideDismissed = true;
+        localStorage.setItem("fameflow.copilotGuideDismissed", "true");
+        hideCopilotGuide();
       }
 
       function showCopilotQuestions() {
@@ -6681,6 +6720,7 @@
       document.querySelector("#copilot-mic").addEventListener("click", showVoiceListening);
       readySubjectCard.addEventListener("click", openCelebrityPickerForCopilot);
       voiceStop.addEventListener("click", hideVoiceListening);
+      guideDismiss.addEventListener("click", dismissCopilotGuide);
       guideStart.addEventListener("click", () => {
         showCopilotQuestions();
         showToast("Guided setup started.");
